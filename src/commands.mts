@@ -27,25 +27,17 @@ type Pretty<T> = {
 } & {}
 
 type TypeMap = {
-  attachment: NonNullable<
-    ReturnType<CommandInteractionOptionResolver["getAttachment"]>
-  >
-  boolean: NonNullable<
-    ReturnType<CommandInteractionOptionResolver["getBoolean"]>
-  >
-  channel: NonNullable<
-    ReturnType<CommandInteractionOptionResolver["getChannel"]>
-  >
-  integer: NonNullable<
-    ReturnType<CommandInteractionOptionResolver["getInteger"]>
-  >
-  mentionable: NonNullable<
-    ReturnType<CommandInteractionOptionResolver["getMentionable"]>
-  >
-  number: NonNullable<ReturnType<CommandInteractionOptionResolver["getNumber"]>>
-  role: NonNullable<ReturnType<CommandInteractionOptionResolver["getRole"]>>
-  string: NonNullable<ReturnType<CommandInteractionOptionResolver["getString"]>>
-  user: NonNullable<ReturnType<CommandInteractionOptionResolver["getUser"]>>
+  attachment: ReturnType<CommandInteractionOptionResolver["getAttachment"]> & {}
+  boolean: ReturnType<CommandInteractionOptionResolver["getBoolean"]> & {}
+  channel: ReturnType<CommandInteractionOptionResolver["getChannel"]> & {}
+  integer: ReturnType<CommandInteractionOptionResolver["getInteger"]> & {}
+  mentionable: ReturnType<
+    CommandInteractionOptionResolver["getMentionable"]
+  > & {}
+  number: ReturnType<CommandInteractionOptionResolver["getNumber"]> & {}
+  role: ReturnType<CommandInteractionOptionResolver["getRole"]> & {}
+  string: ReturnType<CommandInteractionOptionResolver["getString"]> & {}
+  user: ReturnType<CommandInteractionOptionResolver["getUser"]> & {}
 }
 
 type BuilderMap = {
@@ -67,9 +59,9 @@ type OptionValue<T extends Partial<Option>> = T["required"] extends () => void
   ? InferType<T["type"]> | undefined
   : InferType<T["type"]>
 
-type OptionValues<T extends Record<string, Partial<Option>>> = Pretty<{
+type OptionValues<T extends Record<string, Partial<Option>>> = {
   [K in keyof T]: OptionValue<T[K]>
-}>
+} & {}
 
 type Option<
   Type extends keyof TypeMap = keyof TypeMap,
@@ -118,24 +110,22 @@ type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Pretty<
 type SlashCommandWithOptions<
   Keys extends keyof SlashCommand | "",
   Options extends Record<Lowercase<string>, Partial<Option>>,
-> = Pretty<
-  Omit<SlashCommand<Keys>, "handler"> &
-    Omit<
-      {
-        options: Options
-        handler(
-          handler: (
-            interaction: ChatInputCommandInteraction,
-            values: OptionValues<Options>,
-          ) => Promise<void>,
-        ): {
-          builder: SlashCommandBuilder
-          handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-        }
-      },
-      Keys
-    >
->
+> = Omit<SlashCommand<Keys>, "handler"> &
+  Omit<
+    {
+      options: Options
+      handler(
+        handler: (
+          interaction: ChatInputCommandInteraction,
+          values: OptionValues<Options>,
+        ) => Promise<void>,
+      ): {
+        builder: SlashCommandBuilder
+        handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+      }
+    },
+    Keys
+  >
 
 export function slashCommand(
   name: Lowercase<string>,
