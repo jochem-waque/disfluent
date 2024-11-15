@@ -20,6 +20,7 @@ import {
   SlashCommandRoleOption,
   SlashCommandStringOption,
   SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandGroupBuilder,
   SlashCommandUserOption,
 } from "discord.js"
 
@@ -110,13 +111,14 @@ type SlashCommand<
         true
       >
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-      subcommands(): SlashCommand<
-        Keys | "options" | "handler" | "subcommands",
-        true
-      >
+      subcommands(
+        subcommands: Record<string, Subcommand<keyof Subcommand>>,
+      ): SlashCommand<Keys | "options" | "handler" | "subcommands", true>
       subcommandGroups(
-        name: Lowercase<string>,
-        groups: Record<string, unknown>,
+        groups: Record<
+          Lowercase<string>,
+          SubcommandGroup<keyof SubcommandGroup>
+        >,
       ): SlashCommand<Keys | "options" | "handler" | "subcommandGroups", true>
     },
     Handle extends false ? Keys | "handle" : Keys
@@ -136,7 +138,7 @@ type SlashCommandWithOptions<
           interaction: ChatInputCommandInteraction,
           values: OptionValues<Options>,
         ) => Promise<void>,
-      ): SlashCommand<Keys | "handler" | "options", true>
+      ): SlashCommandWithOptions<Keys | "handler" | "options", Options, true>
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
     },
     Handle extends false ? Keys | "handle" : Keys
@@ -151,10 +153,7 @@ type Subcommand<Keys extends keyof Subcommand | "" = ""> = Pretty<
       ): SubcommandWithOptions<Keys | "options", T>
       handler(
         handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
-      ): {
-        builder: SlashCommandSubcommandBuilder
-        handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-      }
+      ): Subcommand<Keys | "handler" | "options">
     },
     Keys
   >
@@ -172,13 +171,20 @@ type SubcommandWithOptions<
           interaction: ChatInputCommandInteraction,
           values: OptionValues<Options>,
         ) => Promise<void>,
-      ): {
-        builder: SlashCommandSubcommandBuilder
-        handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-      }
+      ): SubcommandWithOptions<Keys | "handler", Options>
     },
     Keys
   >
+
+type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> = Omit<
+  {
+    builder: SlashCommandSubcommandGroupBuilder
+    subcommands(
+      subcommands: Record<string, Subcommand<keyof Subcommand>>,
+    ): SubcommandGroup<Keys | "subcommands">
+  },
+  Keys
+>
 
 export function slashCommand(
   name: Lowercase<string>,
@@ -262,25 +268,27 @@ export function subcommand(
         ...this,
         options,
         handler(handler) {
-          return {
-            builder: this.builder,
-            async handle(interaction) {
-              const values = Object.fromEntries(
-                Object.entries(options).map(([key, option]) => [
-                  key,
-                  getOptionValue(interaction, option),
-                ]),
-              ) as OptionValues<typeof options>
-              await handler(interaction, values)
-            },
-          }
+          return this // TODO
         },
       }
     },
     handler(handler) {
+      return this // TODO
+    },
+  }
+}
+
+export function subcommandGroup(
+  name: Lowercase<string>,
+  description: string,
+): SubcommandGroup {
+  return {
+    builder: new SlashCommandSubcommandGroupBuilder()
+      .setName(name)
+      .setDescription(description),
+    subcommands() {
       return {
-        builder: this.builder,
-        handle: handler,
+        ...this,
       }
     },
   }
@@ -409,4 +417,11 @@ slashCommand("", "")
   .defaultMemberPermissions(PermissionFlagsBits.AddReactions)
   .integrationTypes(ApplicationIntegrationType.GuildInstall)
   .nsfw()
-  .subcommands()
+  .subcommands({
+    test: subcommand("test", "").options({}).handler(),
+  })
+  .subcommandGroups({
+    group: subcommandGroup("name", "desc").subcommands({
+      command: subcommand("command", ""),
+    }),
+  })
