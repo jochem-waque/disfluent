@@ -19,6 +19,7 @@ import {
   SlashCommandNumberOption,
   SlashCommandRoleOption,
   SlashCommandStringOption,
+  SlashCommandSubcommandBuilder,
   SlashCommandUserOption,
 } from "discord.js"
 
@@ -77,7 +78,10 @@ type Option<
   >
 >
 
-type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Pretty<
+type SlashCommand<
+  Keys extends keyof SlashCommand | "" = "",
+  Handle extends boolean = false,
+> = Pretty<
   Omit<
     {
       builder: SlashCommandBuilder
@@ -93,23 +97,36 @@ type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Pretty<
         ...rest: ApplicationIntegrationType[]
       ): SlashCommand<Keys | "integrationTypes">
       nsfw(): SlashCommand<Keys | "nsfw">
-      options<T extends Record<Lowercase<string>, Partial<Option>>>(
+      options<T extends Record<string, Partial<Option>>>(
         options: T,
-      ): SlashCommandWithOptions<Keys | "options", T>
+      ): SlashCommandWithOptions<
+        Keys | "options" | "subcommands" | "subcommandGroups",
+        T
+      >
       handler(
         handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
-      ): {
-        builder: SlashCommandBuilder
-        handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-      }
+      ): SlashCommand<
+        Keys | "handler" | "options" | "subcommandGroups" | "subcommands",
+        true
+      >
+      handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+      subcommands(): SlashCommand<
+        Keys | "options" | "handler" | "subcommands",
+        true
+      >
+      subcommandGroups(
+        name: Lowercase<string>,
+        groups: Record<string, unknown>,
+      ): SlashCommand<Keys | "options" | "handler" | "subcommandGroups", true>
     },
-    Keys
+    Handle extends false ? Keys | "handle" : Keys
   >
 >
 
 type SlashCommandWithOptions<
   Keys extends keyof SlashCommand | "",
-  Options extends Record<Lowercase<string>, Partial<Option>>,
+  Options extends Record<string, Partial<Option>>,
+  Handle extends boolean = false,
 > = Omit<SlashCommand<Keys>, "handler"> &
   Omit<
     {
@@ -119,8 +136,44 @@ type SlashCommandWithOptions<
           interaction: ChatInputCommandInteraction,
           values: OptionValues<Options>,
         ) => Promise<void>,
+      ): SlashCommand<Keys | "handler" | "options", true>
+      handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+    },
+    Handle extends false ? Keys | "handle" : Keys
+  >
+
+type Subcommand<Keys extends keyof Subcommand | "" = ""> = Pretty<
+  Omit<
+    {
+      builder: SlashCommandSubcommandBuilder
+      options<T extends Record<string, Partial<Option>>>(
+        options: T,
+      ): SubcommandWithOptions<Keys | "options", T>
+      handler(
+        handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
       ): {
-        builder: SlashCommandBuilder
+        builder: SlashCommandSubcommandBuilder
+        handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+      }
+    },
+    Keys
+  >
+>
+
+type SubcommandWithOptions<
+  Keys extends keyof Subcommand | "",
+  Options extends Record<string, Partial<Option>>,
+> = Omit<Subcommand<Keys>, "handler"> &
+  Omit<
+    {
+      options: Options
+      handler(
+        handler: (
+          interaction: ChatInputCommandInteraction,
+          values: OptionValues<Options>,
+        ) => Promise<void>,
+      ): {
+        builder: SlashCommandSubcommandBuilder
         handle: (interaction: ChatInputCommandInteraction) => Promise<void>
       }
     },
@@ -151,6 +204,59 @@ export function slashCommand(
       this.builder.setNSFW(true)
       return this
     },
+    options(options) {
+      return {
+        ...this,
+        options,
+        handler(handler) {
+          return {
+            ...this,
+            async handle(interaction) {
+              const values = Object.fromEntries(
+                Object.entries(options).map(([key, option]) => [
+                  key,
+                  getOptionValue(interaction, option),
+                ]),
+              ) as OptionValues<typeof options>
+              await handler(interaction, values)
+            },
+          }
+        },
+      }
+    },
+    handler(handler) {
+      return {
+        ...this,
+        handle: handler,
+      }
+    },
+    subcommands() {
+      return {
+        ...this,
+        async handle(interaction) {
+          await interaction.deferReply()
+        },
+      }
+    },
+    subcommandGroups() {
+      return {
+        ...this,
+        async handle(interaction) {
+          await interaction.deferReply()
+        },
+      }
+    },
+  }
+}
+
+export function subcommand(
+  name: Lowercase<string>,
+  description: string,
+): Subcommand {
+  return {
+    builder: new SlashCommandSubcommandBuilder()
+      .setName(name)
+      .setDescription(description),
     options(options) {
       return {
         ...this,
@@ -294,6 +400,13 @@ slashCommand("", "")
     text: string("text", "Example option").required(),
     count: number("count", "Example option"),
   })
-  .handler(async (interaction, { text, count }) => {
-    console.log(text, count)
+  .handler(async (interaction, { text }) => {
+    await interaction.reply(text)
   })
+
+slashCommand("", "")
+  .contexts(InteractionContextType.BotDM, InteractionContextType.Guild)
+  .defaultMemberPermissions(PermissionFlagsBits.AddReactions)
+  .integrationTypes(ApplicationIntegrationType.GuildInstall)
+  .nsfw()
+  .subcommands()
