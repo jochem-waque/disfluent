@@ -28,6 +28,10 @@ type Pretty<T> = {
   [K in keyof T]: T[K]
 } & {}
 
+type LowercaseKeys<T> = {
+  [K in keyof T]: K extends Lowercase<string> ? T[K] : never
+}
+
 type TypeMap = {
   attachment: ReturnType<CommandInteractionOptionResolver["getAttachment"]> & {}
   boolean: ReturnType<CommandInteractionOptionResolver["getBoolean"]> & {}
@@ -98,7 +102,7 @@ type SlashCommand<
         ...rest: ApplicationIntegrationType[]
       ): SlashCommand<Keys | "integrationTypes">
       nsfw(): SlashCommand<Keys | "nsfw">
-      options<T extends Record<string, Partial<Option>>>(
+      options<T extends LowercaseKeys<T>>(
         options: T,
       ): SlashCommandWithOptions<
         Keys | "options" | "subcommands" | "subcommandGroups",
@@ -112,12 +116,15 @@ type SlashCommand<
       >
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
       subcommands(
-        subcommands: Record<string, Subcommand<keyof Subcommand>>,
+        subcommands: Record<
+          Lowercase<string>,
+          Subcommand<Exclude<keyof Subcommand, "builder">>
+        >,
       ): SlashCommand<Keys | "options" | "handler" | "subcommands", true>
       subcommandGroups(
         groups: Record<
           Lowercase<string>,
-          SubcommandGroup<keyof SubcommandGroup>
+          SubcommandGroup<Exclude<keyof SubcommandGroup, "builder">>
         >,
       ): SlashCommand<Keys | "options" | "handler" | "subcommandGroups", true>
     },
@@ -127,28 +134,30 @@ type SlashCommand<
 
 type SlashCommandWithOptions<
   Keys extends keyof SlashCommand | "",
-  Options extends Record<string, Partial<Option>>,
+  Options extends Record<Lowercase<string>, Partial<Option>>,
   Handle extends boolean = false,
-> = Omit<SlashCommand<Keys>, "handler"> &
-  Omit<
-    {
-      options: Options
-      handler(
-        handler: (
-          interaction: ChatInputCommandInteraction,
-          values: OptionValues<Options>,
-        ) => Promise<void>,
-      ): SlashCommandWithOptions<Keys | "handler" | "options", Options, true>
-      handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-    },
-    Handle extends false ? Keys | "handle" : Keys
-  >
+> = Pretty<
+  Omit<SlashCommand<Keys>, "handler"> &
+    Omit<
+      {
+        options: Options
+        handler(
+          handler: (
+            interaction: ChatInputCommandInteraction,
+            values: OptionValues<Options>,
+          ) => Promise<void>,
+        ): SlashCommandWithOptions<Keys | "handler" | "options", Options, true>
+        handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+      },
+      Handle extends false ? Keys | "handle" : Keys
+    >
+>
 
 type Subcommand<Keys extends keyof Subcommand | "" = ""> = Pretty<
   Omit<
     {
       builder: SlashCommandSubcommandBuilder
-      options<T extends Record<string, Partial<Option>>>(
+      options<T extends Record<Lowercase<string>, Partial<Option>>>(
         options: T,
       ): SubcommandWithOptions<Keys | "options", T>
       handler(
@@ -161,29 +170,33 @@ type Subcommand<Keys extends keyof Subcommand | "" = ""> = Pretty<
 
 type SubcommandWithOptions<
   Keys extends keyof Subcommand | "",
-  Options extends Record<string, Partial<Option>>,
-> = Omit<Subcommand<Keys>, "handler"> &
+  Options extends Record<Lowercase<string>, Partial<Option>>,
+> = Pretty<
+  Omit<Subcommand<Keys>, "handler"> &
+    Omit<
+      {
+        options: Options
+        handler(
+          handler: (
+            interaction: ChatInputCommandInteraction,
+            values: OptionValues<Options>,
+          ) => Promise<void>,
+        ): SubcommandWithOptions<Keys | "handler", Options>
+      },
+      Keys
+    >
+>
+
+type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> = Pretty<
   Omit<
     {
-      options: Options
-      handler(
-        handler: (
-          interaction: ChatInputCommandInteraction,
-          values: OptionValues<Options>,
-        ) => Promise<void>,
-      ): SubcommandWithOptions<Keys | "handler", Options>
+      builder: SlashCommandSubcommandGroupBuilder
+      subcommands(
+        subcommands: Record<Lowercase<string>, Subcommand<keyof Subcommand>>,
+      ): SubcommandGroup<Keys | "subcommands">
     },
     Keys
   >
-
-type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> = Omit<
-  {
-    builder: SlashCommandSubcommandGroupBuilder
-    subcommands(
-      subcommands: Record<string, Subcommand<keyof Subcommand>>,
-    ): SubcommandGroup<Keys | "subcommands">
-  },
-  Keys
 >
 
 export function slashCommand(
@@ -236,7 +249,11 @@ export function slashCommand(
         handle: handler,
       }
     },
-    subcommands() {
+    subcommands(subcommands) {
+      for (const [name, { builder }] of Object.entries(subcommands)) {
+        builder.setName(name)
+      }
+
       return {
         ...this,
         async handle(interaction) {
@@ -244,7 +261,11 @@ export function slashCommand(
         },
       }
     },
-    subcommandGroups() {
+    subcommandGroups(subcommandGroups) {
+      for (const [name, { builder }] of Object.entries(subcommandGroups)) {
+        builder.setName(name)
+      }
+
       return {
         ...this,
         async handle(interaction) {
@@ -255,14 +276,9 @@ export function slashCommand(
   }
 }
 
-export function subcommand(
-  name: Lowercase<string>,
-  description: string,
-): Subcommand {
+export function subcommand(description: string): Subcommand {
   return {
-    builder: new SlashCommandSubcommandBuilder()
-      .setName(name)
-      .setDescription(description),
+    builder: new SlashCommandSubcommandBuilder().setDescription(description),
     options(options) {
       return {
         ...this,
@@ -278,14 +294,11 @@ export function subcommand(
   }
 }
 
-export function subcommandGroup(
-  name: Lowercase<string>,
-  description: string,
-): SubcommandGroup {
+export function subcommandGroup(description: string): SubcommandGroup {
   return {
-    builder: new SlashCommandSubcommandGroupBuilder()
-      .setName(name)
-      .setDescription(description),
+    builder: new SlashCommandSubcommandGroupBuilder().setDescription(
+      description,
+    ),
     subcommands() {
       return {
         ...this,
@@ -367,14 +380,9 @@ function getOptionValue<
   return (value ?? undefined) as OptionValue<O>
 }
 
-export function string(
-  name: Lowercase<string>,
-  description: string,
-): Option<"string"> {
+export function string(description: string): Option<"string"> {
   return {
-    builder: new SlashCommandStringOption()
-      .setName(name)
-      .setDescription(description),
+    builder: new SlashCommandStringOption().setDescription(description),
     type: "string",
     required() {
       this.builder.setRequired(true)
@@ -383,14 +391,9 @@ export function string(
   }
 }
 
-export function number(
-  name: Lowercase<string>,
-  description: string,
-): Option<"number"> {
+export function number(description: string): Option<"number"> {
   return {
-    builder: new SlashCommandNumberOption()
-      .setName(name)
-      .setDescription(description),
+    builder: new SlashCommandNumberOption().setDescription(description),
     type: "number",
     required() {
       this.builder.setRequired(true)
@@ -398,30 +401,3 @@ export function number(
     },
   }
 }
-
-slashCommand("", "")
-  .contexts(InteractionContextType.BotDM, InteractionContextType.Guild)
-  .defaultMemberPermissions(PermissionFlagsBits.AddReactions)
-  .integrationTypes(ApplicationIntegrationType.GuildInstall)
-  .nsfw()
-  .options({
-    text: string("text", "Example option").required(),
-    count: number("count", "Example option"),
-  })
-  .handler(async (interaction, { text }) => {
-    await interaction.reply(text)
-  })
-
-slashCommand("", "")
-  .contexts(InteractionContextType.BotDM, InteractionContextType.Guild)
-  .defaultMemberPermissions(PermissionFlagsBits.AddReactions)
-  .integrationTypes(ApplicationIntegrationType.GuildInstall)
-  .nsfw()
-  .subcommands({
-    test: subcommand("test", "").options({}).handler(),
-  })
-  .subcommandGroups({
-    group: subcommandGroup("name", "desc").subcommands({
-      command: subcommand("command", ""),
-    }),
-  })
