@@ -335,15 +335,21 @@ export function slashCommand(
       }
     },
     subcommands(subcommands) {
-      // TODO support both groups and subcommands
       for (const [name, { builder }] of Object.entries(subcommands)) {
         builder.setName(name)
         this.builder.addSubcommand(builder)
       }
 
-      return {
-        ...this,
-        async handle(interaction) {
+      let handle
+      if ("handle" in this) {
+        const newThis = this as SlashCommand<"", true>
+        handle = async (interaction: ChatInputCommandInteraction) => {
+          const group = interaction.options.getSubcommandGroup()
+          if (group) {
+            await newThis.handle(interaction)
+            return
+          }
+
           const name = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
@@ -353,7 +359,24 @@ export function slashCommand(
           }
 
           await command.handle(interaction)
-        },
+        }
+      } else {
+        handle = async (interaction: ChatInputCommandInteraction) => {
+          const name = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = subcommands[name]
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          await command.handle(interaction)
+        }
+      }
+
+      return {
+        ...this,
+        handle,
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -373,15 +396,39 @@ export function slashCommand(
       }
     },
     subcommandGroups(subcommandGroups) {
-      // TODO support both groups and subcommands
       for (const [name, { builder }] of Object.entries(subcommandGroups)) {
         builder.setName(name)
         this.builder.addSubcommandGroup(builder)
       }
 
-      return {
-        ...this,
-        async handle(interaction) {
+      let handle
+      if ("handle" in this) {
+        const newThis = this as SlashCommand<"", true>
+        handle = async (interaction: ChatInputCommandInteraction) => {
+          const groupName =
+            interaction.options.getSubcommandGroup() as Lowercase<string> | null
+          if (!groupName) {
+            await newThis.handle(interaction)
+            return
+          }
+
+          const group = subcommandGroups[groupName]
+          if (!group) {
+            throw new Error() // TODO error text
+          }
+
+          const name = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = group.subcommands[name]
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          await command.handle(interaction)
+        }
+      } else {
+        handle = async (interaction: ChatInputCommandInteraction) => {
           const groupName = interaction.options.getSubcommandGroup(
             true,
           ) as Lowercase<string>
@@ -399,7 +446,12 @@ export function slashCommand(
           }
 
           await command.handle(interaction)
-        },
+        }
+      }
+
+      return {
+        ...this,
+        handle,
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
