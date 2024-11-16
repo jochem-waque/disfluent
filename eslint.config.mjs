@@ -9,7 +9,7 @@ import tseslint from "typescript-eslint"
 
 export default tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   eslintConfigPrettier,
   {
@@ -22,8 +22,6 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/non-nullable-type-assertion-style": "off",
-      "@typescript-eslint/no-deprecated": "error",
-      "@typescript-eslint/consistent-indexed-object-style": "error",
     },
   },
 )

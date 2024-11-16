@@ -85,7 +85,7 @@ type Option<
 
 type SlashCommand<
   Keys extends keyof SlashCommand | "" = "",
-  Handle extends boolean = false,
+  Handler extends boolean = false,
 > = Pretty<
   Omit<
     {
@@ -118,24 +118,27 @@ type SlashCommand<
       subcommands(
         subcommands: Record<
           Lowercase<string>,
-          Subcommand<Exclude<keyof Subcommand, "builder">>
+          Subcommand<Exclude<keyof Subcommand, "builder" | "handler">, true>
         >,
       ): SlashCommand<Keys | "options" | "handler" | "subcommands", true>
       subcommandGroups(
         groups: Record<
           Lowercase<string>,
-          SubcommandGroup<Exclude<keyof SubcommandGroup, "builder">>
+          SubcommandGroup<
+            Exclude<keyof SubcommandGroup, "builder" | "subcommands">,
+            true
+          >
         >,
       ): SlashCommand<Keys | "options" | "handler" | "subcommandGroups", true>
     },
-    Handle extends false ? Keys | "handle" : Keys
+    Handler extends false ? Keys | "handle" : Keys
   >
 >
 
 type SlashCommandWithOptions<
   Keys extends keyof SlashCommand | "",
   Options extends Record<Lowercase<string>, Partial<Option>>,
-  Handle extends boolean = false,
+  Handler extends boolean = false,
 > = Pretty<
   Omit<
     {
@@ -161,20 +164,27 @@ type SlashCommandWithOptions<
       ): SlashCommandWithOptions<Keys | "handler" | "options", Options, true>
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
     },
-    Handle extends false ? Keys | "handle" : Keys
+    Handler extends false ? Keys | "handle" : Keys
   >
 >
 
-type Subcommand<Keys extends keyof Subcommand | "" = ""> = Pretty<
+type Subcommand<
+  Keys extends keyof Subcommand | "" = "",
+  Handler extends boolean = false,
+> = Pretty<
   Omit<
     {
       builder: SlashCommandSubcommandBuilder
       options<T extends Record<Lowercase<string>, Partial<Option>>>(
         options: T,
-      ): SubcommandWithOptions<Keys | "options", T>
-      handler(
-        handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
-      ): Subcommand<Keys | "handler" | "options">
+      ): SubcommandWithOptions<Keys | "options", T, false>
+      handler: Handler extends true
+        ? (interaction: ChatInputCommandInteraction) => Promise<void>
+        : (
+            handler: (
+              interaction: ChatInputCommandInteraction,
+            ) => Promise<void>,
+          ) => Subcommand<Keys | "options", true>
     },
     Keys
   >
@@ -183,32 +193,43 @@ type Subcommand<Keys extends keyof Subcommand | "" = ""> = Pretty<
 type SubcommandWithOptions<
   Keys extends keyof Subcommand | "",
   Options extends Record<Lowercase<string>, Partial<Option>>,
+  Handler extends boolean,
 > = Pretty<
   Omit<
     {
       builder: SlashCommandSubcommandBuilder
       options: Options
-      handler(
-        handler: (
-          interaction: ChatInputCommandInteraction,
-          values: OptionValues<Options>,
-        ) => Promise<void>,
-      ): SubcommandWithOptions<Keys | "handler", Options>
+      handler: Handler extends true
+        ? (interaction: ChatInputCommandInteraction) => Promise<void>
+        : (
+            handler: (
+              interaction: ChatInputCommandInteraction,
+              values: OptionValues<Options>,
+            ) => Promise<void>,
+          ) => SubcommandWithOptions<Keys, Options, true>
     },
     Keys
   >
 >
 
-type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> = Pretty<
+type SubcommandGroup<
+  Keys extends keyof SubcommandGroup | "" = "",
+  Subcommands extends boolean = false,
+> = Pretty<
   Omit<
     {
       builder: SlashCommandSubcommandGroupBuilder
-      subcommands(
-        subcommands: Record<
-          Lowercase<string>,
-          Subcommand<Exclude<keyof Subcommand, "builder">>
-        >,
-      ): SubcommandGroup<Keys | "subcommands">
+      subcommands: Subcommands extends true
+        ? Record<
+            Lowercase<string>,
+            Subcommand<Exclude<keyof Subcommand, "builder" | "handler">, true>
+          >
+        : (
+            subcommands: Record<
+              Lowercase<string>,
+              Subcommand<Exclude<keyof Subcommand, "builder" | "handler">, true>
+            >,
+          ) => SubcommandGroup<Keys, true>
     },
     Keys
   >
@@ -281,6 +302,7 @@ export function slashCommand(
       }
     },
     subcommands(subcommands) {
+      // TODO support both groups and subcommands
       for (const [name, { builder }] of Object.entries(subcommands)) {
         builder.setName(name)
         this.builder.addSubcommand(builder)
@@ -289,11 +311,20 @@ export function slashCommand(
       return {
         ...this,
         async handle(interaction) {
-          // TODO
+          const name = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = subcommands[name]
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          await command.handler(interaction)
         },
       }
     },
     subcommandGroups(subcommandGroups) {
+      // TODO support both groups and subcommands
       for (const [name, { builder }] of Object.entries(subcommandGroups)) {
         builder.setName(name)
         this.builder.addSubcommandGroup(builder)
@@ -302,7 +333,23 @@ export function slashCommand(
       return {
         ...this,
         async handle(interaction) {
-          // TODO
+          const groupName = interaction.options.getSubcommandGroup(
+            true,
+          ) as Lowercase<string>
+          const group = subcommandGroups[groupName]
+          if (!group) {
+            throw new Error() // TODO error text
+          }
+
+          const name = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = group.subcommands[name]
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          await command.handler(interaction)
         },
       }
     },
@@ -317,12 +364,23 @@ export function subcommand(description: string): Subcommand {
         ...this,
         options,
         handler(handler) {
-          return this // TODO
+          return {
+            ...this,
+            async handler(interaction) {
+              const values = Object.fromEntries(
+                Object.entries(options).map(([key, option]) => [
+                  key,
+                  getOptionValue(interaction, option),
+                ]),
+              ) as OptionValues<typeof options>
+              await handler(interaction, values)
+            },
+          }
         },
       }
     },
     handler(handler) {
-      return this // TODO
+      return { ...this, handler }
     },
   }
 }
@@ -340,6 +398,7 @@ export function subcommandGroup(description: string): SubcommandGroup {
 
       return {
         ...this,
+        subcommands,
       }
     },
   }
@@ -357,58 +416,66 @@ function getOptionValue<
 
   switch (option.type) {
     case "attachment":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getAttachment(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "attachment" }>
+      ) as OptionValue<{ type: "attachment" }> | null
       break
     case "boolean":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getBoolean(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "boolean" }>
+      ) as OptionValue<{ type: "boolean" }> | null
       break
     case "channel":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getChannel(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "channel" }>
+      ) as OptionValue<{ type: "channel" }> | null
       break
     case "integer":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getInteger(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "integer" }>
+      ) as OptionValue<{ type: "integer" }> | null
       break
     case "mentionable":
       value = interaction.options.getMentionable(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "mentionable" }>
+      ) as OptionValue<{ type: "mentionable" }> | null
       break
     case "number":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getNumber(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "number" }>
+      ) as OptionValue<{ type: "number" }> | null
       break
     case "role":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getRole(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "role" }>
+      ) as OptionValue<{ type: "role" }> | null
       break
     case "string":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getString(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "string" }>
+      ) as OptionValue<{ type: "string" }> | null
       break
     case "user":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       value = interaction.options.getUser(
         option.builder.name,
         !option.required,
-      ) as OptionValue<{ type: "user" }>
+      ) as OptionValue<{ type: "user" }> | null
       break
     default:
       value = undefined
@@ -459,10 +526,16 @@ slashCommand("", "")
   .integrationTypes(ApplicationIntegrationType.GuildInstall)
   .nsfw()
   .subcommands({
-    test: subcommand("test").options({}),
+    test: subcommand("test")
+      .options({})
+      .handler(async (interaction) => {
+        await interaction.deferReply()
+      }),
   })
   .subcommandGroups({
     group: subcommandGroup("desc").subcommands({
-      command: subcommand(""),
+      command: subcommand("").handler(async (interaction) => {
+        await interaction.deferReply()
+      }),
     }),
   })
