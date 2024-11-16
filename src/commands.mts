@@ -32,6 +32,17 @@ type LowercaseKeys<T> = {
   [K in keyof T]: K extends Lowercase<string> ? T[K] : never
 }
 
+type RequiredKeys<Type> = {
+  [Key in keyof Type]: Type[Key] extends Exclude<Type[Key], undefined>
+    ? Key
+    : never
+}[keyof Type]
+
+type UndefinedToOptional<Type> = Pretty<
+  Partial<{ [Key in keyof Type]: Exclude<Type[Key], undefined> }> &
+    Pick<Type, RequiredKeys<Type>>
+>
+
 type TypeMap = {
   attachment: ReturnType<CommandInteractionOptionResolver["getAttachment"]> & {}
   boolean: ReturnType<CommandInteractionOptionResolver["getBoolean"]> & {}
@@ -65,9 +76,10 @@ type OptionValue<T extends Partial<Option>> = T["required"] extends () => void
   ? InferType<T["type"]> | undefined
   : InferType<T["type"]>
 
-type OptionValues<T extends Record<string, Partial<Option>>> = {
-  [K in keyof T]: OptionValue<T[K]>
-} & {}
+type OptionValues<T extends Record<string, Partial<Option>>> =
+  UndefinedToOptional<{
+    [K in keyof T]: OptionValue<T[K]>
+  }>
 
 type Option<
   Type extends keyof TypeMap = keyof TypeMap,
