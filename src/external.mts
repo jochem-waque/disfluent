@@ -5,6 +5,7 @@
  */
 import {
   ApplicationIntegrationType,
+  AutocompleteInteraction,
   ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
   InteractionContextType,
@@ -86,16 +87,57 @@ type OptionValues<
   }>
 >
 
+// TODO correct type after choices
 type Option<
   Type extends keyof TypeMap = keyof TypeMap,
-  Keys extends keyof Option | "" = "",
+  Keys extends keyof Option<"integer"> | keyof Option<"string"> | "" = "",
+  Autocomplete extends boolean = false,
 > = Unwrap<
   Omit<
     {
       builder: BuilderMap[Type]
       type: Type
-      required(): Option<Type, Keys | "required">
-    },
+      required(): Option<Type, Keys | "required", Autocomplete>
+    } & (Type extends "integer" | "number" | "string"
+      ? {
+          choices<T extends Record<string, TypeMap[Type]>>(
+            choices: NotEmpty<T>,
+          ): Option<Type, Keys | "choices" | "autocomplete", Autocomplete>
+        } & (Autocomplete extends true
+          ? {
+              autocomplete: (
+                interaction: AutocompleteInteraction<"cached">,
+              ) => Promise<void>
+            }
+          : {
+              autocomplete(
+                handler: (
+                  value: string,
+                  interaction: AutocompleteInteraction<"cached">,
+                ) => Promise<Record<string, TypeMap[Type]>>,
+              ): Option<Type, Keys | "choices", true>
+            })
+      : object) &
+      (Type extends "integer" | "number"
+        ? {
+            maxValue(
+              value: TypeMap[Type],
+            ): Option<Type, Keys | "maxValue", Autocomplete>
+            minValue(
+              value: TypeMap[Type],
+            ): Option<Type, Keys | "minValue", Autocomplete>
+          }
+        : object) &
+      (Type extends "string"
+        ? {
+            maxLength(
+              length: number,
+            ): Option<Type, Keys | "maxLength", Autocomplete>
+            minLength(
+              length: number,
+            ): Option<Type, Keys | "minLength", Autocomplete>
+          }
+        : object),
     Keys
   >
 >
@@ -337,6 +379,7 @@ function getOptionValue<
   return (value ?? undefined) as OptionValue<O>
 }
 
+// TODO support autocomplete
 export function slashCommand(
   name: Lowercase<string>,
   description: string,
@@ -622,10 +665,95 @@ export function subcommandGroup(description: string): SubcommandGroup {
   }
 }
 
-export function string(description: string): Option<"string"> {
+export function attachment(description: string): Option<"attachment"> {
   return {
-    builder: new SlashCommandStringOption().setDescription(description),
-    type: "string",
+    type: "attachment",
+    builder: new SlashCommandAttachmentOption().setDescription(description),
+    required() {
+      this.builder.setRequired(true)
+      return this
+    },
+  }
+}
+
+export function boolean(description: string): Option<"boolean"> {
+  return {
+    type: "boolean",
+    builder: new SlashCommandBooleanOption().setDescription(description),
+    required() {
+      this.builder.setRequired(true)
+      return this
+    },
+  }
+}
+
+export function channel(description: string): Option<"channel"> {
+  return {
+    type: "channel",
+    builder: new SlashCommandChannelOption().setDescription(description),
+    required() {
+      this.builder.setRequired(true)
+      return this
+    },
+  }
+}
+
+export function integer(description: string): Option<"integer"> {
+  return {
+    type: "integer",
+    builder: new SlashCommandIntegerOption().setDescription(description),
+    autocomplete(autocomplete) {
+      this.builder.setAutocomplete(true)
+      return {
+        ...this,
+        async autocomplete(interaction) {
+          const result = await autocomplete(
+            interaction.options.getFocused(),
+            interaction,
+          )
+          await interaction.respond(
+            Object.entries(result).map(([name, value]) => ({ name, value })),
+          )
+        },
+        maxValue(value) {
+          this.builder.setMaxValue(value)
+          return this
+        },
+        minValue(value) {
+          this.builder.setMinValue(value)
+          return this
+        },
+        required() {
+          this.builder.setRequired(true)
+          return this
+        },
+      }
+    },
+    choices(choices) {
+      this.builder.setChoices(
+        Object.entries(choices).map(([name, value]) => ({ name, value })),
+      )
+      return this
+    },
+    maxValue(value) {
+      this.builder.setMaxValue(value)
+      return this
+    },
+    minValue(value) {
+      this.builder.setMinValue(value)
+      return this
+    },
+    required() {
+      this.builder.setRequired(true)
+      return this
+    },
+  }
+}
+
+export function mentionable(description: string): Option<"mentionable"> {
+  return {
+    type: "mentionable",
+    builder: new SlashCommandMentionableOption().setDescription(description),
     required() {
       this.builder.setRequired(true)
       return this
@@ -635,8 +763,123 @@ export function string(description: string): Option<"string"> {
 
 export function number(description: string): Option<"number"> {
   return {
-    builder: new SlashCommandNumberOption().setDescription(description),
     type: "number",
+    builder: new SlashCommandNumberOption().setDescription(description),
+    autocomplete(autocomplete) {
+      this.builder.setAutocomplete(true)
+      return {
+        ...this,
+        async autocomplete(interaction) {
+          const result = await autocomplete(
+            interaction.options.getFocused(),
+            interaction,
+          )
+          await interaction.respond(
+            Object.entries(result).map(([name, value]) => ({ name, value })),
+          )
+        },
+        maxValue(value) {
+          this.builder.setMaxValue(value)
+          return this
+        },
+        minValue(value) {
+          this.builder.setMinValue(value)
+          return this
+        },
+        required() {
+          this.builder.setRequired(true)
+          return this
+        },
+      }
+    },
+    choices(choices) {
+      this.builder.setChoices(
+        Object.entries(choices).map(([name, value]) => ({ name, value })),
+      )
+      return this
+    },
+    maxValue(value) {
+      this.builder.setMaxValue(value)
+      return this
+    },
+    minValue(value) {
+      this.builder.setMinValue(value)
+      return this
+    },
+    required() {
+      this.builder.setRequired(true)
+      return this
+    },
+  }
+}
+
+export function role(description: string): Option<"role"> {
+  return {
+    type: "role",
+    builder: new SlashCommandRoleOption().setDescription(description),
+    required() {
+      this.builder.setRequired(true)
+      return this
+    },
+  }
+}
+
+export function string(description: string): Option<"string"> {
+  return {
+    type: "string",
+    builder: new SlashCommandStringOption().setDescription(description),
+    autocomplete(autocomplete) {
+      this.builder.setAutocomplete(true)
+      return {
+        ...this,
+        async autocomplete(interaction) {
+          const result = await autocomplete(
+            interaction.options.getFocused(),
+            interaction,
+          )
+          await interaction.respond(
+            Object.entries(result).map(([name, value]) => ({ name, value })),
+          )
+        },
+        maxLength(length) {
+          this.builder.setMaxLength(length)
+          return this
+        },
+        minLength(length) {
+          this.builder.setMinLength(length)
+          return this
+        },
+        required() {
+          this.builder.setRequired(true)
+          return this
+        },
+      }
+    },
+    choices(choices) {
+      this.builder.setChoices(
+        Object.entries(choices).map(([name, value]) => ({ name, value })),
+      )
+      return this
+    },
+    maxLength(length) {
+      this.builder.setMaxLength(length)
+      return this
+    },
+    minLength(length) {
+      this.builder.setMinLength(length)
+      return this
+    },
+    required() {
+      this.builder.setRequired(true)
+      return this
+    },
+  }
+}
+
+export function user(description: string): Option<"user"> {
+  return {
+    type: "user",
+    builder: new SlashCommandUserOption().setDescription(description),
     required() {
       this.builder.setRequired(true)
       return this
