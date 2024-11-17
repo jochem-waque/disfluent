@@ -198,8 +198,8 @@ type Subcommand<
   Omit<
     {
       builder: SlashCommandSubcommandBuilder
-      options<T extends Record<Lowercase<string>, PartialOption>>(
-        options: T,
+      options<T extends Record<string, PartialOption>>(
+        options: LowercaseKeys<T>,
       ): SubcommandWithOptions<T, Keys | "options", Handler>
       handler: (
         handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
