@@ -110,11 +110,11 @@ type Option<
     } & (Type extends "integer" | "number" | "string"
       ? {
           choices<const T extends Record<string, TypeMap[Type]>>(
-            choices: T,
+            choices: T, // TODO NotEmpty
           ): OptionWithChoices<T, Type, Keys | "autocomplete">
         } & (Autocomplete extends true
           ? {
-              autocomplete: (
+              handleAutocomplete: (
                 interaction: AutocompleteInteraction<"cached">,
               ) => Promise<void>
             }
@@ -186,10 +186,13 @@ type OptionWithChoices<
   >
 >
 
+// TODO this could be better
 type PartialOption<
   Type extends keyof TypeMap = keyof TypeMap,
   Keys extends keyof Option = "builder" | "type",
-> = InvertedPartialize<Option<Type>, Keys>
+> = InvertedPartialize<Option<Type>, Keys> & {
+  handleAutocomplete?: (interaction: AutocompleteInteraction) => Promise<void>
+}
 
 type PartialOptionWithChoices<
   Choices extends Record<string, TypeMap[Type]>,
@@ -210,6 +213,7 @@ type PartialSubcommandGroup = InvertedPartialize<
   "builder" | "subcommands"
 >
 
+// TODO separate Handler into Subcommands and regular Handler
 type SlashCommand<
   Keys extends keyof SlashCommand | "" = "",
   Handler extends boolean = false,
@@ -243,6 +247,7 @@ type SlashCommand<
         true
       >
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+      autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
       subcommands<T extends Record<string, PartialSubcommand>>(
         subcommands: NotEmpty<LowercaseKeys<T>>,
       ): SlashCommand<Keys | "options" | "handler" | "subcommands", true>
@@ -250,7 +255,9 @@ type SlashCommand<
         groups: NotEmpty<LowercaseKeys<T>>,
       ): SlashCommand<Keys | "options" | "handler" | "subcommandGroups", true>
     },
-    Handler extends true ? Exclude<Keys, "handle"> : Keys | "handle"
+    Handler extends true
+      ? Exclude<Keys, "handle" | "autocomplete">
+      : Keys | "handle" | "autocomplete"
   >
 >
 
@@ -286,8 +293,11 @@ type SlashCommandWithOptions<
         ) => Promise<void>,
       ): SlashCommandWithOptions<Options, Keys | "handler" | "options", true>
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+      autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
     },
-    Handler extends true ? Exclude<Keys, "handle"> : Keys | "handle"
+    Handler extends true
+      ? Exclude<Keys, "handle" | "autocomplete">
+      : Keys | "handle" | "autocomplete"
   >
 >
 
@@ -464,6 +474,15 @@ export function slashCommand(
         handler(handler) {
           return {
             ...this,
+            async autocomplete(interaction) {
+              const focused = interaction.options.getFocused(true)
+              const option = options[focused.name] as PartialOption | undefined
+              if (!option || !("handleAutocomplete" in option)) {
+                throw new Error() // TODO error text
+              }
+
+              await option.handleAutocomplete(interaction)
+            },
             async handle(interaction) {
               const values = Object.fromEntries(
                 Object.entries(options).map(([key, option]) => [
@@ -513,6 +532,9 @@ export function slashCommand(
       return {
         ...this,
         handle: handler,
+        autocomplete() {
+          throw new Error() // TODO error text
+        },
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -539,7 +561,10 @@ export function slashCommand(
 
       let handle
       if ("handle" in this) {
-        const newThis = this as SlashCommand<keyof SlashCommand, true>
+        const newThis = this as Omit<
+          SlashCommand<keyof SlashCommand, true>,
+          "autocomplete"
+        >
         handle = async (interaction: ChatInputCommandInteraction) => {
           const group = interaction.options.getSubcommandGroup()
           if (group) {
@@ -571,9 +596,81 @@ export function slashCommand(
         }
       }
 
+      let autocomplete
+      if ("autocomplete" in this) {
+        const newThis = this as Omit<
+          SlashCommand<keyof SlashCommand, true>,
+          "handle"
+        >
+        autocomplete = async (interaction: AutocompleteInteraction) => {
+          const group = interaction.options.getSubcommandGroup()
+          if (group) {
+            await newThis.autocomplete(interaction)
+            return
+          }
+
+          const subcommandName = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = subcommands[subcommandName] as
+            | PartialSubcommand
+            | SubcommandWithOptions<
+                Record<Lowercase<string>, PartialOption>,
+                Exclude<keyof Subcommand, "options">
+              >
+            | undefined
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          if (command.options instanceof Function || !command.options) {
+            throw new Error() // TODO error text
+          }
+
+          const focused = interaction.options.getFocused(true)
+
+          const option = command.options[focused.name as Lowercase<string>]
+          if (!option || !("handleAutocomplete" in option)) {
+            throw new Error() // TODO error text
+          }
+
+          await option.handleAutocomplete(interaction)
+        }
+      } else {
+        autocomplete = async (interaction: AutocompleteInteraction) => {
+          const subcommandName = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = subcommands[subcommandName] as
+            | PartialSubcommand
+            | SubcommandWithOptions<
+                Record<Lowercase<string>, PartialOption>,
+                Exclude<keyof Subcommand, "options">
+              >
+            | undefined
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          if (command.options instanceof Function || !command.options) {
+            throw new Error() // TODO error text
+          }
+
+          const focused = interaction.options.getFocused(true)
+
+          const option = command.options[focused.name as Lowercase<string>]
+          if (!option || !("handleAutocomplete" in option)) {
+            throw new Error() // TODO error text
+          }
+
+          await option.handleAutocomplete(interaction)
+        }
+      }
+
       return {
         ...this,
         handle,
+        autocomplete,
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -600,7 +697,10 @@ export function slashCommand(
 
       let handle
       if ("handle" in this) {
-        const newThis = this as SlashCommand<keyof SlashCommand, true>
+        const newThis = this as Omit<
+          SlashCommand<keyof SlashCommand, true>,
+          "autocomplete"
+        >
         handle = async (interaction: ChatInputCommandInteraction) => {
           const groupName =
             interaction.options.getSubcommandGroup() as Lowercase<string> | null
@@ -646,9 +746,95 @@ export function slashCommand(
         }
       }
 
+      let autocomplete
+      if ("autocomplete" in this) {
+        const newThis = this as Omit<
+          SlashCommand<keyof SlashCommand, true>,
+          "handle"
+        >
+        autocomplete = async (interaction: AutocompleteInteraction) => {
+          const groupName = interaction.options.getSubcommandGroup()
+          if (!groupName) {
+            await newThis.autocomplete(interaction)
+            return
+          }
+
+          const group = subcommandGroups[groupName]
+          if (!group) {
+            throw new Error() // TODO error text
+          }
+
+          const subcommandName = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = group.subcommands[subcommandName] as
+            | PartialSubcommand
+            | SubcommandWithOptions<
+                Record<Lowercase<string>, PartialOption>,
+                Exclude<keyof Subcommand, "options">
+              >
+            | undefined
+
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          if (command.options instanceof Function || !command.options) {
+            throw new Error() // TODO error text
+          }
+
+          const focused = interaction.options.getFocused(true)
+
+          const option = command.options[focused.name as Lowercase<string>]
+          if (!option || !("handleAutocomplete" in option)) {
+            throw new Error() // TODO error text
+          }
+
+          await option.handleAutocomplete(interaction)
+        }
+      } else {
+        autocomplete = async (interaction: AutocompleteInteraction) => {
+          const groupName = interaction.options.getSubcommandGroup(true)
+
+          const group = subcommandGroups[groupName]
+          if (!group) {
+            throw new Error() // TODO error text
+          }
+
+          const subcommandName = interaction.options.getSubcommand(
+            true,
+          ) as Lowercase<string>
+          const command = group.subcommands[subcommandName] as
+            | PartialSubcommand
+            | SubcommandWithOptions<
+                Record<Lowercase<string>, PartialOption>,
+                Exclude<keyof Subcommand, "options">
+              >
+            | undefined
+
+          if (!command) {
+            throw new Error() // TODO error text
+          }
+
+          if (command.options instanceof Function || !command.options) {
+            throw new Error() // TODO error text
+          }
+
+          const focused = interaction.options.getFocused(true)
+
+          const option = command.options[focused.name as Lowercase<string>]
+          if (!option || !("handleAutocomplete" in option)) {
+            throw new Error() // TODO error text
+          }
+
+          await option.handleAutocomplete(interaction)
+        }
+      }
+
       return {
         ...this,
         handle,
+        autocomplete,
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -759,7 +945,7 @@ export function integer(description: string): Option<"integer"> {
       this.builder.setAutocomplete(true)
       return {
         ...this,
-        async autocomplete(interaction) {
+        async handleAutocomplete(interaction) {
           const result = await autocomplete(
             interaction.options.getFocused(),
             interaction,
@@ -837,7 +1023,7 @@ export function number(description: string): Option<"number"> {
       this.builder.setAutocomplete(true)
       return {
         ...this,
-        async autocomplete(interaction) {
+        async handleAutocomplete(interaction) {
           const result = await autocomplete(
             interaction.options.getFocused(),
             interaction,
@@ -915,7 +1101,7 @@ export function string(description: string): Option<"string"> {
       this.builder.setAutocomplete(true)
       return {
         ...this,
-        async autocomplete(interaction) {
+        async handleAutocomplete(interaction) {
           const result = await autocomplete(
             interaction.options.getFocused(),
             interaction,
