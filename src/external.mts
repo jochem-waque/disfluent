@@ -74,10 +74,20 @@ type BuilderMap = {
   user: SlashCommandUserOption
 }
 
-type OptionValue<T extends PartialOption<keyof TypeMap, "type">> =
-  T["required"] extends () => void
-    ? TypeMap[T["type"]] | undefined
-    : TypeMap[T["type"]]
+type OptionValue<T> =
+  T extends PartialOptionWithChoices<infer R>
+    ? T["required"] extends () => void
+      ? R extends Record<string, infer V>
+        ? V | undefined
+        : never
+      : R extends Record<string, infer V>
+        ? V
+        : never
+    : T extends PartialOption<keyof TypeMap, "type">
+      ? T["required"] extends () => void
+        ? TypeMap[T["type"]] | undefined
+        : TypeMap[T["type"]]
+      : never
 
 type OptionValues<
   T extends Record<string, PartialOption<keyof TypeMap, "type">>,
@@ -87,7 +97,6 @@ type OptionValues<
   }>
 >
 
-// TODO correct type after choices
 type Option<
   Type extends keyof TypeMap = keyof TypeMap,
   Keys extends keyof Option<"integer"> | keyof Option<"string"> | "" = "",
@@ -100,9 +109,9 @@ type Option<
       required(): Option<Type, Keys | "required", Autocomplete>
     } & (Type extends "integer" | "number" | "string"
       ? {
-          choices<T extends Record<string, TypeMap[Type]>>(
-            choices: NotEmpty<T>,
-          ): Option<Type, Keys | "choices" | "autocomplete", Autocomplete>
+          choices<const T extends Record<string, TypeMap[Type]>>(
+            choices: T,
+          ): OptionWithChoices<T, Type, Keys | "autocomplete">
         } & (Autocomplete extends true
           ? {
               autocomplete: (
@@ -142,10 +151,54 @@ type Option<
   >
 >
 
+type OptionWithChoices<
+  Choices extends Record<string, TypeMap[Type]>,
+  Type extends keyof TypeMap = keyof TypeMap,
+  Keys extends keyof Option<"integer"> | keyof Option<"string"> | "" = "",
+> = Unwrap<
+  Omit<
+    {
+      builder: BuilderMap[Type]
+      type: Type
+      required(): OptionWithChoices<Choices, Type, Keys | "required">
+      choices: Choices
+    } & (Type extends "integer" | "number"
+      ? {
+          maxValue(
+            value: TypeMap[Type],
+          ): OptionWithChoices<Choices, Type, Keys | "maxValue">
+          minValue(
+            value: TypeMap[Type],
+          ): OptionWithChoices<Choices, Type, Keys | "minValue">
+        }
+      : object) &
+      (Type extends "string"
+        ? {
+            maxLength(
+              length: number,
+            ): OptionWithChoices<Choices, Type, Keys | "maxLength">
+            minLength(
+              length: number,
+            ): OptionWithChoices<Choices, Type, Keys | "minLength">
+          }
+        : object),
+    Keys
+  >
+>
+
 type PartialOption<
   Type extends keyof TypeMap = keyof TypeMap,
   Keys extends keyof Option = "builder" | "type",
 > = InvertedPartialize<Option<Type>, Keys>
+
+type PartialOptionWithChoices<
+  Choices extends Record<string, TypeMap[Type]>,
+  Type extends "number" | "integer" | "string" =
+    | "number"
+    | "integer"
+    | "string",
+  Keys extends keyof Option = "builder" | "type",
+> = InvertedPartialize<OptionWithChoices<Choices, Type>, Keys>
 
 type PartialSubcommand = InvertedPartialize<
   Subcommand<"", true>,
@@ -733,7 +786,22 @@ export function integer(description: string): Option<"integer"> {
       this.builder.setChoices(
         Object.entries(choices).map(([name, value]) => ({ name, value })),
       )
-      return this
+      return {
+        ...this,
+        choices,
+        maxValue(value) {
+          this.builder.setMaxValue(value)
+          return this
+        },
+        minValue(value) {
+          this.builder.setMinValue(value)
+          return this
+        },
+        required() {
+          this.builder.setRequired(true)
+          return this
+        },
+      }
     },
     maxValue(value) {
       this.builder.setMaxValue(value)
@@ -796,7 +864,22 @@ export function number(description: string): Option<"number"> {
       this.builder.setChoices(
         Object.entries(choices).map(([name, value]) => ({ name, value })),
       )
-      return this
+      return {
+        ...this,
+        choices,
+        maxValue(value) {
+          this.builder.setMaxValue(value)
+          return this
+        },
+        minValue(value) {
+          this.builder.setMinValue(value)
+          return this
+        },
+        required() {
+          this.builder.setRequired(true)
+          return this
+        },
+      }
     },
     maxValue(value) {
       this.builder.setMaxValue(value)
@@ -859,7 +942,22 @@ export function string(description: string): Option<"string"> {
       this.builder.setChoices(
         Object.entries(choices).map(([name, value]) => ({ name, value })),
       )
-      return this
+      return {
+        ...this,
+        choices,
+        maxLength(length) {
+          this.builder.setMaxLength(length)
+          return this
+        },
+        minLength(length) {
+          this.builder.setMinLength(length)
+          return this
+        },
+        required() {
+          this.builder.setRequired(true)
+          return this
+        },
+      }
     },
     maxLength(length) {
       this.builder.setMaxLength(length)
