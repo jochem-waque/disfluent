@@ -39,12 +39,9 @@ d.slashCommand("", "")
 
 d.slashCommand("", "")
   .subcommands({
-    test: d
-      .subcommand("test")
-      .options({})
-      .handler(async (interaction) => {
-        await interaction.deferReply()
-      }),
+    test: d.subcommand("test").handler(async (interaction) => {
+      await interaction.deferReply()
+    }),
   })
   .subcommandGroups({
     group: d.subcommandGroup("desc").subcommands({

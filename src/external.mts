@@ -103,6 +103,16 @@ type PartialOption<
   Keys extends keyof Option = "builder" | "type",
 > = InvertedPartialize<Option<Type>, Keys>
 
+type PartialSubcommand = InvertedPartialize<
+  Subcommand<"", true>,
+  "builder" | "handle"
+>
+
+type PartialSubcommandGroup = InvertedPartialize<
+  SubcommandGroup<"", true>,
+  "builder" | "subcommands"
+>
+
 type SlashCommand<
   Keys extends keyof SlashCommand | "" = "",
   Handler extends boolean = false,
@@ -136,20 +146,11 @@ type SlashCommand<
         true
       >
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-      subcommands(
-        subcommands: Record<
-          Lowercase<string>,
-          Subcommand<Exclude<keyof Subcommand, "builder">, true>
-        >,
+      subcommands<T extends Record<string, PartialSubcommand>>(
+        subcommands: NotEmpty<LowercaseKeys<T>>,
       ): SlashCommand<Keys | "options" | "handler" | "subcommands", true>
-      subcommandGroups(
-        groups: Record<
-          Lowercase<string>,
-          SubcommandGroup<
-            Exclude<keyof SubcommandGroup, "builder" | "subcommands">,
-            true
-          >
-        >,
+      subcommandGroups<T extends Record<string, PartialSubcommandGroup>>(
+        groups: NotEmpty<LowercaseKeys<T>>,
       ): SlashCommand<Keys | "options" | "handler" | "subcommandGroups", true>
     },
     Handler extends true ? Exclude<Keys, "handle"> : Keys | "handle"
@@ -244,18 +245,15 @@ type SubcommandGroup<
   Omit<
     {
       builder: SlashCommandSubcommandGroupBuilder
-      subcommands: Subcommands extends true
-        ? Record<
-            Lowercase<string>,
-            Subcommand<Exclude<keyof Subcommand, "builder" | "handle">, true>
-          >
-        : (
-            subcommands: Record<
-              Lowercase<string>,
-              Subcommand<Exclude<keyof Subcommand, "builder" | "handle">, true>
-            >,
-          ) => SubcommandGroup<Keys, true>
-    },
+    } & (Subcommands extends true
+      ? {
+          subcommands: Record<Lowercase<string>, PartialSubcommand>
+        }
+      : {
+          subcommands<T extends Record<string, PartialSubcommand>>(
+            subcommands: NotEmpty<LowercaseKeys<T>>,
+          ): SubcommandGroup<Keys, true>
+        }),
     Keys
   >
 >
@@ -435,7 +433,7 @@ export function slashCommand(
         },
       }
     },
-    subcommands(subcommands) {
+    subcommands(subcommands: Record<string, PartialSubcommand>) {
       for (const [name, { builder }] of Object.entries(subcommands)) {
         builder.setName(name)
         this.builder.addSubcommand(builder)
@@ -496,7 +494,7 @@ export function slashCommand(
         },
       }
     },
-    subcommandGroups(subcommandGroups) {
+    subcommandGroups(subcommandGroups: Record<string, PartialSubcommandGroup>) {
       for (const [name, { builder }] of Object.entries(subcommandGroups)) {
         builder.setName(name)
         this.builder.addSubcommandGroup(builder)
@@ -608,7 +606,7 @@ export function subcommandGroup(description: string): SubcommandGroup {
     builder: new SlashCommandSubcommandGroupBuilder().setDescription(
       description,
     ),
-    subcommands(subcommands) {
+    subcommands(subcommands: Record<Lowercase<string>, PartialSubcommand>) {
       for (const [name, { builder }] of Object.entries(subcommands)) {
         builder.setName(name)
         this.builder.addSubcommand(builder)
