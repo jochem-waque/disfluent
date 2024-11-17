@@ -203,9 +203,9 @@ export function slashCommand(
             throw new Error() // TODO error text
           }
 
-          const focused = interaction.options.getFocused(true)
+          const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[focused.name as Lowercase<string>]
+          const option = command.options[name as Lowercase<string>]
           if (!option || !("handleAutocomplete" in option)) {
             throw new Error() // TODO error text
           }
@@ -232,9 +232,9 @@ export function slashCommand(
             throw new Error() // TODO error text
           }
 
-          const focused = interaction.options.getFocused(true)
+          const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[focused.name as Lowercase<string>]
+          const option = command.options[name as Lowercase<string>]
           if (!option || !("handleAutocomplete" in option)) {
             throw new Error() // TODO error text
           }
@@ -278,8 +278,7 @@ export function slashCommand(
           "autocomplete"
         >
         handle = async (interaction: ChatInputCommandInteraction) => {
-          const groupName =
-            interaction.options.getSubcommandGroup() as Lowercase<string> | null
+          const groupName = interaction.options.getSubcommandGroup()
           if (!groupName) {
             await newThis.handle(interaction)
             return
@@ -359,9 +358,9 @@ export function slashCommand(
             throw new Error() // TODO error text
           }
 
-          const focused = interaction.options.getFocused(true)
+          const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[focused.name as Lowercase<string>]
+          const option = command.options[name as Lowercase<string>]
           if (!option || !("handleAutocomplete" in option)) {
             throw new Error() // TODO error text
           }
@@ -396,9 +395,9 @@ export function slashCommand(
             throw new Error() // TODO error text
           }
 
-          const focused = interaction.options.getFocused(true)
+          const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[focused.name as Lowercase<string>]
+          const option = command.options[name as Lowercase<string>]
           if (!option || !("handleAutocomplete" in option)) {
             throw new Error() // TODO error text
           }
