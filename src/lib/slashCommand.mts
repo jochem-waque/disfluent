@@ -18,6 +18,7 @@ import {
   Subcommand,
   SubcommandWithOptions,
 } from "./internal.mjs"
+import { InternalError } from "./error.mjs"
 
 export function slashCommand(
   name: Lowercase<string>,
@@ -53,8 +54,12 @@ export function slashCommand(
             async autocomplete(interaction) {
               const focused = interaction.options.getFocused(true)
               const option = options[focused.name] as PartialOption | undefined
-              if (!option || !("handleAutocomplete" in option)) {
-                throw new Error() // TODO error text
+              if (!option) {
+                throw new InternalError("option_not_found")
+              }
+
+              if (!("handleAutocomplete" in option)) {
+                throw new InternalError("option_not_autocompletable")
               }
 
               await option.handleAutocomplete(interaction)
@@ -109,7 +114,7 @@ export function slashCommand(
         ...this,
         handle: handler,
         autocomplete() {
-          throw new Error() // TODO error text
+          throw new InternalError("command_not_autocompletable")
         },
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
@@ -153,7 +158,7 @@ export function slashCommand(
           ) as Lowercase<string>
           const command = subcommands[name]
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
           await command.handle(interaction)
@@ -165,7 +170,7 @@ export function slashCommand(
           ) as Lowercase<string>
           const command = subcommands[name]
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
           await command.handle(interaction)
@@ -196,18 +201,22 @@ export function slashCommand(
               >
             | undefined
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
-          if (command.options instanceof Function || !command.options) {
-            throw new Error() // TODO error text
+          if (!command.options || command.options instanceof Function) {
+            throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
           const option = command.options[name as Lowercase<string>]
-          if (!option || !("handleAutocomplete" in option)) {
-            throw new Error() // TODO error text
+          if (!option) {
+            throw new InternalError("option_not_found")
+          }
+
+          if (!("handleAutocomplete" in option)) {
+            throw new InternalError("option_not_autocompletable")
           }
 
           await option.handleAutocomplete(interaction)
@@ -225,18 +234,22 @@ export function slashCommand(
               >
             | undefined
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
-          if (command.options instanceof Function || !command.options) {
-            throw new Error() // TODO error text
+          if (!command.options || command.options instanceof Function) {
+            throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
           const option = command.options[name as Lowercase<string>]
-          if (!option || !("handleAutocomplete" in option)) {
-            throw new Error() // TODO error text
+          if (!option) {
+            throw new InternalError("option_not_found")
+          }
+
+          if (!("handleAutocomplete" in option)) {
+            throw new InternalError("option_not_autocompletable")
           }
 
           await option.handleAutocomplete(interaction)
@@ -286,7 +299,7 @@ export function slashCommand(
 
           const group = subcommandGroups[groupName]
           if (!group) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_group_not_found")
           }
 
           const name = interaction.options.getSubcommand(
@@ -294,7 +307,7 @@ export function slashCommand(
           ) as Lowercase<string>
           const command = group.subcommands[name]
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
           await command.handle(interaction)
@@ -306,7 +319,7 @@ export function slashCommand(
           ) as Lowercase<string>
           const group = subcommandGroups[groupName]
           if (!group) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_group_not_found")
           }
 
           const name = interaction.options.getSubcommand(
@@ -314,7 +327,7 @@ export function slashCommand(
           ) as Lowercase<string>
           const command = group.subcommands[name]
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
           await command.handle(interaction)
@@ -336,7 +349,7 @@ export function slashCommand(
 
           const group = subcommandGroups[groupName]
           if (!group) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_group_not_found")
           }
 
           const subcommandName = interaction.options.getSubcommand(
@@ -351,18 +364,22 @@ export function slashCommand(
             | undefined
 
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
-          if (command.options instanceof Function || !command.options) {
-            throw new Error() // TODO error text
+          if (!command.options || command.options instanceof Function) {
+            throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
           const option = command.options[name as Lowercase<string>]
-          if (!option || !("handleAutocomplete" in option)) {
-            throw new Error() // TODO error text
+          if (!option) {
+            throw new InternalError("option_not_found")
+          }
+
+          if (!("handleAutocomplete" in option)) {
+            throw new InternalError("option_not_autocompletable")
           }
 
           await option.handleAutocomplete(interaction)
@@ -373,7 +390,7 @@ export function slashCommand(
 
           const group = subcommandGroups[groupName]
           if (!group) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_group_not_found")
           }
 
           const subcommandName = interaction.options.getSubcommand(
@@ -388,18 +405,22 @@ export function slashCommand(
             | undefined
 
           if (!command) {
-            throw new Error() // TODO error text
+            throw new InternalError("subcommand_not_found")
           }
 
-          if (command.options instanceof Function || !command.options) {
-            throw new Error() // TODO error text
+          if (!command.options || command.options instanceof Function) {
+            throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
           const option = command.options[name as Lowercase<string>]
-          if (!option || !("handleAutocomplete" in option)) {
-            throw new Error() // TODO error text
+          if (!option) {
+            throw new InternalError("option_not_found")
+          }
+
+          if (!("handleAutocomplete" in option)) {
+            throw new InternalError("option_not_autocompletable")
           }
 
           await option.handleAutocomplete(interaction)
