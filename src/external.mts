@@ -39,10 +39,10 @@ type RequiredKeysOf<Type> = {
     : never
 }[keyof Type]
 
-type UndefinedToOptional<Type> = Unwrap<
-  Partial<{ [Key in keyof Type]: Exclude<Type[Key], undefined> }> &
-    Pick<Type, RequiredKeysOf<Type>>
->
+type UndefinedToOptional<Type> = Partial<{
+  [Key in keyof Type]: Exclude<Type[Key], undefined>
+}> &
+  Pick<Type, RequiredKeysOf<Type>>
 
 type InvertedPartialize<Type, Keys extends keyof Type> = Partial<Type> &
   Pick<Type, Keys>
@@ -80,9 +80,11 @@ type OptionValue<T extends PartialOption<keyof TypeMap, "type">> =
 
 type OptionValues<
   T extends Record<string, PartialOption<keyof TypeMap, "type">>,
-> = UndefinedToOptional<{
-  [K in keyof T]: OptionValue<T[K]>
-}>
+> = Unwrap<
+  UndefinedToOptional<{
+    [K in keyof T]: OptionValue<T[K]>
+  }>
+>
 
 type Option<
   Type extends keyof TypeMap = keyof TypeMap,
