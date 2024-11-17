@@ -8,7 +8,6 @@ import {
   ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
   InteractionContextType,
-  PermissionFlagsBits,
   Permissions,
   SlashCommandAttachmentOption,
   SlashCommandBooleanOption,
@@ -254,6 +253,83 @@ type SubcommandGroup<
     Keys
   >
 >
+
+function getOptionValue<
+  Type extends keyof TypeMap,
+  O extends PartialOption<Type>,
+>(interaction: ChatInputCommandInteraction, option: O): OptionValue<O> {
+  let value
+
+  switch (option.type) {
+    case "attachment":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getAttachment(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "attachment" }> | null
+      break
+    case "boolean":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getBoolean(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "boolean" }> | null
+      break
+    case "channel":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getChannel(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "channel" }> | null
+      break
+    case "integer":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getInteger(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "integer" }> | null
+      break
+    case "mentionable":
+      value = interaction.options.getMentionable(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "mentionable" }> | null
+      break
+    case "number":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getNumber(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "number" }> | null
+      break
+    case "role":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getRole(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "role" }> | null
+      break
+    case "string":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getString(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "string" }> | null
+      break
+    case "user":
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      value = interaction.options.getUser(
+        option.builder.name,
+        !option.required,
+      ) as OptionValue<{ type: "user" }> | null
+      break
+    default:
+      value = undefined
+      break
+  }
+
+  return (value ?? undefined) as OptionValue<O>
+}
 
 export function slashCommand(
   name: Lowercase<string>,
@@ -540,83 +616,6 @@ export function subcommandGroup(description: string): SubcommandGroup {
   }
 }
 
-function getOptionValue<
-  Type extends keyof TypeMap,
-  O extends PartialOption<Type>,
->(interaction: ChatInputCommandInteraction, option: O): OptionValue<O> {
-  let value
-
-  switch (option.type) {
-    case "attachment":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getAttachment(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "attachment" }> | null
-      break
-    case "boolean":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getBoolean(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "boolean" }> | null
-      break
-    case "channel":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getChannel(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "channel" }> | null
-      break
-    case "integer":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getInteger(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "integer" }> | null
-      break
-    case "mentionable":
-      value = interaction.options.getMentionable(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "mentionable" }> | null
-      break
-    case "number":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getNumber(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "number" }> | null
-      break
-    case "role":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getRole(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "role" }> | null
-      break
-    case "string":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getString(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "string" }> | null
-      break
-    case "user":
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      value = interaction.options.getUser(
-        option.builder.name,
-        !option.required,
-      ) as OptionValue<{ type: "user" }> | null
-      break
-    default:
-      value = undefined
-      break
-  }
-
-  return (value ?? undefined) as OptionValue<O>
-}
-
 export function string(description: string): Option<"string"> {
   return {
     builder: new SlashCommandStringOption().setDescription(description),
@@ -638,53 +637,3 @@ export function number(description: string): Option<"number"> {
     },
   }
 }
-
-slashCommand("", "")
-  .options({
-    text: string("Example option").required(),
-    count: number("Example option"),
-  })
-  .handler(async (interaction, { text }) => {
-    await interaction.reply(text)
-  })
-  .contexts(InteractionContextType.BotDM, InteractionContextType.Guild)
-  .defaultMemberPermissions(PermissionFlagsBits.AddReactions)
-  .integrationTypes(ApplicationIntegrationType.GuildInstall)
-  .nsfw()
-
-slashCommand("", "")
-  .handler(async (interaction) => {
-    await interaction.deferReply()
-  })
-  .contexts(InteractionContextType.BotDM, InteractionContextType.Guild)
-  .defaultMemberPermissions(PermissionFlagsBits.AddReactions)
-  .integrationTypes(ApplicationIntegrationType.GuildInstall)
-  .nsfw()
-  .handle(null as unknown as ChatInputCommandInteraction)
-  .catch((e: unknown) => {
-    console.error(e)
-  })
-
-slashCommand("", "")
-  .subcommands({
-    test: subcommand("test")
-      .options({})
-      .handler(async (interaction) => {
-        await interaction.deferReply()
-      }),
-  })
-  .subcommandGroups({
-    group: subcommandGroup("desc").subcommands({
-      command: subcommand("").handler(async (interaction) => {
-        await interaction.deferReply()
-      }),
-    }),
-  })
-  .contexts(InteractionContextType.BotDM, InteractionContextType.Guild)
-  .defaultMemberPermissions(PermissionFlagsBits.AddReactions)
-  .integrationTypes(ApplicationIntegrationType.GuildInstall)
-  .nsfw()
-  .handle(null as unknown as ChatInputCommandInteraction)
-  .catch((e: unknown) => {
-    console.error(e)
-  })
