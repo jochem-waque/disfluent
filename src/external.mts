@@ -23,6 +23,8 @@ import {
   SlashCommandUserOption,
 } from "discord.js"
 
+type NotEmpty<T> = T extends Record<string, never> ? never : T
+
 type Unwrap<T> = {
   [K in keyof T]: T[K]
 } & {}
@@ -121,9 +123,9 @@ type SlashCommand<
       ): SlashCommand<Keys | "integrationTypes", Handler>
       nsfw(): SlashCommand<Keys | "nsfw", Handler>
       options<T extends Record<string, PartialOption>>(
-        options: LowercaseKeys<T>,
+        options: NotEmpty<LowercaseKeys<T>>,
       ): SlashCommandWithOptions<
-        T,
+        NotEmpty<LowercaseKeys<T>>,
         Keys | "options" | "subcommands" | "subcommandGroups",
         Handler
       >
@@ -199,8 +201,12 @@ type Subcommand<
     {
       builder: SlashCommandSubcommandBuilder
       options<T extends Record<string, PartialOption>>(
-        options: LowercaseKeys<T>,
-      ): SubcommandWithOptions<T, Keys | "options", Handler>
+        options: NotEmpty<LowercaseKeys<T>>,
+      ): SubcommandWithOptions<
+        NotEmpty<LowercaseKeys<T>>,
+        Keys | "options",
+        Handler
+      >
       handler: (
         handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
       ) => Subcommand<Keys | "options" | "handler", true>
