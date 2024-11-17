@@ -24,7 +24,7 @@ import {
   SlashCommandUserOption,
 } from "discord.js"
 
-type Pretty<T> = {
+type Unwrap<T> = {
   [K in keyof T]: T[K]
 } & {}
 
@@ -32,16 +32,19 @@ type LowercaseKeys<T> = {
   [K in keyof T]: K extends Lowercase<string> ? T[K] : never
 }
 
-type RequiredKeys<Type> = {
+type RequiredKeysOf<Type> = {
   [Key in keyof Type]: Type[Key] extends Exclude<Type[Key], undefined>
     ? Key
     : never
 }[keyof Type]
 
-type UndefinedToOptional<Type> = Pretty<
+type UndefinedToOptional<Type> = Unwrap<
   Partial<{ [Key in keyof Type]: Exclude<Type[Key], undefined> }> &
-    Pick<Type, RequiredKeys<Type>>
+    Pick<Type, RequiredKeysOf<Type>>
 >
+
+type InvertedPartialize<Type, Keys extends keyof Type> = Partial<Type> &
+  Pick<Type, Keys>
 
 type TypeMap = {
   attachment: ReturnType<CommandInteractionOptionResolver["getAttachment"]> & {}
@@ -69,22 +72,21 @@ type BuilderMap = {
   user: SlashCommandUserOption
 }
 
-type InferType<TypeName extends keyof TypeMap | undefined> =
-  TypeName extends keyof TypeMap ? TypeMap[TypeName] : undefined
+type OptionValue<T extends PartialOption<keyof TypeMap, "type">> =
+  T["required"] extends () => void
+    ? TypeMap[T["type"]] | undefined
+    : TypeMap[T["type"]]
 
-type OptionValue<T extends Partial<Option>> = T["required"] extends () => void
-  ? InferType<T["type"]> | undefined
-  : InferType<T["type"]>
-
-type OptionValues<T extends Record<string, Partial<Option>>> =
-  UndefinedToOptional<{
-    [K in keyof T]: OptionValue<T[K]>
-  }>
+type OptionValues<
+  T extends Record<string, PartialOption<keyof TypeMap, "type">>,
+> = UndefinedToOptional<{
+  [K in keyof T]: OptionValue<T[K]>
+}>
 
 type Option<
   Type extends keyof TypeMap = keyof TypeMap,
   Keys extends keyof Option | "" = "",
-> = Pretty<
+> = Unwrap<
   Omit<
     {
       builder: BuilderMap[Type]
@@ -95,10 +97,15 @@ type Option<
   >
 >
 
+type PartialOption<
+  Type extends keyof TypeMap = keyof TypeMap,
+  Keys extends keyof Option = "builder" | "type",
+> = InvertedPartialize<Option<Type>, Keys>
+
 type SlashCommand<
   Keys extends keyof SlashCommand | "" = "",
   Handler extends boolean = false,
-> = Pretty<
+> = Unwrap<
   Omit<
     {
       builder: SlashCommandBuilder
@@ -114,7 +121,7 @@ type SlashCommand<
         ...rest: ApplicationIntegrationType[]
       ): SlashCommand<Keys | "integrationTypes", Handler>
       nsfw(): SlashCommand<Keys | "nsfw", Handler>
-      options<T extends Record<string, Partial<Option>>>(
+      options<T extends Record<string, PartialOption>>(
         options: LowercaseKeys<T>,
       ): SlashCommandWithOptions<
         T,
@@ -149,10 +156,10 @@ type SlashCommand<
 >
 
 type SlashCommandWithOptions<
-  Options extends Record<Lowercase<string>, Partial<Option>>,
+  Options extends Record<Lowercase<string>, PartialOption>,
   Keys extends keyof SlashCommand | "" = "",
   Handler extends boolean = false,
-> = Pretty<
+> = Unwrap<
   Omit<
     {
       builder: SlashCommandBuilder
@@ -188,11 +195,11 @@ type SlashCommandWithOptions<
 type Subcommand<
   Keys extends keyof Subcommand | "" = "",
   Handler extends boolean = false,
-> = Pretty<
+> = Unwrap<
   Omit<
     {
       builder: SlashCommandSubcommandBuilder
-      options<T extends Record<Lowercase<string>, Partial<Option>>>(
+      options<T extends Record<Lowercase<string>, PartialOption>>(
         options: T,
       ): SubcommandWithOptions<T, Keys | "options", Handler>
       handler: (
@@ -205,10 +212,10 @@ type Subcommand<
 >
 
 type SubcommandWithOptions<
-  Options extends Record<Lowercase<string>, Partial<Option>>,
+  Options extends Record<Lowercase<string>, PartialOption>,
   Keys extends keyof Subcommand | "" = "",
   Handler extends boolean = false,
-> = Pretty<
+> = Unwrap<
   Omit<
     {
       builder: SlashCommandSubcommandBuilder
@@ -228,7 +235,7 @@ type SubcommandWithOptions<
 type SubcommandGroup<
   Keys extends keyof SubcommandGroup | "" = "",
   Subcommands extends boolean = false,
-> = Pretty<
+> = Unwrap<
   Omit<
     {
       builder: SlashCommandSubcommandGroupBuilder
@@ -354,7 +361,7 @@ export function slashCommand(
 
       let handle
       if ("handle" in this) {
-        const newThis = this as SlashCommand<"", true>
+        const newThis = this as SlashCommand<keyof SlashCommand, true>
         handle = async (interaction: ChatInputCommandInteraction) => {
           const group = interaction.options.getSubcommandGroup()
           if (group) {
@@ -415,7 +422,7 @@ export function slashCommand(
 
       let handle
       if ("handle" in this) {
-        const newThis = this as SlashCommand<"", true>
+        const newThis = this as SlashCommand<keyof SlashCommand, true>
         handle = async (interaction: ChatInputCommandInteraction) => {
           const groupName =
             interaction.options.getSubcommandGroup() as Lowercase<string> | null
@@ -535,12 +542,8 @@ export function subcommandGroup(description: string): SubcommandGroup {
 
 function getOptionValue<
   Type extends keyof TypeMap,
-  O extends Partial<Option<Type>>,
+  O extends PartialOption<Type>,
 >(interaction: ChatInputCommandInteraction, option: O): OptionValue<O> {
-  if (!option.builder) {
-    return undefined as OptionValue<O>
-  }
-
   let value
 
   switch (option.type) {
