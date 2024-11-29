@@ -4,8 +4,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
+  ApplicationCommandOptionAllowedChannelTypes,
   ApplicationIntegrationType,
   AutocompleteInteraction,
+  Channel,
+  Guild,
   ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
   InteractionContextType,
@@ -74,9 +77,15 @@ type TypeMap = {
   user: ReturnType<CommandInteractionOptionResolver["getUser"]> & {}
 }
 
+// TODO this could be better
+type OptionKeys =
+  | keyof Option<"string">
+  | keyof Option<"number">
+  | keyof Option<"channel">
+
 export type Option<
   Type extends keyof TypeMap = keyof TypeMap,
-  Keys extends keyof Option<"integer"> | keyof Option<"string"> | "" = "",
+  Keys extends OptionKeys | "" = "",
   Autocomplete extends boolean = false,
 > = Unwrap<
   Omit<
@@ -123,6 +132,16 @@ export type Option<
               length: number,
             ): Option<Type, Keys | "minLength", Autocomplete>
           }
+        : object) &
+      (Type extends "channel"
+        ? {
+            channelTypes<
+              Types extends
+                readonly ApplicationCommandOptionAllowedChannelTypes[],
+            >(
+              ...types: Types
+            ): OptionWithChannelTypes<Types, Keys>
+          }
         : object),
     Keys
   >
@@ -131,15 +150,30 @@ export type Option<
 // TODO this could be better
 export type PartialOption<
   Type extends keyof TypeMap = keyof TypeMap,
-  Keys extends keyof Option = "builder" | "type",
+  Keys extends keyof Option<Type> = "builder" | "type",
 > = InvertedPartialize<Option<Type>, Keys> & {
   handleAutocomplete?: (interaction: AutocompleteInteraction) => Promise<void>
 }
 
+type OptionWithChannelTypes<
+  Types extends readonly ApplicationCommandOptionAllowedChannelTypes[],
+  Keys extends OptionKeys | "" = "",
+> = Unwrap<
+  Omit<
+    {
+      builder: BuilderMap["channel"]
+      type: "channel"
+      channelTypes: Types
+      required(): OptionWithChannelTypes<Types, Keys | "required">
+    },
+    Keys
+  >
+>
+
 type OptionWithChoices<
   Choices extends Record<string, TypeMap[Type]>,
   Type extends keyof TypeMap = keyof TypeMap,
-  Keys extends keyof Option<"integer"> | keyof Option<"string"> | "" = "",
+  Keys extends OptionKeys | "" = "",
 > = Unwrap<
   Omit<
     {
@@ -171,6 +205,11 @@ type OptionWithChoices<
   >
 >
 
+type PartialOptionWithChannelTypes<
+  Types extends readonly ApplicationCommandOptionAllowedChannelTypes[],
+  Keys extends keyof Option = "builder" | "type",
+> = InvertedPartialize<OptionWithChannelTypes<Types>, Keys>
+
 type PartialOptionWithChoices<
   Choices extends Record<string, TypeMap[Type]>,
   Type extends "number" | "integer" | "string" =
@@ -181,19 +220,27 @@ type PartialOptionWithChoices<
 > = InvertedPartialize<OptionWithChoices<Choices, Type>, Keys>
 
 type OptionValue<T> =
-  T extends PartialOptionWithChoices<infer R>
+  T extends PartialOptionWithChannelTypes<infer C>
     ? T["required"] extends () => void
-      ? R extends Record<string, infer V>
-        ? V | undefined
+      ? C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
+        ? C[number] | undefined
         : never
-      : R extends Record<string, infer V>
-        ? V
+      : C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
+        ? Extract<Channel, { guild: Guild }>
         : never
-    : T extends PartialOption<keyof TypeMap, "type">
+    : T extends PartialOptionWithChoices<infer R>
       ? T["required"] extends () => void
-        ? TypeMap[T["type"]] | undefined
-        : TypeMap[T["type"]]
-      : never
+        ? R extends Record<string, infer V>
+          ? V | undefined
+          : never
+        : R extends Record<string, infer V>
+          ? V
+          : never
+      : T extends PartialOption<keyof TypeMap, "type">
+        ? T["required"] extends () => void
+          ? TypeMap[T["type"]] | undefined
+          : TypeMap[T["type"]]
+        : never
 
 export type OptionValues<
   T extends Record<string, PartialOption<keyof TypeMap, "type">>,

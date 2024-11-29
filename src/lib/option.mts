@@ -46,6 +46,17 @@ export function channel(description: string): Option<"channel"> {
       this.builder.setRequired(true)
       return this
     },
+    channelTypes(...channelTypes) {
+      this.builder.addChannelTypes(...channelTypes)
+      return {
+        ...this,
+        required() {
+          this.builder.setRequired(true)
+          return this
+        },
+        channelTypes,
+      }
+    },
   }
 }
 

@@ -8,15 +8,20 @@ import {
   PermissionFlagsBits,
   ApplicationIntegrationType,
   ChatInputCommandInteraction,
+  ChannelType,
 } from "discord.js"
 import d from "./index.mjs"
 
 d.slashCommand("", "")
   .options({
-    text: d.string("Example option").required(),
+    text: d.string("Example option").required().choices({ a: "a", b: "b" }),
     count: d.number("Example option"),
+    chan: d
+      .channel("Example channel")
+      .required()
+      .channelTypes(ChannelType.GuildCategory, ChannelType.GuildText),
   })
-  .handler(async (interaction, { text }) => {
+  .handler(async (interaction, { text, chan }) => {
     await interaction.reply(text)
   })
   .contexts(InteractionContextType.BotDM, InteractionContextType.Guild)
