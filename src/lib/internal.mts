@@ -228,28 +228,21 @@ type MapChannelType<Type extends ChannelType> = Extract<
   }
 >
 
-type OptionValue<T> =
-  T extends PartialOptionWithChannelTypes<infer C>
-    ? T["required"] extends () => void
-      ? C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
-        ? MapChannelType<C[number]> | undefined
-        : never
-      : C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
-        ? MapChannelType<C[number]>
-        : never
+type RequiredOptionValue<T extends PartialOption<keyof TypeMap, "type">> =
+  T extends PartialOptionWithChannelTypes<
+    infer C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
+  >
+    ? MapChannelType<C[number]>
     : T extends PartialOptionWithChoices<infer R>
-      ? T["required"] extends () => void
-        ? R extends Record<string, infer V>
-          ? V | undefined
-          : never
-        : R extends Record<string, infer V>
-          ? V
-          : never
-      : T extends PartialOption<keyof TypeMap, "type">
-        ? T["required"] extends () => void
-          ? TypeMap[T["type"]] | undefined
-          : TypeMap[T["type"]]
+      ? R extends Record<string, infer V>
+        ? V
         : never
+      : TypeMap[T["type"]]
+
+type OptionValue<T extends PartialOption<keyof TypeMap, "type">> =
+  T["required"] extends () => void
+    ? RequiredOptionValue<T> | undefined
+    : RequiredOptionValue<T>
 
 export type OptionValues<
   T extends Record<string, PartialOption<keyof TypeMap, "type">>,
