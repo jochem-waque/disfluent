@@ -8,7 +8,6 @@ import {
   ApplicationIntegrationType,
   AutocompleteInteraction,
   Channel,
-  Guild,
   ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
   InteractionContextType,
@@ -25,6 +24,7 @@ import {
   SlashCommandSubcommandBuilder,
   SlashCommandSubcommandGroupBuilder,
   SlashCommandUserOption,
+  ChannelType,
 } from "discord.js"
 
 type InvertedPartialize<Type, Keys extends keyof Type> = Partial<Type> &
@@ -219,14 +219,23 @@ type PartialOptionWithChoices<
   Keys extends keyof Option = "builder" | "type",
 > = InvertedPartialize<OptionWithChoices<Choices, Type>, Keys>
 
+type MapChannelType<Type extends ChannelType> = Extract<
+  Channel,
+  {
+    type: Type extends ChannelType.PublicThread | ChannelType.AnnouncementThread
+      ? ChannelType.PublicThread | ChannelType.AnnouncementThread
+      : Type
+  }
+>
+
 type OptionValue<T> =
   T extends PartialOptionWithChannelTypes<infer C>
     ? T["required"] extends () => void
       ? C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
-        ? C[number] | undefined
+        ? MapChannelType<C[number]> | undefined
         : never
       : C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
-        ? Extract<Channel, { guild: Guild }>
+        ? MapChannelType<C[number]>
         : never
     : T extends PartialOptionWithChoices<infer R>
       ? T["required"] extends () => void
