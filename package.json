@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup"
+    "prepack": "tsup"
   },
   "bugs": {
     "url": "https://github.com/Jochem-W/fluent-commands/issues"
