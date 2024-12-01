@@ -17,7 +17,7 @@ import {
   SlashCommand,
   Subcommand,
   SubcommandWithOptions,
-} from "./internal.mjs"
+} from "./shared.mjs"
 import { InternalError } from "./error.mjs"
 
 export function slashCommand(

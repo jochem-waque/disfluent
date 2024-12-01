@@ -13,7 +13,7 @@ import {
   SubcommandGroup,
   PartialSubcommand,
   getOptionValue,
-} from "./internal.mjs"
+} from "./shared.mjs"
 
 export function subcommand(description: string): Subcommand {
   return {

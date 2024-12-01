@@ -14,7 +14,7 @@ import {
   SlashCommandStringOption,
   SlashCommandUserOption,
 } from "discord.js"
-import { Option } from "./internal.mjs"
+import { Option } from "./shared.mjs"
 
 export function attachment(description: string): Option<"attachment"> {
   return {
