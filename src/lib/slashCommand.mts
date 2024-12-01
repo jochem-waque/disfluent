@@ -47,9 +47,11 @@ export function slashCommand(
       return this
     },
     options(options) {
-      for (const option of Object.values(
+      for (const [name, option] of Object.entries(
         options as Record<string, PartialOption>,
       )) {
+        option.builder.setName(name)
+
         // TODO this could be better
         switch (option.type) {
           case "string":
