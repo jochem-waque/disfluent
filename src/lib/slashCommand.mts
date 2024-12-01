@@ -4,10 +4,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
   AutocompleteInteraction,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
 } from "discord.js"
+import { InternalError } from "./error.mjs"
 import {
   getOptionValue,
   OptionValues,
@@ -18,7 +19,6 @@ import {
   Subcommand,
   SubcommandWithOptions,
 } from "./shared.mjs"
-import { InternalError } from "./error.mjs"
 
 export function slashCommand(
   name: Lowercase<string>,

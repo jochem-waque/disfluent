@@ -8,6 +8,7 @@ import {
   ApplicationIntegrationType,
   AutocompleteInteraction,
   Channel,
+  ChannelType,
   ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
   InteractionContextType,
@@ -24,7 +25,6 @@ import {
   SlashCommandSubcommandBuilder,
   SlashCommandSubcommandGroupBuilder,
   SlashCommandUserOption,
-  ChannelType,
 } from "discord.js"
 
 type InvertedPartialize<Type, Keys extends keyof Type> = Partial<Type> &
