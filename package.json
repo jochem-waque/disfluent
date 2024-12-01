@@ -1,6 +1,6 @@
 {
   "name": "fluent-commands",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "author": "Jochem-W (https://jochem.cc/)",
   "license": "AGPL-3.0-or-later",
   "main": "./dist/index.mjs",
