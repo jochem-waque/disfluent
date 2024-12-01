@@ -219,7 +219,9 @@ type PartialOptionWithChoices<
     | "integer"
     | "string",
   Keys extends keyof Option = "builder" | "type",
-> = InvertedPartialize<OptionWithChoices<Choices, Type>, Keys>
+> = InvertedPartialize<OptionWithChoices<Choices, Type>, Keys> & {
+  choices: Choices
+}
 
 type MapChannelType<Type extends ChannelType> = Extract<
   Channel,
