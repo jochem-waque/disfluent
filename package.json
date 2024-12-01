@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "author": "Jochem-W (https://jochem.cc/)",
   "license": "AGPL-3.0-or-later",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "scripts": {
+    "build": "tsup"
+  },
   "bugs": {
     "url": "https://github.com/Jochem-W/fluent-commands/issues"
   },
@@ -47,5 +52,14 @@
   "prettier": {
     "semi": false,
     "proseWrap": "always"
+  },
+  "tsup": {
+    "tsconfig": "./tsconfig.build.json",
+    "entry": [
+      "src/index.mts"
+    ],
+    "dts": true,
+    "format": "esm",
+    "clean": true
   }
 }
