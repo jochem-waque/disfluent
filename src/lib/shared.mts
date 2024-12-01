@@ -152,7 +152,9 @@ export type PartialOption<
   Type extends keyof TypeMap = keyof TypeMap,
   Keys extends keyof Option<Type> = "builder" | "type",
 > = InvertedPartialize<Option<Type>, Keys> & {
-  handleAutocomplete?: (interaction: AutocompleteInteraction) => Promise<void>
+  handleAutocomplete?: (
+    interaction: AutocompleteInteraction<"cached">,
+  ) => Promise<void>
 }
 
 type OptionWithChannelTypes<
@@ -360,7 +362,9 @@ export type SlashCommand<
         true
       >
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-      autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
+      autocomplete: (
+        interaction: AutocompleteInteraction<"cached">,
+      ) => Promise<void>
       subcommands<T extends Record<string, PartialSubcommand>>(
         subcommands: NotEmpty<LowercaseKeys<T>>,
       ): SlashCommand<Keys | "options" | "handler" | "subcommands", true>
@@ -406,7 +410,9 @@ type SlashCommandWithOptions<
         ) => Promise<void>,
       ): SlashCommandWithOptions<Options, Keys | "handler" | "options", true>
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-      autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
+      autocomplete: (
+        interaction: AutocompleteInteraction<"cached">,
+      ) => Promise<void>
     },
     Handler extends true
       ? Exclude<Keys, "handle" | "autocomplete">

@@ -183,7 +183,9 @@ export function slashCommand(
           SlashCommand<keyof SlashCommand, true>,
           "handle"
         >
-        autocomplete = async (interaction: AutocompleteInteraction) => {
+        autocomplete = async (
+          interaction: AutocompleteInteraction<"cached">,
+        ) => {
           const group = interaction.options.getSubcommandGroup()
           if (group) {
             await newThis.autocomplete(interaction)
@@ -222,7 +224,9 @@ export function slashCommand(
           await option.handleAutocomplete(interaction)
         }
       } else {
-        autocomplete = async (interaction: AutocompleteInteraction) => {
+        autocomplete = async (
+          interaction: AutocompleteInteraction<"cached">,
+        ) => {
           const subcommandName = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
@@ -340,7 +344,9 @@ export function slashCommand(
           SlashCommand<keyof SlashCommand, true>,
           "handle"
         >
-        autocomplete = async (interaction: AutocompleteInteraction) => {
+        autocomplete = async (
+          interaction: AutocompleteInteraction<"cached">,
+        ) => {
           const groupName = interaction.options.getSubcommandGroup()
           if (!groupName) {
             await newThis.autocomplete(interaction)
@@ -385,7 +391,9 @@ export function slashCommand(
           await option.handleAutocomplete(interaction)
         }
       } else {
-        autocomplete = async (interaction: AutocompleteInteraction) => {
+        autocomplete = async (
+          interaction: AutocompleteInteraction<"cached">,
+        ) => {
           const groupName = interaction.options.getSubcommandGroup(true)
 
           const group = subcommandGroups[groupName]
