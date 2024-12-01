@@ -27,6 +27,7 @@ import {
   SlashCommandSubcommandGroupBuilder,
   SlashCommandUserOption,
 } from "discord.js"
+import { InternalError } from "./error.mjs"
 
 type InvertedPartialize<Type, Keys extends keyof Type> = Partial<Type> &
   Pick<Type, Keys>
@@ -480,4 +481,50 @@ export function getOptionValue<
   }
 
   return (value ?? undefined) as OptionValue<O>
+}
+
+export function applyOptions(
+  builder: SlashCommandBuilder | SlashCommandSubcommandBuilder,
+  options: Record<string, PartialOption>,
+) {
+  for (const [name, option] of Object.entries(options)) {
+    option.builder.setName(name)
+
+    // TODO this could be better
+    switch (option.type) {
+      case "string":
+        builder.addStringOption((option as PartialOption<"string">).builder)
+        break
+      case "number":
+        builder.addNumberOption((option as PartialOption<"number">).builder)
+        break
+      case "boolean":
+        builder.addBooleanOption((option as PartialOption<"boolean">).builder)
+        break
+      case "integer":
+        builder.addIntegerOption((option as PartialOption<"integer">).builder)
+        break
+      case "channel":
+        builder.addChannelOption((option as PartialOption<"channel">).builder)
+        break
+      case "attachment":
+        builder.addAttachmentOption(
+          (option as PartialOption<"attachment">).builder,
+        )
+        break
+      case "mentionable":
+        builder.addMentionableOption(
+          (option as PartialOption<"mentionable">).builder,
+        )
+        break
+      case "role":
+        builder.addRoleOption((option as PartialOption<"role">).builder)
+        break
+      case "user":
+        builder.addUserOption((option as PartialOption<"user">).builder)
+        break
+      default:
+        throw new InternalError("unsupported_option_type")
+    }
+  }
 }

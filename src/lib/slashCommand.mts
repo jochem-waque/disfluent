@@ -11,6 +11,7 @@ import {
 } from "discord.js"
 import { InternalError } from "./error.mjs"
 import {
+  applyOptions,
   getOptionValue,
   OptionValues,
   PartialOption,
@@ -47,62 +48,7 @@ export function slashCommand(
       return this
     },
     options(options) {
-      for (const [name, option] of Object.entries(
-        options as Record<string, PartialOption>,
-      )) {
-        option.builder.setName(name)
-
-        // TODO this could be better
-        switch (option.type) {
-          case "string":
-            this.builder.addStringOption(
-              (option as PartialOption<"string">).builder,
-            )
-            break
-          case "number":
-            this.builder.addNumberOption(
-              (option as PartialOption<"number">).builder,
-            )
-            break
-          case "boolean":
-            this.builder.addBooleanOption(
-              (option as PartialOption<"boolean">).builder,
-            )
-            break
-          case "integer":
-            this.builder.addIntegerOption(
-              (option as PartialOption<"integer">).builder,
-            )
-            break
-          case "channel":
-            this.builder.addChannelOption(
-              (option as PartialOption<"channel">).builder,
-            )
-            break
-          case "attachment":
-            this.builder.addAttachmentOption(
-              (option as PartialOption<"attachment">).builder,
-            )
-            break
-          case "mentionable":
-            this.builder.addMentionableOption(
-              (option as PartialOption<"mentionable">).builder,
-            )
-            break
-          case "role":
-            this.builder.addRoleOption(
-              (option as PartialOption<"role">).builder,
-            )
-            break
-          case "user":
-            this.builder.addUserOption(
-              (option as PartialOption<"user">).builder,
-            )
-            break
-          default:
-            throw new InternalError("unsupported_option_type")
-        }
-      }
+      applyOptions(this.builder, options)
 
       return {
         ...this,

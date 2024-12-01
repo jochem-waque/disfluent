@@ -12,6 +12,7 @@ import {
   PartialSubcommand,
   Subcommand,
   SubcommandGroup,
+  applyOptions,
   getOptionValue,
 } from "./shared.mjs"
 
@@ -19,6 +20,8 @@ export function subcommand(description: string): Subcommand {
   return {
     builder: new SlashCommandSubcommandBuilder().setDescription(description),
     options(options) {
+      applyOptions(this.builder, options)
+
       return {
         ...this,
         options,
