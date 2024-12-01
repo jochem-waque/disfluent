@@ -9,6 +9,7 @@ type ErrorCode =
   | "option_not_found"
   | "subcommand_group_not_found"
   | "subcommand_not_found"
+  | "unsupported_option_type"
 
 export class InternalError extends Error {
   public code: ErrorCode

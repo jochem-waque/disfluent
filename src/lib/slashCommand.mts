@@ -47,6 +47,61 @@ export function slashCommand(
       return this
     },
     options(options) {
+      for (const option of Object.values(
+        options as Record<string, PartialOption>,
+      )) {
+        // TODO this could be better
+        switch (option.type) {
+          case "string":
+            this.builder.addStringOption(
+              (option as PartialOption<"string">).builder,
+            )
+            break
+          case "number":
+            this.builder.addNumberOption(
+              (option as PartialOption<"number">).builder,
+            )
+            break
+          case "boolean":
+            this.builder.addBooleanOption(
+              (option as PartialOption<"boolean">).builder,
+            )
+            break
+          case "integer":
+            this.builder.addIntegerOption(
+              (option as PartialOption<"integer">).builder,
+            )
+            break
+          case "channel":
+            this.builder.addChannelOption(
+              (option as PartialOption<"channel">).builder,
+            )
+            break
+          case "attachment":
+            this.builder.addAttachmentOption(
+              (option as PartialOption<"attachment">).builder,
+            )
+            break
+          case "mentionable":
+            this.builder.addMentionableOption(
+              (option as PartialOption<"mentionable">).builder,
+            )
+            break
+          case "role":
+            this.builder.addRoleOption(
+              (option as PartialOption<"role">).builder,
+            )
+            break
+          case "user":
+            this.builder.addUserOption(
+              (option as PartialOption<"user">).builder,
+            )
+            break
+          default:
+            throw new InternalError("unsupported_option_type")
+        }
+      }
+
       return {
         ...this,
         options,
