@@ -5,6 +5,9 @@
   "license": "AGPL-3.0-or-later",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup"
   },
