@@ -7,3 +7,5 @@ import * as d from "./lib/external.mjs"
 export * from "./lib/external.mjs"
 export { d }
 export default d
+
+export type * from "./lib/external.mjs"
