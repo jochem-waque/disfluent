@@ -330,11 +330,6 @@ export type PartialSubcommandGroup = InvertedPartialize<
   "builder" | "subcommands"
 >
 
-export type HandleableSlashCommand = SlashCommand<
-  Exclude<keyof SlashCommand, "builder">,
-  true
->
-
 // TODO separate Handler into Subcommands and regular Handler
 export type SlashCommand<
   Keys extends keyof SlashCommand | "" = "",
