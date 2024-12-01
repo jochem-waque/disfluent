@@ -5,6 +5,7 @@
  */
 import {
   ApplicationCommandOptionAllowedChannelTypes,
+  ApplicationCommandType,
   ApplicationIntegrationType,
   AutocompleteInteraction,
   Channel,
@@ -338,6 +339,7 @@ export type SlashCommand<
   Omit<
     {
       builder: SlashCommandBuilder
+      type: ApplicationCommandType.ChatInput
       contexts(
         context: InteractionContextType,
         ...rest: InteractionContextType[]

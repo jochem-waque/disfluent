@@ -4,6 +4,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
+  ApplicationCommandType,
   AutocompleteInteraction,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
@@ -25,6 +26,7 @@ export function slashCommand(
   description: string,
 ): SlashCommand {
   return {
+    type: ApplicationCommandType.ChatInput,
     builder: new SlashCommandBuilder()
       .setName(name)
       .setDescription(description),
