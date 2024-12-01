@@ -111,7 +111,9 @@ export type Option<
                 handler: (
                   value: string,
                   interaction: AutocompleteInteraction,
-                ) => Promise<Record<string, TypeMap[Type]>>,
+                ) =>
+                  | Promise<Record<string, TypeMap[Type]>>
+                  | Record<string, TypeMap[Type]>,
               ): Option<Type, Keys | "choices", true>
             })
       : object) &
