@@ -390,6 +390,7 @@ type SlashCommandWithOptions<
   Omit<
     {
       builder: SlashCommandBuilder
+      type: ApplicationCommandType.ChatInput
       options: Options
       contexts(
         context: InteractionContextType,
