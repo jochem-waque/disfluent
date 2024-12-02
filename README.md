@@ -1,6 +1,6 @@
 # Fluent Commands
 
-Like Zod, but for discord.js commands.
+A fluent, Zod-like API for discord.js commands.
 
 ## Usage
 
@@ -13,7 +13,7 @@ d.slashCommand("ping", "Respond with pong").handler(async (interaction) => {
 })
 ```
 
-More likely than not though, you'll have to add subcommands, options, choices
+More likely than not though, you'll want to add subcommands, options, choices
 and autocomplete, which are also all supported of course:
 
 ```ts
