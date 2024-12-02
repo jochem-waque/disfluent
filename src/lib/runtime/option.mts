@@ -14,9 +14,11 @@ import {
   SlashCommandStringOption,
   SlashCommandUserOption,
 } from "discord.js"
-import { Option } from "../types/option.mjs"
+import { DefaultKeys, Option } from "../types/option.mjs"
 
-export function attachment(description: string): Option<"attachment"> {
+export function attachment(
+  description: string,
+): Option<"attachment", DefaultKeys["standard"]> {
   return {
     type: "attachment",
     builder: new SlashCommandAttachmentOption().setDescription(description),
@@ -35,7 +37,9 @@ export function attachment(description: string): Option<"attachment"> {
   }
 }
 
-export function boolean(description: string): Option<"boolean"> {
+export function boolean(
+  description: string,
+): Option<"boolean", DefaultKeys["standard"]> {
   return {
     type: "boolean",
     builder: new SlashCommandBooleanOption().setDescription(description),
@@ -54,7 +58,9 @@ export function boolean(description: string): Option<"boolean"> {
   }
 }
 
-export function channel(description: string): Option<"channel"> {
+export function channel(
+  description: string,
+): Option<"channel", DefaultKeys["channel"]> {
   return {
     type: "channel",
     builder: new SlashCommandChannelOption().setDescription(description),
@@ -92,7 +98,9 @@ export function channel(description: string): Option<"channel"> {
   }
 }
 
-export function integer(description: string): Option<"integer"> {
+export function integer(
+  description: string,
+): Option<"integer", DefaultKeys["numeric"]> {
   return {
     type: "integer",
     builder: new SlashCommandIntegerOption().setDescription(description),
@@ -183,7 +191,9 @@ export function integer(description: string): Option<"integer"> {
   }
 }
 
-export function mentionable(description: string): Option<"mentionable"> {
+export function mentionable(
+  description: string,
+): Option<"mentionable", DefaultKeys["standard"]> {
   return {
     type: "mentionable",
     builder: new SlashCommandMentionableOption().setDescription(description),
@@ -202,7 +212,9 @@ export function mentionable(description: string): Option<"mentionable"> {
   }
 }
 
-export function number(description: string): Option<"number"> {
+export function number(
+  description: string,
+): Option<"number", DefaultKeys["numeric"]> {
   return {
     type: "number",
     builder: new SlashCommandNumberOption().setDescription(description),
@@ -293,7 +305,9 @@ export function number(description: string): Option<"number"> {
   }
 }
 
-export function role(description: string): Option<"role"> {
+export function role(
+  description: string,
+): Option<"role", DefaultKeys["standard"]> {
   return {
     type: "role",
     builder: new SlashCommandRoleOption().setDescription(description),
@@ -312,7 +326,9 @@ export function role(description: string): Option<"role"> {
   }
 }
 
-export function string(description: string): Option<"string"> {
+export function string(
+  description: string,
+): Option<"string", DefaultKeys["text"]> {
   return {
     type: "string",
     builder: new SlashCommandStringOption().setDescription(description),
@@ -403,7 +419,9 @@ export function string(description: string): Option<"string"> {
   }
 }
 
-export function user(description: string): Option<"user"> {
+export function user(
+  description: string,
+): Option<"user", DefaultKeys["standard"]> {
   return {
     type: "user",
     builder: new SlashCommandUserOption().setDescription(description),

@@ -20,7 +20,7 @@ import {
   SlashCommandUserOption,
 } from "discord.js"
 import { OptionTypeMap } from "./internal.mjs"
-import { InvertedPartialize, UndefinedToOptional, Unwrap } from "./util.mjs"
+import { UndefinedToOptional, Unwrap } from "./util.mjs"
 
 type BuilderMap = {
   attachment: SlashCommandAttachmentOption
@@ -34,16 +34,31 @@ type BuilderMap = {
   user: SlashCommandUserOption
 }
 
-// TODO this could be better
-type OptionKeys =
-  | keyof Option<"string">
-  | keyof Option<"number">
-  | keyof Option<"channel">
+export type DefaultKeys = {
+  standard:
+    | "autocomplete"
+    | "choices"
+    | "handleAutocomplete"
+    | "maxLength"
+    | "minLength"
+    | "maxValue"
+    | "minValue"
+    | "channelTypes"
+  channel:
+    | "autocomplete"
+    | "choices"
+    | "handleAutocomplete"
+    | "maxLength"
+    | "minLength"
+    | "maxValue"
+    | "minValue"
+  text: "handleAutocomplete" | "maxValue" | "minValue" | "channelTypes"
+  numeric: "handleAutocomplete" | "maxLength" | "minLength" | "channelTypes"
+}
 
 export type Option<
   Type extends keyof OptionTypeMap = keyof OptionTypeMap,
-  Keys extends OptionKeys | "" = "",
-  Autocomplete extends boolean = false,
+  Keys extends keyof Option | "" = "",
 > = Unwrap<
   Omit<
     {
@@ -51,78 +66,42 @@ export type Option<
       type: Type
       nameLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
-      ): Option<Type, Keys | "nameLocalizations", Autocomplete>
+      ): Option<Type, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
-      ): Option<Type, Keys | "descriptionLocalizations", Autocomplete>
-      required(): Option<Type, Keys | "required", Autocomplete>
-    } & (Type extends "integer" | "number" | "string"
-      ? {
-          choices<const T extends Record<string, OptionTypeMap[Type]>>(
-            choices: T, // TODO NotEmpty
-          ): OptionWithChoices<T, Type, Keys | "autocomplete">
-        } & (Autocomplete extends true
-          ? {
-              handleAutocomplete: (
-                interaction: AutocompleteInteraction,
-              ) => Promise<void>
-            }
-          : {
-              autocomplete(
-                handler: (
-                  value: string,
-                  interaction: AutocompleteInteraction,
-                ) =>
-                  | Promise<Record<string, OptionTypeMap[Type]>>
-                  | Record<string, OptionTypeMap[Type]>,
-              ): Option<Type, Keys | "choices", true>
-            })
-      : object) &
-      (Type extends "integer" | "number"
-        ? {
-            maxValue(
-              value: OptionTypeMap[Type],
-            ): Option<Type, Keys | "maxValue", Autocomplete>
-            minValue(
-              value: OptionTypeMap[Type],
-            ): Option<Type, Keys | "minValue", Autocomplete>
-          }
-        : object) &
-      (Type extends "string"
-        ? {
-            maxLength(
-              length: number,
-            ): Option<Type, Keys | "maxLength", Autocomplete>
-            minLength(
-              length: number,
-            ): Option<Type, Keys | "minLength", Autocomplete>
-          }
-        : object) &
-      (Type extends "channel"
-        ? {
-            channelTypes<
-              Types extends
-                readonly ApplicationCommandOptionAllowedChannelTypes[],
-            >(
-              ...types: Types
-            ): OptionWithChannelTypes<Types, Keys>
-          }
-        : object),
+      ): Option<Type, Keys | "descriptionLocalizations">
+      required(): Option<Type, Keys | "required">
+      choices<const T extends Record<string, OptionTypeMap[Type]>>(
+        choices: T, // TODO NotEmpty
+      ): OptionWithChoices<T, Type, Keys | "autocomplete">
+      handleAutocomplete: (
+        interaction: AutocompleteInteraction,
+      ) => Promise<void>
+      autocomplete(
+        handler: (
+          value: string,
+          interaction: AutocompleteInteraction,
+        ) =>
+          | Promise<Record<string, OptionTypeMap[Type]>>
+          | Record<string, OptionTypeMap[Type]>,
+      ): Option<Type, Exclude<Keys, "handleAutocomplete"> | "choices">
+      maxValue(value: OptionTypeMap[Type]): Option<Type, Keys | "maxValue">
+      minValue(value: OptionTypeMap[Type]): Option<Type, Keys | "minValue">
+      maxLength(length: number): Option<Type, Keys | "maxLength">
+      minLength(length: number): Option<Type, Keys | "minLength">
+      channelTypes<
+        Types extends readonly ApplicationCommandOptionAllowedChannelTypes[],
+      >(
+        ...types: Types
+      ): OptionWithChannelTypes<Types, Keys>
+    },
     Keys
   >
 >
 
-// TODO this could be better
-export type PartialOption<
-  Type extends keyof OptionTypeMap = keyof OptionTypeMap,
-  Keys extends keyof Option<Type> = "builder" | "type",
-> = InvertedPartialize<Option<Type>, Keys> & {
-  handleAutocomplete?: (interaction: AutocompleteInteraction) => Promise<void>
-}
-
 type OptionWithChannelTypes<
   Types extends readonly ApplicationCommandOptionAllowedChannelTypes[],
-  Keys extends OptionKeys | "" = "",
+  Keys extends keyof Option | "" = "",
 > = Unwrap<
   Omit<
     {
@@ -144,12 +123,13 @@ type OptionWithChannelTypes<
 type OptionWithChoices<
   Choices extends Record<string, OptionTypeMap[Type]>,
   Type extends keyof OptionTypeMap = keyof OptionTypeMap,
-  Keys extends OptionKeys | "" = "",
+  Keys extends keyof Option | "" = "",
 > = Unwrap<
   Omit<
     {
       builder: BuilderMap[Type]
       type: Type
+      choices: Choices
       nameLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
       ): OptionWithChoices<Choices, Type, Keys | "nameLocalizations">
@@ -157,35 +137,33 @@ type OptionWithChoices<
         localizations: Partial<Record<LocaleString, string>>,
       ): OptionWithChoices<Choices, Type, Keys | "descriptionLocalizations">
       required(): OptionWithChoices<Choices, Type, Keys | "required">
-      choices: Choices
-    } & (Type extends "integer" | "number"
-      ? {
-          maxValue(
-            value: OptionTypeMap[Type],
-          ): OptionWithChoices<Choices, Type, Keys | "maxValue">
-          minValue(
-            value: OptionTypeMap[Type],
-          ): OptionWithChoices<Choices, Type, Keys | "minValue">
-        }
-      : object) &
-      (Type extends "string"
-        ? {
-            maxLength(
-              length: number,
-            ): OptionWithChoices<Choices, Type, Keys | "maxLength">
-            minLength(
-              length: number,
-            ): OptionWithChoices<Choices, Type, Keys | "minLength">
-          }
-        : object),
+      maxValue(
+        value: OptionTypeMap[Type],
+      ): OptionWithChoices<Choices, Type, Keys | "maxValue">
+      minValue(
+        value: OptionTypeMap[Type],
+      ): OptionWithChoices<Choices, Type, Keys | "minValue">
+      maxLength(
+        length: number,
+      ): OptionWithChoices<Choices, Type, Keys | "maxLength">
+      minLength(
+        length: number,
+      ): OptionWithChoices<Choices, Type, Keys | "minLength">
+    },
     Keys
   >
 >
 
+export type PartialOption<
+  Type extends keyof OptionTypeMap = keyof OptionTypeMap,
+> = Pick<Option<Type>, "builder" | "type"> &
+  Partial<Pick<Option<Type>, "handleAutocomplete">> & {
+    required?: () => unknown
+  }
+
 type PartialOptionWithChannelTypes<
   Types extends readonly ApplicationCommandOptionAllowedChannelTypes[],
-  Keys extends keyof Option = "builder" | "type",
-> = InvertedPartialize<OptionWithChannelTypes<Types>, Keys>
+> = Pick<OptionWithChannelTypes<Types>, "builder" | "type">
 
 type PartialOptionWithChoices<
   Choices extends Record<string, OptionTypeMap[Type]>,
@@ -193,10 +171,7 @@ type PartialOptionWithChoices<
     | "number"
     | "integer"
     | "string",
-  Keys extends keyof Option = "builder" | "type",
-> = InvertedPartialize<OptionWithChoices<Choices, Type>, Keys> & {
-  choices: Choices
-}
+> = Pick<OptionWithChoices<Choices, Type>, "builder" | "type" | "choices">
 
 type MapChannelType<Type extends ChannelType> = Extract<
   Channel,
@@ -207,7 +182,7 @@ type MapChannelType<Type extends ChannelType> = Extract<
   }
 >
 
-type RequiredOptionValue<T extends PartialOption<keyof OptionTypeMap, "type">> =
+type RequiredOptionValue<T extends PartialOption> =
   T extends PartialOptionWithChannelTypes<
     infer C extends readonly ApplicationCommandOptionAllowedChannelTypes[]
   >
@@ -218,14 +193,12 @@ type RequiredOptionValue<T extends PartialOption<keyof OptionTypeMap, "type">> =
         : never
       : OptionTypeMap[T["type"]]
 
-export type OptionValue<T extends PartialOption<keyof OptionTypeMap, "type">> =
+export type OptionValue<T extends PartialOption> =
   T["required"] extends () => void
     ? RequiredOptionValue<T> | undefined
     : RequiredOptionValue<T>
 
-export type OptionValues<
-  T extends Record<string, PartialOption<keyof OptionTypeMap, "type">>,
-> = Unwrap<
+export type OptionValues<T extends Record<string, PartialOption>> = Unwrap<
   UndefinedToOptional<{
     [K in keyof T]: OptionValue<T[K]>
   }>

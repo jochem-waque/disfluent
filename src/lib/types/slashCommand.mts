@@ -18,64 +18,70 @@ import { PartialSubcommand, PartialSubcommandGroup } from "./subcommand.mjs"
 import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
 
 // TODO separate Handler into Subcommands and regular Handler
-export type SlashCommand<
-  Keys extends keyof SlashCommand | "" = "",
-  Handler extends boolean = false,
-> = Unwrap<
+export type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Unwrap<
   Omit<
     {
       builder: SlashCommandBuilder
       type: ApplicationCommandType.ChatInput
       nameLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
-      ): SlashCommand<Keys | "nameLocalizations", Handler>
+      ): SlashCommand<Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
-      ): SlashCommand<Keys | "descriptionLocalizations", Handler>
+      ): SlashCommand<Keys | "descriptionLocalizations">
       contexts(
         context: InteractionContextType,
         ...rest: InteractionContextType[]
-      ): SlashCommand<Keys | "contexts", Handler>
+      ): SlashCommand<Keys | "contexts">
       defaultMemberPermissions(
         permissions: Permissions | bigint,
-      ): SlashCommand<Keys | "defaultMemberPermissions", Handler>
+      ): SlashCommand<Keys | "defaultMemberPermissions">
       integrationTypes(
         type: ApplicationIntegrationType,
         ...rest: ApplicationIntegrationType[]
-      ): SlashCommand<Keys | "integrationTypes", Handler>
-      nsfw(): SlashCommand<Keys | "nsfw", Handler>
+      ): SlashCommand<Keys | "integrationTypes">
+      nsfw(): SlashCommand<Keys | "nsfw">
       options<T extends Record<string, PartialOption>>(
         options: NotEmpty<LowercaseKeys<T>>,
       ): SlashCommandWithOptions<
         NotEmpty<LowercaseKeys<T>>,
-        Keys | "options" | "subcommands" | "subcommandGroups",
-        Handler
+        Keys | "options" | "subcommands" | "subcommandGroups"
       >
       handler(
         handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
       ): SlashCommand<
-        Keys | "handler" | "options" | "subcommandGroups" | "subcommands",
-        true
+        | Exclude<Keys, "handle" | "autocomplete">
+        | "handler"
+        | "options"
+        | "subcommandGroups"
+        | "subcommands"
       >
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
       autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
       subcommands<T extends Record<string, PartialSubcommand>>(
         subcommands: NotEmpty<LowercaseKeys<T>>,
-      ): SlashCommand<Keys | "options" | "handler" | "subcommands", true>
+      ): SlashCommand<
+        | Exclude<Keys, "handle" | "autocomplete">
+        | "options"
+        | "handler"
+        | "subcommands"
+      >
       subcommandGroups<T extends Record<string, PartialSubcommandGroup>>(
         groups: NotEmpty<LowercaseKeys<T>>,
-      ): SlashCommand<Keys | "options" | "handler" | "subcommandGroups", true>
+      ): SlashCommand<
+        | Exclude<Keys, "handle" | "autocomplete">
+        | "options"
+        | "handler"
+        | "subcommandGroups"
+      >
     },
-    Handler extends true
-      ? Exclude<Keys, "handle" | "autocomplete">
-      : Keys | "handle" | "autocomplete"
+    Keys
   >
 >
 
 type SlashCommandWithOptions<
   Options extends Record<Lowercase<string>, PartialOption>,
   Keys extends keyof SlashCommand | "" = "",
-  Handler extends boolean = false,
 > = Unwrap<
   Omit<
     {
@@ -84,41 +90,34 @@ type SlashCommandWithOptions<
       options: Options
       nameLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
-      ): SlashCommandWithOptions<Options, Keys | "nameLocalizations", Handler>
+      ): SlashCommandWithOptions<Options, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
-      ): SlashCommandWithOptions<
-        Options,
-        Keys | "descriptionLocalizations",
-        Handler
-      >
+      ): SlashCommandWithOptions<Options, Keys | "descriptionLocalizations">
       contexts(
         context: InteractionContextType,
         ...rest: InteractionContextType[]
-      ): SlashCommandWithOptions<Options, Keys | "contexts", Handler>
+      ): SlashCommandWithOptions<Options, Keys | "contexts">
       defaultMemberPermissions(
         permissions: Permissions | bigint,
-      ): SlashCommandWithOptions<
-        Options,
-        Keys | "defaultMemberPermissions",
-        Handler
-      >
+      ): SlashCommandWithOptions<Options, Keys | "defaultMemberPermissions">
       integrationTypes(
         type: ApplicationIntegrationType,
         ...rest: ApplicationIntegrationType[]
-      ): SlashCommandWithOptions<Options, Keys | "integrationTypes", Handler>
-      nsfw(): SlashCommandWithOptions<Options, Keys | "nsfw", Handler>
+      ): SlashCommandWithOptions<Options, Keys | "integrationTypes">
+      nsfw(): SlashCommandWithOptions<Options, Keys | "nsfw">
       handler(
         handler: (
           interaction: ChatInputCommandInteraction,
           values: OptionValues<Options>,
         ) => Promise<void>,
-      ): SlashCommandWithOptions<Options, Keys | "handler" | "options", true>
+      ): SlashCommandWithOptions<
+        Options,
+        Exclude<Keys, "handle" | "autocomplete"> | "handler" | "options"
+      >
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
       autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
     },
-    Handler extends true
-      ? Exclude<Keys, "handle" | "autocomplete">
-      : Keys | "handle" | "autocomplete"
+    Keys
   >
 >

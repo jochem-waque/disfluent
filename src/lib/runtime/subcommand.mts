@@ -15,7 +15,7 @@ import {
 } from "../types/subcommand.mjs"
 import { applyOptions, getOptionValue } from "./internal.mjs"
 
-export function subcommand(description: string): Subcommand {
+export function subcommand(description: string): Subcommand<"handle"> {
   return {
     builder: new SlashCommandSubcommandBuilder().setDescription(description),
     nameLocalizations(localizations) {

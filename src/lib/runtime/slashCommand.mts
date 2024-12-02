@@ -23,7 +23,7 @@ import { applyOptions, getOptionValue } from "./internal.mjs"
 export function slashCommand(
   name: Lowercase<string>,
   description: string,
-): SlashCommand {
+): SlashCommand<"handle" | "autocomplete"> {
   return {
     type: ApplicationCommandType.ChatInput,
     builder: new SlashCommandBuilder()
@@ -177,10 +177,7 @@ export function slashCommand(
 
       let handle
       if ("handle" in this) {
-        const newThis = this as Omit<
-          SlashCommand<keyof SlashCommand, true>,
-          "autocomplete"
-        >
+        const newThis = this as Pick<SlashCommand, "handle">
         handle = async (interaction: ChatInputCommandInteraction) => {
           const group = interaction.options.getSubcommandGroup()
           if (group) {
@@ -214,10 +211,7 @@ export function slashCommand(
 
       let autocomplete
       if ("autocomplete" in this) {
-        const newThis = this as Omit<
-          SlashCommand<keyof SlashCommand, true>,
-          "handle"
-        >
+        const newThis = this as Pick<SlashCommand, "autocomplete">
         autocomplete = async (interaction: AutocompleteInteraction) => {
           const group = interaction.options.getSubcommandGroup()
           if (group) {
@@ -329,10 +323,7 @@ export function slashCommand(
 
       let handle
       if ("handle" in this) {
-        const newThis = this as Omit<
-          SlashCommand<keyof SlashCommand, true>,
-          "autocomplete"
-        >
+        const newThis = this as Pick<SlashCommand, "handle">
         handle = async (interaction: ChatInputCommandInteraction) => {
           const groupName = interaction.options.getSubcommandGroup()
           if (!groupName) {
@@ -379,10 +370,7 @@ export function slashCommand(
 
       let autocomplete
       if ("autocomplete" in this) {
-        const newThis = this as Omit<
-          SlashCommand<keyof SlashCommand, true>,
-          "handle"
-        >
+        const newThis = this as Pick<SlashCommand, "autocomplete">
         autocomplete = async (interaction: AutocompleteInteraction) => {
           const groupName = interaction.options.getSubcommandGroup()
           if (!groupName) {
