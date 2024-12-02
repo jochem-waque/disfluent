@@ -24,7 +24,7 @@ export type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Unwrap<
       builder: SlashCommandBuilder
       type: ApplicationCommandType.ChatInput
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): SlashCommand<Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
@@ -89,7 +89,7 @@ type SlashCommandWithOptions<
       type: ApplicationCommandType.ChatInput
       options: Options
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): SlashCommandWithOptions<Options, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,

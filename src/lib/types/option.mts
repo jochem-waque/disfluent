@@ -65,7 +65,7 @@ export type Option<
       builder: BuilderMap[Type]
       type: Type
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): Option<Type, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
@@ -109,7 +109,7 @@ type OptionWithChannelTypes<
       type: "channel"
       channelTypes: Types
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): OptionWithChannelTypes<Types, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
@@ -131,7 +131,7 @@ type OptionWithChoices<
       type: Type
       choices: Choices
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): OptionWithChoices<Choices, Type, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,

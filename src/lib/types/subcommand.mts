@@ -17,7 +17,7 @@ export type Subcommand<Keys extends keyof Subcommand | "" = ""> = Unwrap<
     {
       builder: SlashCommandSubcommandBuilder
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): Subcommand<Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
@@ -47,7 +47,7 @@ export type SubcommandWithOptions<
       builder: SlashCommandSubcommandBuilder
       options: Options
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): SubcommandWithOptions<Options, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
@@ -72,7 +72,7 @@ export type SubcommandGroup<
     {
       builder: SlashCommandSubcommandGroupBuilder
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
       ): SubcommandGroup<Keys, Subcommands>
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
