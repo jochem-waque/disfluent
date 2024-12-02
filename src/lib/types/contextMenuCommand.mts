@@ -4,9 +4,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
+  ApplicationCommandType,
   ApplicationIntegrationType,
   ContextMenuCommandBuilder,
   ContextMenuCommandInteraction,
+  ContextMenuCommandType,
   InteractionContextType,
   MessageContextMenuCommandInteraction,
   Permissions,
@@ -20,6 +22,12 @@ type InteractionMap = {
   message: MessageContextMenuCommandInteraction
 }
 
+type TypeMap = {
+  undefined: ContextMenuCommandType
+  user: ApplicationCommandType.User
+  message: ApplicationCommandType.Message
+}
+
 export type ContextMenuCommand<
   Type extends keyof InteractionMap | "undefined" = "undefined",
   Keys extends keyof ContextMenuCommand | "" = "",
@@ -27,7 +35,7 @@ export type ContextMenuCommand<
   Omit<
     {
       builder: ContextMenuCommandBuilder
-      type: Type
+      type: TypeMap[Type]
       user(): ContextMenuCommand<
         "user",
         Exclude<Keys, "type" | "handler"> | "user" | "message"

@@ -3,7 +3,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { ContextMenuCommandBuilder } from "discord.js"
+import { ApplicationCommandType, ContextMenuCommandBuilder } from "discord.js"
 import { ContextMenuCommand } from "../types/contextMenuCommand.mjs"
 
 export function contextMenuCommand(
@@ -14,7 +14,7 @@ export function contextMenuCommand(
     user() {
       return {
         ...this,
-        type: "user",
+        type: ApplicationCommandType.User,
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -50,7 +50,7 @@ export function contextMenuCommand(
     message() {
       return {
         ...this,
-        type: "message",
+        type: ApplicationCommandType.Message,
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
