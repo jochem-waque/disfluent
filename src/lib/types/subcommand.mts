@@ -10,7 +10,7 @@ import {
   SlashCommandSubcommandGroupBuilder,
 } from "discord.js"
 import { OptionValues, PartialOption } from "./option.mjs"
-import { InvertedPartialize, LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
+import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
 
 export type Subcommand<Keys extends keyof Subcommand | "" = ""> = Unwrap<
   Omit<
@@ -90,7 +90,7 @@ export type SubcommandGroup<
   >
 >
 
-export type PartialSubcommandGroup = InvertedPartialize<
+export type PartialSubcommandGroup = Pick<
   SubcommandGroup<"", true>,
   "builder" | "subcommands"
 >
