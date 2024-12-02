@@ -12,7 +12,10 @@ import {
   ChannelType,
   ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
+  ContextMenuCommandBuilder,
+  ContextMenuCommandInteraction,
   InteractionContextType,
+  MessageContextMenuCommandInteraction,
   Permissions,
   SlashCommandAttachmentOption,
   SlashCommandBooleanOption,
@@ -26,6 +29,7 @@ import {
   SlashCommandSubcommandBuilder,
   SlashCommandSubcommandGroupBuilder,
   SlashCommandUserOption,
+  UserContextMenuCommandInteraction,
 } from "discord.js"
 import { InternalError } from "./error.mjs"
 
@@ -419,6 +423,48 @@ type SlashCommandWithOptions<
     Handler extends true
       ? Exclude<Keys, "handle" | "autocomplete">
       : Keys | "handle" | "autocomplete"
+  >
+>
+
+type InteractionMap = {
+  undefined: ContextMenuCommandInteraction
+  user: UserContextMenuCommandInteraction
+  message: MessageContextMenuCommandInteraction
+}
+
+export type ContextMenuCommand<
+  Type extends keyof InteractionMap | "undefined" = "undefined",
+  Keys extends keyof ContextMenuCommand | "" = "",
+> = Unwrap<
+  Omit<
+    {
+      builder: ContextMenuCommandBuilder
+      type: Type
+      user(): ContextMenuCommand<
+        "user",
+        Exclude<Keys, "type" | "handler"> | "user" | "message"
+      >
+      message(): ContextMenuCommand<
+        "message",
+        Exclude<Keys, "type" | "handler"> | "user" | "message"
+      >
+      contexts(
+        context: InteractionContextType,
+        ...rest: InteractionContextType[]
+      ): ContextMenuCommand<Type, Keys | "contexts">
+      defaultMemberPermissions(
+        permissions: Permissions | bigint,
+      ): ContextMenuCommand<Type, Keys | "defaultMemberPermissions">
+      integrationTypes(
+        type: ApplicationIntegrationType,
+        ...rest: ApplicationIntegrationType[]
+      ): ContextMenuCommand<Type, Keys | "integrationTypes">
+      handler(
+        handler: (interaction: InteractionMap[Type]) => Promise<void>,
+      ): ContextMenuCommand<Type, Exclude<Keys, "handle"> | "handler">
+      handle(interaction: InteractionMap[Type]): Promise<void>
+    },
+    Keys
   >
 >
 
