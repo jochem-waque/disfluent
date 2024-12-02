@@ -14,7 +14,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 import { OptionValues, PartialOption } from "./option.mjs"
-import { PartialSubcommand, PartialSubcommandGroup } from "./subcommand.mjs"
+import { PartialSubcommand } from "./subcommand.mjs"
+import { PartialSubcommandGroup } from "./subcommandGroup.mjs"
 import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
 
 // TODO separate Handler into Subcommands and regular Handler

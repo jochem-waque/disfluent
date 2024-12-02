@@ -13,10 +13,10 @@ import { OptionValues, PartialOption } from "../types/option.mjs"
 import { SlashCommand } from "../types/slashCommand.mjs"
 import {
   PartialSubcommand,
-  PartialSubcommandGroup,
   Subcommand,
   SubcommandWithOptions,
 } from "../types/subcommand.mjs"
+import { PartialSubcommandGroup } from "../types/subcommandGroup.mjs"
 import { InternalError } from "./error.mjs"
 import { applyOptions, getOptionValue } from "./internal.mjs"
 
