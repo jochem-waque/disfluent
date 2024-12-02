@@ -7,33 +7,44 @@ import { LocaleString, SlashCommandSubcommandGroupBuilder } from "discord.js"
 import { PartialSubcommand } from "./subcommand.mjs"
 import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
 
-export type SubcommandGroup<
+export type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> =
+  Unwrap<
+    Omit<
+      {
+        builder: SlashCommandSubcommandGroupBuilder
+        nameLocalizations(
+          localizations: Partial<Record<LocaleString, Lowercase<string>>>,
+        ): SubcommandGroup<Keys | "nameLocalizations">
+        descriptionLocalizations(
+          localizations: Partial<Record<LocaleString, string>>,
+        ): SubcommandGroup<Keys | "descriptionLocalizations">
+        subcommands<T extends Record<string, PartialSubcommand>>(
+          subcommands: NotEmpty<LowercaseKeys<T>>,
+        ): SubcommandGroupWithSubcommands<Keys>
+      },
+      Keys
+    >
+  >
+
+export type SubcommandGroupWithSubcommands<
   Keys extends keyof SubcommandGroup | "" = "",
-  Subcommands extends boolean = false,
 > = Unwrap<
   Omit<
     {
       builder: SlashCommandSubcommandGroupBuilder
+      subcommands: Record<Lowercase<string>, PartialSubcommand>
       nameLocalizations(
         localizations: Partial<Record<LocaleString, Lowercase<string>>>,
-      ): SubcommandGroup<Keys, Subcommands>
+      ): SubcommandGroupWithSubcommands<Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<LocaleString, string>>,
-      ): SubcommandGroup<Keys, Subcommands>
-    } & (Subcommands extends true
-      ? {
-          subcommands: Record<Lowercase<string>, PartialSubcommand>
-        }
-      : {
-          subcommands<T extends Record<string, PartialSubcommand>>(
-            subcommands: NotEmpty<LowercaseKeys<T>>,
-          ): SubcommandGroup<Keys, true>
-        }),
+      ): SubcommandGroupWithSubcommands<Keys | "descriptionLocalizations">
+    },
     Keys
   >
 >
 
 export type PartialSubcommandGroup = Pick<
-  SubcommandGroup<"", true>,
+  SubcommandGroupWithSubcommands,
   "builder" | "subcommands"
 >
