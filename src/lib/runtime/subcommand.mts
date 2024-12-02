@@ -7,14 +7,13 @@ import {
   SlashCommandSubcommandBuilder,
   SlashCommandSubcommandGroupBuilder,
 } from "discord.js"
+import { OptionValues } from "../types/option.mjs"
 import {
-  OptionValues,
   PartialSubcommand,
   Subcommand,
   SubcommandGroup,
-  applyOptions,
-  getOptionValue,
-} from "./shared.mjs"
+} from "../types/subcommand.mjs"
+import { applyOptions, getOptionValue } from "./internal.mjs"
 
 export function subcommand(description: string): Subcommand {
   return {

@@ -9,18 +9,16 @@ import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js"
-import { InternalError } from "./error.mjs"
+import { OptionValues, PartialOption } from "../types/option.mjs"
+import { SlashCommand } from "../types/slashCommand.mjs"
 import {
-  applyOptions,
-  getOptionValue,
-  OptionValues,
-  PartialOption,
   PartialSubcommand,
   PartialSubcommandGroup,
-  SlashCommand,
   Subcommand,
   SubcommandWithOptions,
-} from "./shared.mjs"
+} from "../types/subcommand.mjs"
+import { InternalError } from "./error.mjs"
+import { applyOptions, getOptionValue } from "./internal.mjs"
 
 export function slashCommand(
   name: Lowercase<string>,

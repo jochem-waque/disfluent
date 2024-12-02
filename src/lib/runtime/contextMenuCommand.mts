@@ -4,7 +4,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { ContextMenuCommandBuilder } from "discord.js"
-import { ContextMenuCommand } from "./shared.mjs"
+import { ContextMenuCommand } from "../types/contextMenuCommand.mjs"
 
 export function contextMenuCommand(
   name: string,
