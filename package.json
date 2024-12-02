@@ -62,7 +62,6 @@
     ]
   },
   "tsup": {
-    "tsconfig": "./tsconfig.build.json",
     "entry": [
       "src/index.mts"
     ],
