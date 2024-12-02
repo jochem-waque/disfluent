@@ -8,6 +8,7 @@ import {
   AutocompleteInteraction,
   Channel,
   ChannelType,
+  LocaleString,
   SlashCommandAttachmentOption,
   SlashCommandBooleanOption,
   SlashCommandChannelOption,
@@ -48,6 +49,12 @@ export type Option<
     {
       builder: BuilderMap[Type]
       type: Type
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): Option<Type, Keys | "nameLocalizations", Autocomplete>
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): Option<Type, Keys | "descriptionLocalizations", Autocomplete>
       required(): Option<Type, Keys | "required", Autocomplete>
     } & (Type extends "integer" | "number" | "string"
       ? {
@@ -122,6 +129,12 @@ type OptionWithChannelTypes<
       builder: BuilderMap["channel"]
       type: "channel"
       channelTypes: Types
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): OptionWithChannelTypes<Types, Keys | "nameLocalizations">
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): OptionWithChannelTypes<Types, Keys | "descriptionLocalizations">
       required(): OptionWithChannelTypes<Types, Keys | "required">
     },
     Keys
@@ -137,6 +150,12 @@ type OptionWithChoices<
     {
       builder: BuilderMap[Type]
       type: Type
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): OptionWithChoices<Choices, Type, Keys | "nameLocalizations">
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): OptionWithChoices<Choices, Type, Keys | "descriptionLocalizations">
       required(): OptionWithChoices<Choices, Type, Keys | "required">
       choices: Choices
     } & (Type extends "integer" | "number"

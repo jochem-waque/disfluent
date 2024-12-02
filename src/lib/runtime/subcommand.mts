@@ -18,6 +18,14 @@ import { applyOptions, getOptionValue } from "./internal.mjs"
 export function subcommand(description: string): Subcommand {
   return {
     builder: new SlashCommandSubcommandBuilder().setDescription(description),
+    nameLocalizations(localizations) {
+      this.builder.setNameLocalizations(localizations)
+      return this
+    },
+    descriptionLocalizations(localizations) {
+      this.builder.setDescriptionLocalizations(localizations)
+      return this
+    },
     options(options) {
       applyOptions(this.builder, options)
 
@@ -36,12 +44,39 @@ export function subcommand(description: string): Subcommand {
               ) as OptionValues<typeof options>
               await handler(interaction, values)
             },
+            nameLocalizations(localizations) {
+              this.builder.setNameLocalizations(localizations)
+              return this
+            },
+            descriptionLocalizations(localizations) {
+              this.builder.setDescriptionLocalizations(localizations)
+              return this
+            },
           }
+        },
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
+        descriptionLocalizations(localizations) {
+          this.builder.setDescriptionLocalizations(localizations)
+          return this
         },
       }
     },
     handler(handler) {
-      return { ...this, handle: handler }
+      return {
+        ...this,
+        handle: handler,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
+        descriptionLocalizations(localizations) {
+          this.builder.setDescriptionLocalizations(localizations)
+          return this
+        },
+      }
     },
   }
 }
@@ -51,6 +86,14 @@ export function subcommandGroup(description: string): SubcommandGroup {
     builder: new SlashCommandSubcommandGroupBuilder().setDescription(
       description,
     ),
+    nameLocalizations(localizations) {
+      this.builder.setNameLocalizations(localizations)
+      return this
+    },
+    descriptionLocalizations(localizations) {
+      this.builder.setDescriptionLocalizations(localizations)
+      return this
+    },
     subcommands(subcommands: Record<Lowercase<string>, PartialSubcommand>) {
       for (const [name, { builder }] of Object.entries(subcommands)) {
         builder.setName(name)
@@ -60,6 +103,14 @@ export function subcommandGroup(description: string): SubcommandGroup {
       return {
         ...this,
         subcommands,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
+        descriptionLocalizations(localizations) {
+          this.builder.setDescriptionLocalizations(localizations)
+          return this
+        },
       }
     },
   }

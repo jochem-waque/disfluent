@@ -29,6 +29,14 @@ export function slashCommand(
     builder: new SlashCommandBuilder()
       .setName(name)
       .setDescription(description),
+    nameLocalizations(localizations) {
+      this.builder.setNameLocalizations(localizations)
+      return this
+    },
+    descriptionLocalizations(localizations) {
+      this.builder.setDescriptionLocalizations(localizations)
+      return this
+    },
     contexts(context, ...rest) {
       this.builder.setContexts(context, ...rest)
       return this
@@ -51,6 +59,14 @@ export function slashCommand(
       return {
         ...this,
         options,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
+        descriptionLocalizations(localizations) {
+          this.builder.setDescriptionLocalizations(localizations)
+          return this
+        },
         handler(handler) {
           return {
             ...this,
@@ -75,6 +91,14 @@ export function slashCommand(
                 ]),
               ) as OptionValues<typeof options>
               await handler(interaction, values)
+            },
+            nameLocalizations(localizations) {
+              this.builder.setNameLocalizations(localizations)
+              return this
+            },
+            descriptionLocalizations(localizations) {
+              this.builder.setDescriptionLocalizations(localizations)
+              return this
             },
             contexts(context, ...rest) {
               this.builder.setContexts(context, ...rest)
@@ -116,6 +140,14 @@ export function slashCommand(
       return {
         ...this,
         handle: handler,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
+        descriptionLocalizations(localizations) {
+          this.builder.setDescriptionLocalizations(localizations)
+          return this
+        },
         autocomplete() {
           throw new InternalError("command_not_autocompletable")
         },
@@ -263,6 +295,14 @@ export function slashCommand(
         ...this,
         handle,
         autocomplete,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
+        descriptionLocalizations(localizations) {
+          this.builder.setDescriptionLocalizations(localizations)
+          return this
+        },
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -434,6 +474,14 @@ export function slashCommand(
         ...this,
         handle,
         autocomplete,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
+        descriptionLocalizations(localizations) {
+          this.builder.setDescriptionLocalizations(localizations)
+          return this
+        },
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this

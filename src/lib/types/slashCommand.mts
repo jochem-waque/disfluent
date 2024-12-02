@@ -9,6 +9,7 @@ import {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
   InteractionContextType,
+  LocaleString,
   Permissions,
   SlashCommandBuilder,
 } from "discord.js"
@@ -25,6 +26,12 @@ export type SlashCommand<
     {
       builder: SlashCommandBuilder
       type: ApplicationCommandType.ChatInput
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SlashCommand<Keys | "nameLocalizations", Handler>
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SlashCommand<Keys | "descriptionLocalizations", Handler>
       contexts(
         context: InteractionContextType,
         ...rest: InteractionContextType[]
@@ -75,6 +82,16 @@ type SlashCommandWithOptions<
       builder: SlashCommandBuilder
       type: ApplicationCommandType.ChatInput
       options: Options
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SlashCommandWithOptions<Options, Keys | "nameLocalizations", Handler>
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SlashCommandWithOptions<
+        Options,
+        Keys | "descriptionLocalizations",
+        Handler
+      >
       contexts(
         context: InteractionContextType,
         ...rest: InteractionContextType[]

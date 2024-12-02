@@ -10,6 +10,7 @@ import {
   ContextMenuCommandInteraction,
   ContextMenuCommandType,
   InteractionContextType,
+  LocaleString,
   MessageContextMenuCommandInteraction,
   Permissions,
   UserContextMenuCommandInteraction,
@@ -36,6 +37,9 @@ export type ContextMenuCommand<
     {
       builder: ContextMenuCommandBuilder
       type: TypeMap[Type]
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): ContextMenuCommand<Type, Keys | "nameLocalizations">
       user(): ContextMenuCommand<
         "user",
         Exclude<Keys, "type" | "handler"> | "user" | "message"

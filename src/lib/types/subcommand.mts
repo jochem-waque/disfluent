@@ -5,6 +5,7 @@
  */
 import {
   ChatInputCommandInteraction,
+  LocaleString,
   SlashCommandSubcommandBuilder,
   SlashCommandSubcommandGroupBuilder,
 } from "discord.js"
@@ -18,6 +19,12 @@ export type Subcommand<
   Omit<
     {
       builder: SlashCommandSubcommandBuilder
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): Subcommand<Keys | "nameLocalizations", Handler>
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): Subcommand<Keys | "descriptionLocalizations", Handler>
       options<T extends Record<string, PartialOption>>(
         options: NotEmpty<LowercaseKeys<T>>,
       ): SubcommandWithOptions<
@@ -48,6 +55,16 @@ export type SubcommandWithOptions<
     {
       builder: SlashCommandSubcommandBuilder
       options: Options
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SubcommandWithOptions<Options, Keys | "nameLocalizations", Handler>
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SubcommandWithOptions<
+        Options,
+        Keys | "descriptionLocalizations",
+        Handler
+      >
       handler: (
         handler: (
           interaction: ChatInputCommandInteraction,
@@ -67,6 +84,12 @@ export type SubcommandGroup<
   Omit<
     {
       builder: SlashCommandSubcommandGroupBuilder
+      nameLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SubcommandGroup<Keys, Subcommands>
+      descriptionLocalizations(
+        localizations: Partial<Record<LocaleString, string>>,
+      ): SubcommandGroup<Keys, Subcommands>
     } & (Subcommands extends true
       ? {
           subcommands: Record<Lowercase<string>, PartialSubcommand>

@@ -11,10 +11,18 @@ export function contextMenuCommand(
 ): ContextMenuCommand<"undefined", "handle" | "handler" | "type"> {
   return {
     builder: new ContextMenuCommandBuilder().setName(name),
+    nameLocalizations(localizations) {
+      this.builder.setNameLocalizations(localizations)
+      return this
+    },
     user() {
       return {
         ...this,
         type: ApplicationCommandType.User,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -30,6 +38,11 @@ export function contextMenuCommand(
         handler(handler) {
           return {
             ...this,
+            handle: handler,
+            nameLocalizations(localizations) {
+              this.builder.setNameLocalizations(localizations)
+              return this
+            },
             contexts(context, ...rest) {
               this.builder.setContexts(context, ...rest)
               return this
@@ -42,7 +55,6 @@ export function contextMenuCommand(
               this.builder.setIntegrationTypes(type, ...rest)
               return this
             },
-            handle: handler,
           }
         },
       }
@@ -51,6 +63,10 @@ export function contextMenuCommand(
       return {
         ...this,
         type: ApplicationCommandType.Message,
+        nameLocalizations(localizations) {
+          this.builder.setNameLocalizations(localizations)
+          return this
+        },
         contexts(context, ...rest) {
           this.builder.setContexts(context, ...rest)
           return this
@@ -66,6 +82,11 @@ export function contextMenuCommand(
         handler(handler) {
           return {
             ...this,
+            handle: handler,
+            nameLocalizations(localizations) {
+              this.builder.setNameLocalizations(localizations)
+              return this
+            },
             contexts(context, ...rest) {
               this.builder.setContexts(context, ...rest)
               return this
@@ -78,7 +99,6 @@ export function contextMenuCommand(
               this.builder.setIntegrationTypes(type, ...rest)
               return this
             },
-            handle: handler,
           }
         },
       }
