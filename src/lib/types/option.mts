@@ -163,7 +163,7 @@ export type PartialOption<
 
 type PartialOptionWithChannelTypes<
   Types extends readonly ApplicationCommandOptionAllowedChannelTypes[],
-> = Pick<OptionWithChannelTypes<Types>, "builder" | "type">
+> = Pick<OptionWithChannelTypes<Types>, "builder" | "type" | "channelTypes">
 
 type PartialOptionWithChoices<
   Choices extends Record<string, OptionTypeMap[Type]>,
