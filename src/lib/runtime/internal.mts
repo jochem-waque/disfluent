@@ -82,38 +82,51 @@ export function applyOptions(
   for (const [name, option] of Object.entries(options)) {
     option.builder.setName(name)
 
-    // TODO this could be better
     switch (option.type) {
       case "string":
-        builder.addStringOption((option as PartialOption<"string">).builder)
+        builder.addStringOption(
+          (option as PartialOption<typeof option.type>).builder,
+        )
         break
       case "number":
-        builder.addNumberOption((option as PartialOption<"number">).builder)
+        builder.addNumberOption(
+          (option as PartialOption<typeof option.type>).builder,
+        )
         break
       case "boolean":
-        builder.addBooleanOption((option as PartialOption<"boolean">).builder)
+        builder.addBooleanOption(
+          (option as PartialOption<typeof option.type>).builder,
+        )
         break
       case "integer":
-        builder.addIntegerOption((option as PartialOption<"integer">).builder)
+        builder.addIntegerOption(
+          (option as PartialOption<typeof option.type>).builder,
+        )
         break
       case "channel":
-        builder.addChannelOption((option as PartialOption<"channel">).builder)
+        builder.addChannelOption(
+          (option as PartialOption<typeof option.type>).builder,
+        )
         break
       case "attachment":
         builder.addAttachmentOption(
-          (option as PartialOption<"attachment">).builder,
+          (option as PartialOption<typeof option.type>).builder,
         )
         break
       case "mentionable":
         builder.addMentionableOption(
-          (option as PartialOption<"mentionable">).builder,
+          (option as PartialOption<typeof option.type>).builder,
         )
         break
       case "role":
-        builder.addRoleOption((option as PartialOption<"role">).builder)
+        builder.addRoleOption(
+          (option as PartialOption<typeof option.type>).builder,
+        )
         break
       case "user":
-        builder.addUserOption((option as PartialOption<"user">).builder)
+        builder.addUserOption(
+          (option as PartialOption<typeof option.type>).builder,
+        )
         break
       default:
         throw new InternalError("unsupported_option_type")
