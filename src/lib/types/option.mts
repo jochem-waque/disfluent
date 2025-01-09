@@ -8,7 +8,7 @@ import {
   AutocompleteInteraction,
   Channel,
   ChannelType,
-  LocaleString,
+  Locale,
   SlashCommandAttachmentOption,
   SlashCommandBooleanOption,
   SlashCommandChannelOption,
@@ -65,10 +65,10 @@ export type Option<
       builder: BuilderMap[Type]
       type: Type
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
+        localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): Option<Type, Keys | "nameLocalizations">
       descriptionLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<Locale, string>>,
       ): Option<Type, Keys | "descriptionLocalizations">
       required(): Option<Type, Keys | "required">
       choices<const T extends Record<string, OptionTypeMap[Type]>>(
@@ -109,10 +109,10 @@ type OptionWithChannelTypes<
       type: "channel"
       channelTypes: Types
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
+        localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): OptionWithChannelTypes<Types, Keys | "nameLocalizations">
       descriptionLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<Locale, string>>,
       ): OptionWithChannelTypes<Types, Keys | "descriptionLocalizations">
       required(): OptionWithChannelTypes<Types, Keys | "required">
     },
@@ -131,10 +131,10 @@ type OptionWithChoices<
       type: Type
       choices: Choices
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
+        localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): OptionWithChoices<Choices, Type, Keys | "nameLocalizations">
       descriptionLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<Locale, string>>,
       ): OptionWithChoices<Choices, Type, Keys | "descriptionLocalizations">
       required(): OptionWithChoices<Choices, Type, Keys | "required">
       maxValue(
