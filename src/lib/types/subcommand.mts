@@ -5,7 +5,7 @@
  */
 import {
   ChatInputCommandInteraction,
-  LocaleString,
+  Locale,
   SlashCommandSubcommandBuilder,
 } from "discord.js"
 import { OptionValues, PartialOption } from "./option.mjs"
@@ -16,10 +16,10 @@ export type Subcommand<Keys extends keyof Subcommand | "" = ""> = Unwrap<
     {
       builder: SlashCommandSubcommandBuilder
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
+        localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): Subcommand<Keys | "nameLocalizations">
       descriptionLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<Locale, string>>,
       ): Subcommand<Keys | "descriptionLocalizations">
       options<T extends Record<string, PartialOption>>(
         options: NotEmpty<LowercaseKeys<T>>,
@@ -46,10 +46,10 @@ export type SubcommandWithOptions<
       builder: SlashCommandSubcommandBuilder
       options: Options
       nameLocalizations(
-        localizations: Partial<Record<LocaleString, Lowercase<string>>>,
+        localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): SubcommandWithOptions<Options, Keys | "nameLocalizations">
       descriptionLocalizations(
-        localizations: Partial<Record<LocaleString, string>>,
+        localizations: Partial<Record<Locale, string>>,
       ): SubcommandWithOptions<Options, Keys | "descriptionLocalizations">
       handler: (
         handler: (
