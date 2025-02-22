@@ -32,7 +32,7 @@
       "onFail": "warn"
     }
   },
-  "dependencies": {
+  "peerDependencies": {
     "discord.js": "^14.18.0"
   },
   "devDependencies": {
@@ -48,10 +48,6 @@
     "tsup": "^8.3.6",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.24.1"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.9",
-    "zlib-sync": "^0.1.9"
   },
   "prettier": {
     "semi": false,
