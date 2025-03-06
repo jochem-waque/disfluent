@@ -4,6 +4,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export * from "./runtime/contextMenuCommand.mjs"
+export * from "./runtime/error.mjs"
 export * from "./runtime/option.mjs"
 export * from "./runtime/slashCommand.mjs"
 export * from "./runtime/subcommand.mjs"
