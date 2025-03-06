@@ -7,9 +7,11 @@
 import {
   ApplicationCommandType,
   AutocompleteInteraction,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   ContextMenuCommandBuilder,
+  MessageContextMenuCommandInteraction,
   SlashCommandBuilder,
+  UserContextMenuCommandInteraction,
 } from "discord.js"
 import { CompletedEventHandler } from "./event.mjs"
 import { Unwrap } from "./util.mjs"
@@ -31,6 +33,11 @@ export type CompletedCommand = {
   name: string
   builder: SlashCommandBuilder | ContextMenuCommandBuilder
   type: ApplicationCommandType
-  handle: (interaction: CommandInteraction) => Promise<void>
+  handle: (
+    interaction:
+      | ChatInputCommandInteraction
+      | UserContextMenuCommandInteraction
+      | MessageContextMenuCommandInteraction,
+  ) => Promise<void>
   autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
 }
