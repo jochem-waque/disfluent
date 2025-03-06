@@ -4,16 +4,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { CompletedCommand, Module } from "../external.mjs"
+import {
+  CompletedCommand,
+  CompletedEventHandler,
+  Module,
+} from "../external.mjs"
 
 export function module(name: string): Module {
   const commands = new Map<string, CompletedCommand>()
+  const events: CompletedEventHandler[] = []
 
   return {
     name,
     commands,
+    events,
     addCommand(command) {
       commands.set(command.name, command)
+      return this
+    },
+    addEventHandler(handler) {
+      events.push(handler)
       return this
     },
   }

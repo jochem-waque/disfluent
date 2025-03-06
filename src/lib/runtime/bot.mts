@@ -70,6 +70,22 @@ export function bot(options: ClientOptions, register?: true): Bot {
         commands.set(command.name, command)
       }
 
+      for (const handler of module.events) {
+        const wrapped = (...params: Parameters<typeof handler.handle>) => {
+          const promise = handler.handle(...params)
+          if (promise) {
+            promise.catch(console.error)
+          }
+        }
+
+        if (handler.once === true) {
+          client.once(handler.event, wrapped)
+          continue
+        }
+
+        client.on(handler.event, wrapped)
+      }
+
       return this
     },
   }

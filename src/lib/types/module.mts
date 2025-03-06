@@ -11,6 +11,7 @@ import {
   ContextMenuCommandBuilder,
   SlashCommandBuilder,
 } from "discord.js"
+import { CompletedEventHandler } from "./event.mjs"
 import { Unwrap } from "./util.mjs"
 
 export type Module<Keys extends keyof Module | "" = ""> = Unwrap<
@@ -18,7 +19,9 @@ export type Module<Keys extends keyof Module | "" = ""> = Unwrap<
     {
       readonly name: string
       readonly commands: ReadonlyMap<string, CompletedCommand>
+      readonly events: readonly CompletedEventHandler[]
       addCommand(command: CompletedCommand): Module<Keys>
+      addEventHandler(handler: CompletedEventHandler): Module<Keys>
     },
     Keys
   >
