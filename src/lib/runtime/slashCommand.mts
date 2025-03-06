@@ -25,6 +25,7 @@ export function slashCommand(
   description: string,
 ): SlashCommand<"handle" | "autocomplete"> {
   return {
+    name,
     type: ApplicationCommandType.ChatInput,
     builder: new SlashCommandBuilder()
       .setName(name)

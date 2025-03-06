@@ -10,3 +10,4 @@ export type ErrorCode =
   | "subcommand_group_not_found"
   | "subcommand_not_found"
   | "unsupported_option_type"
+  | "could_not_register"

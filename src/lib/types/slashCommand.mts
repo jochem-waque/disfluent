@@ -22,6 +22,7 @@ import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
 export type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Unwrap<
   Omit<
     {
+      name: string
       builder: SlashCommandBuilder
       type: ApplicationCommandType.ChatInput
       nameLocalizations(
@@ -86,6 +87,7 @@ type SlashCommandWithOptions<
 > = Unwrap<
   Omit<
     {
+      name: string
       builder: SlashCommandBuilder
       type: ApplicationCommandType.ChatInput
       options: Options
