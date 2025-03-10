@@ -6,10 +6,18 @@
 
 import { Client } from "discord.js"
 import { Module } from "./module.mjs"
+import { Unwrap } from "./util.mjs"
 
-export type Bot = {
-  readonly client: Client
-  errorHandler(handler: (error: unknown) => void): Bot
-  addModule(module: Module): Bot
-  register(): Bot
-}
+export type Bot<Keys extends keyof Bot | "" = ""> = Unwrap<
+  Omit<
+    {
+      readonly client: Client
+      addModule(module: Module): Bot<Keys>
+      errorHandler(
+        handler: (error: unknown) => void,
+      ): Bot<Keys | "errorHandler">
+      register(): Bot<Keys | "register">
+    },
+    Keys
+  >
+>
