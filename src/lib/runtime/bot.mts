@@ -18,6 +18,8 @@ export function bot(options: ClientOptions): Bot {
   const commands = new Map<string, CompletedCommand>()
   const registeredCommands = new Map<string, CompletedCommand>()
 
+  let errorHandler = console.error
+
   client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
       const command = registeredCommands.get(interaction.commandId)
@@ -25,7 +27,7 @@ export function bot(options: ClientOptions): Bot {
         return
       }
 
-      command.handle(interaction as never).catch(console.error)
+      command.handle(interaction as never).catch(errorHandler)
 
       return
     }
@@ -36,7 +38,7 @@ export function bot(options: ClientOptions): Bot {
         return
       }
 
-      command.autocomplete(interaction).catch(console.error)
+      command.autocomplete(interaction).catch(errorHandler)
       return
     }
   })
@@ -52,7 +54,7 @@ export function bot(options: ClientOptions): Bot {
         const wrapped = (...params: Parameters<typeof handler.handle>) => {
           const promise = handler.handle(...params)
           if (promise) {
-            promise.catch(console.error)
+            promise.catch(errorHandler)
           }
         }
 
@@ -64,6 +66,10 @@ export function bot(options: ClientOptions): Bot {
         client.on(handler.event, wrapped)
       }
 
+      return this
+    },
+    errorHandler(handler) {
+      errorHandler = handler
       return this
     },
     register() {
@@ -85,7 +91,7 @@ export function bot(options: ClientOptions): Bot {
               registeredCommands.set(registration.id, command)
             }
           })
-          .catch(console.error)
+          .catch(errorHandler)
       })
       return this
     },

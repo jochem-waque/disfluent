@@ -9,6 +9,7 @@ import { Module } from "./module.mjs"
 
 export type Bot = {
   readonly client: Client
+  errorHandler(handler: (error: unknown) => void): Bot
   addModule(module: Module): Bot
   register(): Bot
 }
