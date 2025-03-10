@@ -21,17 +21,18 @@ export function bot(options: ClientOptions, register?: true): Bot {
   client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
       const command = registeredCommands.get(interaction.commandId)
-      if (!command) {
+      if (!command || command.type !== interaction.commandType) {
         return
       }
 
-      command.handle(interaction).catch(console.error)
+      command.handle(interaction as never).catch(console.error)
+
       return
     }
 
     if (interaction.isAutocomplete()) {
       const command = registeredCommands.get(interaction.commandId)
-      if (!command) {
+      if (!command || !("autocomplete" in command)) {
         return
       }
 

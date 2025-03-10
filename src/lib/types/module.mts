@@ -31,13 +31,23 @@ export type Module<Keys extends keyof Module | "" = ""> = Unwrap<
 
 export type CompletedCommand = {
   name: string
-  builder: SlashCommandBuilder | ContextMenuCommandBuilder
-  type: ApplicationCommandType
-  handle: (
-    interaction:
-      | ChatInputCommandInteraction
-      | UserContextMenuCommandInteraction
-      | MessageContextMenuCommandInteraction,
-  ) => Promise<void>
-  autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
-}
+} & (
+  | {
+      builder: SlashCommandBuilder
+      type: ApplicationCommandType.ChatInput
+      handle: (interaction: ChatInputCommandInteraction) => Promise<void>
+      autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
+    }
+  | {
+      builder: ContextMenuCommandBuilder
+      type: ApplicationCommandType.User
+      handle: (interaction: UserContextMenuCommandInteraction) => Promise<void>
+    }
+  | {
+      builder: ContextMenuCommandBuilder
+      type: ApplicationCommandType.Message
+      handle: (
+        interaction: MessageContextMenuCommandInteraction,
+      ) => Promise<void>
+    }
+)
