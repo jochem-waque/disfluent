@@ -27,4 +27,4 @@ export type EventHandler<
 export type CompletedEventHandler = EventHandler<
   keyof ClientEvents,
   "handler" | "once"
-> & { once: EventHandler<keyof ClientEvents>["once"] | true }
+> & { once: unknown }
