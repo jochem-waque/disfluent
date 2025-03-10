@@ -35,6 +35,7 @@ export type ContextMenuCommand<
 > = Unwrap<
   Omit<
     {
+      name: string
       builder: ContextMenuCommandBuilder
       type: TypeMap[Type]
       nameLocalizations(

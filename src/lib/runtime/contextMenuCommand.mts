@@ -10,6 +10,7 @@ export function contextMenuCommand(
   name: string,
 ): ContextMenuCommand<"undefined", "handle" | "handler" | "type"> {
   return {
+    name,
     builder: new ContextMenuCommandBuilder().setName(name),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
