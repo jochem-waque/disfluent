@@ -12,7 +12,7 @@ import {
 } from "discord.js"
 import { Bot, CompletedCommand, InternalError } from "../external.mjs"
 
-export function bot(options: ClientOptions, register?: true): Bot {
+export function bot(options: ClientOptions): Bot {
   const client = new Client(options)
 
   const commands = new Map<string, CompletedCommand>()
@@ -41,29 +41,6 @@ export function bot(options: ClientOptions, register?: true): Bot {
     }
   })
 
-  if (register) {
-    client.once("ready", (client) => {
-      client.rest
-        .put(Routes.applicationCommands(client.application.id), {
-          body: [...commands.values()],
-        })
-        .then((data) => {
-          for (const registration of data as RESTPutAPIApplicationCommandsResult) {
-            const command = commands.get(registration.name)
-            if (!command) {
-              throw new InternalError(
-                "could_not_register",
-                `Could not correctly register command "${registration.name} (${registration.id})"`,
-              )
-            }
-
-            registeredCommands.set(registration.id, command)
-          }
-        })
-        .catch(console.error)
-    })
-  }
-
   return {
     client,
     addModule(module) {
@@ -87,6 +64,29 @@ export function bot(options: ClientOptions, register?: true): Bot {
         client.on(handler.event, wrapped)
       }
 
+      return this
+    },
+    register() {
+      client.once("ready", (client) => {
+        client.rest
+          .put(Routes.applicationCommands(client.application.id), {
+            body: [...commands.values()],
+          })
+          .then((data) => {
+            for (const registration of data as RESTPutAPIApplicationCommandsResult) {
+              const command = commands.get(registration.name)
+              if (!command) {
+                throw new InternalError(
+                  "could_not_register",
+                  `Could not correctly register command "${registration.name} (${registration.id})"`,
+                )
+              }
+
+              registeredCommands.set(registration.id, command)
+            }
+          })
+          .catch(console.error)
+      })
       return this
     },
   }

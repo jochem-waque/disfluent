@@ -10,4 +10,5 @@ import { Module } from "./module.mjs"
 export type Bot = {
   readonly client: Client
   addModule(module: Module): Bot
+  register(): Bot
 }
