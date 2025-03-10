@@ -76,7 +76,9 @@ export function bot(options: ClientOptions): Bot {
       client.once("ready", (client) => {
         client.rest
           .put(Routes.applicationCommands(client.application.id), {
-            body: [...commands.values()],
+            body: [...commands.values()].map((command) =>
+              command.builder.toJSON(),
+            ),
           })
           .then((data) => {
             for (const registration of data as RESTPutAPIApplicationCommandsResult) {
