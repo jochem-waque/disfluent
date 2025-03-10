@@ -14,7 +14,7 @@ d.slashCommand("ping", "Respond with pong").handler(async (interaction) => {
 ```
 
 More likely than not though, you'll want to add subcommands, options, choices
-and autocomplete, which are also all supported of course:
+and autocomplete, which are all supported, of course:
 
 ```ts
 d.slashCommand("examples", "Example commands")
@@ -42,7 +42,7 @@ d.slashCommand("examples", "Example commands")
   })
 ```
 
-In the second example, the type of the deconstructed parameter is inferred as
+In the second example, the type of the deconstructed parameter is inferred as:
 
 ```ts
 {
@@ -55,20 +55,10 @@ In the second example, the type of the deconstructed parameter is inferred as
 
 ## Why?
 
-During the almost three years I've spent developing Discord bots for my friends
-— some of which have been used for servers with thousands of members — I've
-found myself wondering whether there's a better, more type-safe way I can define
-discord.js commands, as the built-in command builders require error-prone code
-duplication. One of my previous approaches used a syntax that was very similar
-to the JSON of Discord commands, which required a lot of typing and had very
-poor autocomplete. This new iteration provides an API that will feel familiar to
-those who have worked with Zod, Drizzle or similar fluent APIs.
-
-The development of this project started as part challenge (how can I implement
-the type inferencing I want?), part me wanting to separate my code into
-installable packages so I don't have to copy-paste the same code into a dozen
-repositories, and part genuine interest in wanting to improve my development
-experience with discord.js commands and reducing the mistakes that can be made.
+Because Discord.js's command builders just aren't good enough. Defining your
+commands in one place and repeating all of the option names and types in another
+is prone to errors and completely unnecessary. I already solved this problem
+over a year ago. Now, I've solved it again, but more terse and elegant.
 
 ## License
 
