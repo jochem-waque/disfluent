@@ -4,6 +4,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
+  SharedNameAndDescription,
   SlashCommandAttachmentOption,
   SlashCommandBooleanOption,
   SlashCommandChannelOption,
@@ -14,14 +15,65 @@ import {
   SlashCommandStringOption,
   SlashCommandUserOption,
 } from "discord.js"
-import { DefaultKeys, Option } from "../types/option.mjs"
+import { OptionSelector } from "../types/option.mjs"
 
-export function attachment(
-  description: string,
-): Option<"attachment", DefaultKeys["standard"]> {
+export function option(description: string): OptionSelector {
+  const builder = new SharedNameAndDescription().setDescription(description)
+
+  return {
+    attachment() {
+      return attachment(builder)
+    },
+    boolean() {
+      return boolean(builder)
+    },
+    channel() {
+      return channel(builder)
+    },
+    integer() {
+      return integer(builder)
+    },
+    mentionable() {
+      return mentionable(builder)
+    },
+    number() {
+      return number(builder)
+    },
+    role() {
+      return role(builder)
+    },
+    string() {
+      return string(builder)
+    },
+    user() {
+      return user(builder)
+    },
+  }
+}
+
+function extendBuilder<Builder extends SharedNameAndDescription>(
+  ext: Builder,
+  base: SharedNameAndDescription,
+) {
+  ext.setDescription(base.description)
+
+  if (base.name_localizations) {
+    ext.setNameLocalizations(base.name_localizations)
+  }
+
+  if (base.description_localizations) {
+    ext.setDescriptionLocalizations(base.description_localizations)
+  }
+
+  return ext
+}
+
+function attachment(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["attachment"]> {
   return {
     type: "attachment",
-    builder: new SlashCommandAttachmentOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandAttachmentOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -37,12 +89,12 @@ export function attachment(
   }
 }
 
-export function boolean(
-  description: string,
-): Option<"boolean", DefaultKeys["standard"]> {
+function boolean(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["boolean"]> {
   return {
     type: "boolean",
-    builder: new SlashCommandBooleanOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandBooleanOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -58,12 +110,12 @@ export function boolean(
   }
 }
 
-export function channel(
-  description: string,
-): Option<"channel", DefaultKeys["channel"]> {
+function channel(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["channel"]> {
   return {
     type: "channel",
-    builder: new SlashCommandChannelOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandChannelOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -98,12 +150,12 @@ export function channel(
   }
 }
 
-export function integer(
-  description: string,
-): Option<"integer", DefaultKeys["numeric"]> {
+function integer(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["integer"]> {
   return {
     type: "integer",
-    builder: new SlashCommandIntegerOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandIntegerOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -191,12 +243,12 @@ export function integer(
   }
 }
 
-export function mentionable(
-  description: string,
-): Option<"mentionable", DefaultKeys["standard"]> {
+function mentionable(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["mentionable"]> {
   return {
     type: "mentionable",
-    builder: new SlashCommandMentionableOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandMentionableOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -212,12 +264,12 @@ export function mentionable(
   }
 }
 
-export function number(
-  description: string,
-): Option<"number", DefaultKeys["numeric"]> {
+function number(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["number"]> {
   return {
     type: "number",
-    builder: new SlashCommandNumberOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandNumberOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -305,12 +357,12 @@ export function number(
   }
 }
 
-export function role(
-  description: string,
-): Option<"role", DefaultKeys["standard"]> {
+function role(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["role"]> {
   return {
     type: "role",
-    builder: new SlashCommandRoleOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandRoleOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -326,12 +378,12 @@ export function role(
   }
 }
 
-export function string(
-  description: string,
-): Option<"string", DefaultKeys["text"]> {
+function string(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["string"]> {
   return {
     type: "string",
-    builder: new SlashCommandStringOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandStringOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this
@@ -419,12 +471,12 @@ export function string(
   }
 }
 
-export function user(
-  description: string,
-): Option<"user", DefaultKeys["standard"]> {
+function user(
+  base: SharedNameAndDescription,
+): ReturnType<OptionSelector["user"]> {
   return {
     type: "user",
-    builder: new SlashCommandUserOption().setDescription(description),
+    builder: extendBuilder(new SlashCommandUserOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
       return this

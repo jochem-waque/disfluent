@@ -56,6 +56,18 @@ export type DefaultKeys = {
   numeric: "handleAutocomplete" | "maxLength" | "minLength" | "channelTypes"
 }
 
+export type OptionSelector = {
+  attachment(): Option<"attachment", DefaultKeys["standard"]>
+  boolean(): Option<"boolean", DefaultKeys["standard"]>
+  channel(): Option<"channel", DefaultKeys["channel"]>
+  integer(): Option<"integer", DefaultKeys["numeric"]>
+  mentionable(): Option<"mentionable", DefaultKeys["standard"]>
+  number(): Option<"number", DefaultKeys["numeric"]>
+  role(): Option<"role", DefaultKeys["standard"]>
+  string(): Option<"string", DefaultKeys["text"]>
+  user(): Option<"user", DefaultKeys["standard"]>
+}
+
 export type Option<
   Type extends keyof OptionTypeMap = keyof OptionTypeMap,
   Keys extends keyof Option | "" = "",
