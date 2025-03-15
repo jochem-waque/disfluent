@@ -9,7 +9,8 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "tsup"
+    "prepack": "pnpm test && tsup",
+    "test": "tsc && node --test --experimental-strip-types"
   },
   "bugs": {
     "url": "https://github.com/Jochem-W/fluent-commands/issues"
