@@ -13,8 +13,8 @@ import {
   SlashCommandBuilder,
   UserContextMenuCommandInteraction,
 } from "discord.js"
-import { CompletedEventHandler } from "./event.mjs"
-import { Unwrap } from "./util.mjs"
+import type { CompletedEventHandler } from "./event.mts"
+import type { Unwrap } from "./util.mts"
 
 export type Module<Keys extends keyof Module | "" = ""> = Unwrap<
   Omit<

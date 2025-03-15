@@ -4,9 +4,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { SlashCommandSubcommandBuilder } from "discord.js"
-import { OptionValues } from "../types/option.mjs"
-import { Subcommand } from "../types/subcommand.mjs"
-import { applyOptions, getOptionValue } from "./internal.mjs"
+import type { OptionValues } from "../types/option.mts"
+import type { Subcommand } from "../types/subcommand.mts"
+import { applyOptions, getOptionValue } from "./internal.mts"
 
 export function subcommand(description: string): Subcommand<"handle"> {
   return {

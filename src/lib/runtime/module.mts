@@ -4,11 +4,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
+import type {
   CompletedCommand,
   CompletedEventHandler,
   Module,
-} from "../external.mjs"
+} from "../external.mts"
 
 export function module(name: string): Module {
   const commands = new Map<string, CompletedCommand>()

@@ -3,7 +3,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { ErrorCode } from "../types/error.mjs"
+import type { ErrorCode } from "../types/error.mts"
 
 export class InternalError extends Error {
   public code: ErrorCode

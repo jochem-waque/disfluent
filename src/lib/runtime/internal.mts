@@ -8,9 +8,9 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js"
-import { OptionTypeMap } from "../types/internal.mjs"
-import { OptionValue, PartialOption } from "../types/option.mjs"
-import { InternalError } from "./error.mjs"
+import type { OptionTypeMap } from "../types/internal.mts"
+import type { OptionValue, PartialOption } from "../types/option.mts"
+import { InternalError } from "./error.mts"
 
 export function getOptionValue<
   Type extends keyof OptionTypeMap,

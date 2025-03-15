@@ -8,8 +8,8 @@ import {
   Locale,
   SlashCommandSubcommandBuilder,
 } from "discord.js"
-import { OptionValues, PartialOption } from "./option.mjs"
-import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
+import type { OptionValues, PartialOption } from "./option.mts"
+import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 
 export type Subcommand<Keys extends keyof Subcommand | "" = ""> = Unwrap<
   Omit<

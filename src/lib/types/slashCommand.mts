@@ -10,13 +10,13 @@ import {
   ChatInputCommandInteraction,
   InteractionContextType,
   Locale,
-  Permissions,
+  type Permissions,
   SlashCommandBuilder,
 } from "discord.js"
-import { OptionValues, PartialOption } from "./option.mjs"
-import { PartialSubcommand } from "./subcommand.mjs"
-import { PartialSubcommandGroup } from "./subcommandGroup.mjs"
-import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
+import type { OptionValues, PartialOption } from "./option.mts"
+import type { PartialSubcommand } from "./subcommand.mts"
+import type { PartialSubcommandGroup } from "./subcommandGroup.mts"
+import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 
 // TODO separate Handler into Subcommands and regular Handler
 export type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Unwrap<

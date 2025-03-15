@@ -4,13 +4,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  Client,
+import type {
   ClientOptions,
   RESTPutAPIApplicationCommandsResult,
-  Routes,
 } from "discord.js"
-import { Bot, CompletedCommand, InternalError } from "../external.mjs"
+import { Client, Routes } from "discord.js"
+import { type Bot, type CompletedCommand, InternalError } from "../external.mts"
 
 export function bot(options: ClientOptions): Bot {
   const client = new Client(options)

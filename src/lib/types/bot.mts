@@ -5,8 +5,8 @@
  */
 
 import { Client } from "discord.js"
-import { Module } from "./module.mjs"
-import { Unwrap } from "./util.mjs"
+import type { Module } from "./module.mts"
+import type { Unwrap } from "./util.mts"
 
 export type Bot<Keys extends keyof Bot | "" = ""> = Unwrap<
   Omit<

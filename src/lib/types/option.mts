@@ -4,9 +4,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
-  ApplicationCommandOptionAllowedChannelTypes,
+  type ApplicationCommandOptionAllowedChannelTypes,
   AutocompleteInteraction,
-  Channel,
+  type Channel,
   ChannelType,
   Locale,
   SlashCommandAttachmentOption,
@@ -19,8 +19,8 @@ import {
   SlashCommandStringOption,
   SlashCommandUserOption,
 } from "discord.js"
-import { OptionTypeMap } from "./internal.mjs"
-import { UndefinedToOptional, Unwrap } from "./util.mjs"
+import type { OptionTypeMap } from "./internal.mts"
+import type { UndefinedToOptional, Unwrap } from "./util.mts"
 
 type BuilderMap = {
   attachment: SlashCommandAttachmentOption

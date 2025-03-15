@@ -4,8 +4,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ClientEvents } from "discord.js"
-import { EventHandler } from "../external.mjs"
+import type { ClientEvents } from "discord.js"
+import type { EventHandler } from "../external.mts"
 
 export function event<Event extends keyof ClientEvents>(
   event: Event,

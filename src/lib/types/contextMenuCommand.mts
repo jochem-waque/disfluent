@@ -8,14 +8,14 @@ import {
   ApplicationIntegrationType,
   ContextMenuCommandBuilder,
   ContextMenuCommandInteraction,
-  ContextMenuCommandType,
+  type ContextMenuCommandType,
   InteractionContextType,
   Locale,
   MessageContextMenuCommandInteraction,
-  Permissions,
+  type Permissions,
   UserContextMenuCommandInteraction,
 } from "discord.js"
-import { Unwrap } from "./util.mjs"
+import type { Unwrap } from "./util.mts"
 
 type InteractionMap = {
   undefined: ContextMenuCommandInteraction

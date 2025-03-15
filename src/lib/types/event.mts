@@ -4,8 +4,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ClientEvents } from "discord.js"
-import { Unwrap } from "./util.mjs"
+import type { ClientEvents } from "discord.js"
+import type { Unwrap } from "./util.mts"
 
 export type EventHandler<
   Event extends keyof ClientEvents,

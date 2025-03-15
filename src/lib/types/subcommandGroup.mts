@@ -4,8 +4,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { Locale, SlashCommandSubcommandGroupBuilder } from "discord.js"
-import { PartialSubcommand } from "./subcommand.mjs"
-import { LowercaseKeys, NotEmpty, Unwrap } from "./util.mjs"
+import type { PartialSubcommand } from "./subcommand.mts"
+import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 
 export type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> =
   Unwrap<

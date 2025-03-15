@@ -15,7 +15,7 @@ import {
   SlashCommandStringOption,
   SlashCommandUserOption,
 } from "discord.js"
-import { OptionSelector } from "../types/option.mjs"
+import type { OptionSelector } from "../types/option.mts"
 
 export function option(description: string): OptionSelector {
   const builder = new SharedNameAndDescription().setDescription(description)

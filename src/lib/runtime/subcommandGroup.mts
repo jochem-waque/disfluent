@@ -4,8 +4,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { SlashCommandSubcommandGroupBuilder } from "discord.js"
-import { PartialSubcommand } from "../types/subcommand.mjs"
-import { SubcommandGroup } from "../types/subcommandGroup.mjs"
+import type { PartialSubcommand } from "../types/subcommand.mts"
+import type { SubcommandGroup } from "../types/subcommandGroup.mts"
 
 export function subcommandGroup(description: string): SubcommandGroup {
   return {
