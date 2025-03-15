@@ -35,6 +35,6 @@ jobs:
         uses: adobe/update-prerelease-npm-version@v1.2.0
 
       - name: Publish
-        run: pnpm publish --provenance --access public --tag dev
+        run: pnpm publish --provenance --no-git-checks --access public --tag dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
