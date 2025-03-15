@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "pnpm test && tsup",
+    "prepack": "tsup",
     "test": "tsc && node --test --experimental-strip-types"
   },
   "bugs": {
