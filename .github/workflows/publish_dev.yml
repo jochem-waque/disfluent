@@ -32,7 +32,7 @@ jobs:
         run: pnpm test
 
       - name: Update package.json
-        uses: adobe/update-prerelease-npm-version@v1.0.0
+        uses: adobe/update-prerelease-npm-version@v1.2.0
 
       - name: Publish
         run: pnpm publish --provenance --access public --tag dev
