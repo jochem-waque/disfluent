@@ -38,3 +38,6 @@ jobs:
         run: pnpm publish --provenance --no-git-checks --access public --tag dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Deprecate old versions
+        run: pnpm npm-deprecate --name "*-pre.*" --package fluent-commands
