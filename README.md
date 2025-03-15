@@ -23,18 +23,23 @@ d.slashCommand("examples", "Example commands")
     text: d
       .subcommand("Subcommand example")
       .options({
-        body: d.string("Body text").required().maxLength(500),
+        body: d.option("Body text").string().required().maxLength(500),
         channel: d
-          .channel("Category channel")
+          .option("Category channel")
+          .channel()
           .required()
           .channelTypes(ChannelType.GuildCategory),
         choose: d
-          .integer("Option with choice")
+          .option("Option with choice")
+          .integer()
           .choices({ first: 1, second: 2, third: 3 }),
-        auto: d.number("Autocompleted number").autocomplete((value) => ({
-          up: Math.ceil(parseFloat(value)),
-          down: Math.ceil(parseFloat(value)),
-        })),
+        auto: d
+          .option("Autocompleted number")
+          .number()
+          .autocomplete((value) => ({
+            up: Math.ceil(parseFloat(value)),
+            down: Math.ceil(parseFloat(value)),
+          })),
       })
       .handler(async (interaction, { body, channel, choose, auto }) => {
         await interaction.reply(JSON.stringify({ body, channel, choose, auto }))
