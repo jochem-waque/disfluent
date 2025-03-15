@@ -41,3 +41,5 @@ jobs:
 
       - name: Deprecate old versions
         run: pnpm npm-deprecate --name "*-pre.*" --package fluent-commands
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
