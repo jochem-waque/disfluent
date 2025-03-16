@@ -67,4 +67,20 @@ await suite("testString", async () => {
 
     assert.ok(pass)
   })
+
+  await test("maxLength", () => {
+    const value = 10
+
+    const option = d.option("Description").string().maxLength(value)
+
+    assert.strictEqual(option.builder.max_length, value)
+  })
+
+  await test("minLength", () => {
+    const value = 10
+
+    const option = d.option("Description").string().minLength(value)
+
+    assert.strictEqual(option.builder.min_length, value)
+  })
 })

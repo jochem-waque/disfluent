@@ -66,4 +66,20 @@ await suite("testInteger", async () => {
 
     assert.ok(pass)
   })
+
+  await test("maxValue", () => {
+    const value = 10
+
+    const option = d.option("Description").integer().maxValue(value)
+
+    assert.strictEqual(option.builder.max_value, value)
+  })
+
+  await test("minValue", () => {
+    const value = 10
+
+    const option = d.option("Description").integer().minValue(value)
+
+    assert.strictEqual(option.builder.min_value, value)
+  })
 })
