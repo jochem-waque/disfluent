@@ -4,16 +4,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
+import { ApplicationCommandOptionType } from "discord.js"
 import assert from "node:assert"
 import { suite, test } from "node:test"
 import d, { type OptionValue } from "../../index.mts"
-import type { Equal } from "../shared.mts"
+import type { Equal } from "../util.mts"
 
 await suite("testInteger", async () => {
   await test("base", () => {
-    const option = d.option("option").integer()
+    const description = "Option description"
+
+    const option = d.option(description).integer()
+
+    assert.strictEqual(
+      option.builder.type,
+      ApplicationCommandOptionType.Integer,
+    )
+    assert.strictEqual(option.builder.description, description)
 
     const pass: Equal<number | undefined, OptionValue<typeof option>> = true
 
@@ -21,7 +28,9 @@ await suite("testInteger", async () => {
   })
 
   await test("required", () => {
-    const option = d.option("option").integer().required()
+    const option = d.option("Description").integer().required()
+
+    assert.ok(option.builder.required)
 
     const pass: Equal<number, OptionValue<typeof option>> = true
 
@@ -29,7 +38,16 @@ await suite("testInteger", async () => {
   })
 
   await test("choices", () => {
-    const option = d.option("option").integer().choices({ first: 1, second: 2 })
+    const choices = { first: 1, second: 2 } as const
+
+    const option = d.option("Description").integer().choices(choices)
+
+    assert.deepStrictEqual(
+      option.builder.choices?.reduce((prev, cur) => {
+        return { ...prev, [cur.name]: cur.value }
+      }, {}),
+      choices,
+    )
 
     const pass: Equal<1 | 2 | undefined, OptionValue<typeof option>> = true
 
@@ -37,8 +55,9 @@ await suite("testInteger", async () => {
   })
 
   await test("choicesRequired", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const option = d
-      .option("option")
+      .option("Description")
       .integer()
       .choices({ first: 1, second: 2 })
       .required()

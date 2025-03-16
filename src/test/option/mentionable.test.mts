@@ -4,17 +4,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { GuildMember, Role, User } from "discord.js"
+import {
+  ApplicationCommandOptionType,
+  GuildMember,
+  Role,
+  User,
+} from "discord.js"
 import assert from "node:assert"
 import { suite, test } from "node:test"
 import d, { type OptionValue } from "../../index.mts"
-import type { Equal } from "../shared.mts"
+import type { Equal } from "../util.mts"
 
 await suite("testMentionable", async () => {
   await test("base", () => {
-    const option = d.option("option").mentionable()
+    const description = "Option description"
+
+    const option = d.option(description).mentionable()
+
+    assert.strictEqual(
+      option.builder.type,
+      ApplicationCommandOptionType.Mentionable,
+    )
+
+    assert.strictEqual(option.builder.description, description)
 
     const pass: Equal<
       GuildMember | User | Role | undefined,
@@ -25,7 +37,9 @@ await suite("testMentionable", async () => {
   })
 
   await test("required", () => {
-    const option = d.option("option").mentionable().required()
+    const option = d.option("Description").mentionable().required()
+
+    assert.ok(option.builder.required)
 
     const pass: Equal<
       GuildMember | User | Role,

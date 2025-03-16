@@ -4,17 +4,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { Role } from "discord.js"
+import { ApplicationCommandOptionType, Role } from "discord.js"
 import assert from "node:assert"
 import { suite, test } from "node:test"
 import d, { type OptionValue } from "../../index.mts"
-import type { Equal } from "../shared.mts"
+import type { Equal } from "../util.mts"
 
 await suite("testRole", async () => {
   await test("base", () => {
-    const option = d.option("option").role()
+    const description = "Option description"
+
+    const option = d.option(description).role()
+
+    assert.strictEqual(option.builder.type, ApplicationCommandOptionType.Role)
+
+    assert.strictEqual(option.builder.description, description)
 
     const pass: Equal<Role | undefined, OptionValue<typeof option>> = true
 
@@ -22,7 +26,9 @@ await suite("testRole", async () => {
   })
 
   await test("required", () => {
-    const option = d.option("option").role().required()
+    const option = d.option("Description").role().required()
+
+    assert.ok(option.builder.required)
 
     const pass: Equal<Role, OptionValue<typeof option>> = true
 

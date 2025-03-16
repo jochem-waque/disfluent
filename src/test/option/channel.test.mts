@@ -4,9 +4,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import {
+  ApplicationCommandOptionType,
   ChannelType,
   type GuildBasedChannel,
   TextChannel,
@@ -15,11 +14,20 @@ import {
 import assert from "node:assert"
 import { suite, test } from "node:test"
 import d, { type OptionValue } from "../../index.mts"
-import type { Equal } from "../shared.mts"
+import { arrayEqual, type Equal } from "../util.mts"
 
 await suite("testChannel", async () => {
   await test("base", () => {
-    const option = d.option("option").channel()
+    const description = "Option description"
+
+    const option = d.option(description).channel()
+
+    assert.strictEqual(
+      option.builder.type,
+      ApplicationCommandOptionType.Channel,
+    )
+
+    assert.strictEqual(option.builder.description, description)
 
     const pass: Equal<
       GuildBasedChannel | undefined,
@@ -30,7 +38,9 @@ await suite("testChannel", async () => {
   })
 
   await test("required", () => {
-    const option = d.option("option").channel().required()
+    const option = d.option("Description").channel().required()
+
+    assert.ok(option.builder.required)
 
     const pass: Equal<GuildBasedChannel, OptionValue<typeof option>> = true
 
@@ -38,10 +48,16 @@ await suite("testChannel", async () => {
   })
 
   await test("channelTypes", () => {
+    const types = [ChannelType.GuildText, ChannelType.GuildVoice]
+
     const option = d
-      .option("option")
+      .option("Description")
       .channel()
       .channelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
+
+    assert.ok(option.builder.channel_types)
+
+    assert.ok(arrayEqual(option.builder.channel_types, types))
 
     const pass: Equal<
       TextChannel | VoiceChannel | undefined,
@@ -52,8 +68,9 @@ await suite("testChannel", async () => {
   })
 
   await test("channelTypesRequired", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const option = d
-      .option("option")
+      .option("Description")
       .channel()
       .channelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
       .required()
