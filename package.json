@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "prepack": "tsup",
-    "test": "tsc && node --test --experimental-strip-types"
+    "test": "tsc && node --test --experimental-strip-types",
+    "lint": "eslint src"
   },
   "bugs": {
     "url": "https://github.com/Jochem-W/fluent-commands/issues"
