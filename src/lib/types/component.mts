@@ -33,8 +33,8 @@ export type CompletedComponent<
   Type extends keyof InteractionMap = keyof InteractionMap,
   Arguments extends readonly string[] = string[],
 > = {
-  id: string
-  type: Type
+  readonly id: string
+  readonly type: Type
   build(...args: Arguments): DataMap[Type]
   handle(interaction: InteractionMap[Type], ...args: Arguments): Promise<void>
 }
@@ -50,7 +50,7 @@ export type ComponentSelector = {
 export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
   Omit<
     {
-      builder: ButtonBuilder
+      readonly builder: ButtonBuilder
       id(id: string): Button<Exclude<Keys, "handler"> | "id" | "url">
       disabled(): Button<Keys | "disabled">
       emoji(emoji: ComponentEmojiResolvable): Button<Keys | "emoji">

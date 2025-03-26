@@ -14,7 +14,7 @@ import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 export type Subcommand<Keys extends keyof Subcommand | "" = ""> = Unwrap<
   Omit<
     {
-      builder: SlashCommandSubcommandBuilder
+      readonly builder: SlashCommandSubcommandBuilder
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): Subcommand<Keys | "nameLocalizations">
@@ -43,8 +43,8 @@ export type SubcommandWithOptions<
 > = Unwrap<
   Omit<
     {
-      builder: SlashCommandSubcommandBuilder
-      options: Options
+      readonly builder: SlashCommandSubcommandBuilder
+      readonly options: Options
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): SubcommandWithOptions<Options, Keys | "nameLocalizations">

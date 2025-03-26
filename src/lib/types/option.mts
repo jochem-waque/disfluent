@@ -74,8 +74,8 @@ export type Option<
 > = Unwrap<
   Omit<
     {
-      builder: BuilderMap[Type]
-      type: Type
+      readonly builder: BuilderMap[Type]
+      readonly type: Type
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): Option<Type, Keys | "nameLocalizations">
@@ -117,9 +117,9 @@ type OptionWithChannelTypes<
 > = Unwrap<
   Omit<
     {
-      builder: BuilderMap["channel"]
-      type: "channel"
-      channelTypes: Types
+      readonly builder: BuilderMap["channel"]
+      readonly type: "channel"
+      readonly channelTypes: Types
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): OptionWithChannelTypes<Types, Keys | "nameLocalizations">
@@ -139,9 +139,9 @@ type OptionWithChoices<
 > = Unwrap<
   Omit<
     {
-      builder: BuilderMap[Type]
-      type: Type
-      choices: Choices
+      readonly builder: BuilderMap[Type]
+      readonly type: Type
+      readonly choices: Choices
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): OptionWithChoices<Choices, Type, Keys | "nameLocalizations">
@@ -188,7 +188,9 @@ type PartialOptionWithChoices<
 type MapChannelType<Type extends ChannelType> = Extract<
   Channel,
   {
-    type: Type extends ChannelType.PublicThread | ChannelType.AnnouncementThread
+    readonly type: Type extends
+      | ChannelType.PublicThread
+      | ChannelType.AnnouncementThread
       ? ChannelType.PublicThread | ChannelType.AnnouncementThread
       : Type
   }

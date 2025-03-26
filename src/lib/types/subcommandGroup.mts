@@ -11,7 +11,7 @@ export type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> =
   Unwrap<
     Omit<
       {
-        builder: SlashCommandSubcommandGroupBuilder
+        readonly builder: SlashCommandSubcommandGroupBuilder
         nameLocalizations(
           localizations: Partial<Record<Locale, Lowercase<string>>>,
         ): SubcommandGroup<Keys | "nameLocalizations">
@@ -31,8 +31,8 @@ export type SubcommandGroupWithSubcommands<
 > = Unwrap<
   Omit<
     {
-      builder: SlashCommandSubcommandGroupBuilder
-      subcommands: Record<Lowercase<string>, PartialSubcommand>
+      readonly builder: SlashCommandSubcommandGroupBuilder
+      readonly subcommands: Record<Lowercase<string>, PartialSubcommand>
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): SubcommandGroupWithSubcommands<Keys | "nameLocalizations">

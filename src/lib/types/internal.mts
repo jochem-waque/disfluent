@@ -6,27 +6,31 @@
 import { CommandInteractionOptionResolver } from "discord.js"
 
 export type OptionTypeMap = {
-  attachment: ReturnType<
+  readonly attachment: ReturnType<
     CommandInteractionOptionResolver<"cached">["getAttachment"]
   > & {}
-  boolean: ReturnType<
+  readonly boolean: ReturnType<
     CommandInteractionOptionResolver<"cached">["getBoolean"]
   > & {}
-  channel: ReturnType<
+  readonly channel: ReturnType<
     CommandInteractionOptionResolver<"cached">["getChannel"]
   > & {}
-  integer: ReturnType<
+  readonly integer: ReturnType<
     CommandInteractionOptionResolver<"cached">["getInteger"]
   > & {}
-  mentionable: ReturnType<
+  readonly mentionable: ReturnType<
     CommandInteractionOptionResolver<"cached">["getMentionable"]
   > & {}
-  number: ReturnType<
+  readonly number: ReturnType<
     CommandInteractionOptionResolver<"cached">["getNumber"]
   > & {}
-  role: ReturnType<CommandInteractionOptionResolver<"cached">["getRole"]> & {}
-  string: ReturnType<
+  readonly role: ReturnType<
+    CommandInteractionOptionResolver<"cached">["getRole"]
+  > & {}
+  readonly string: ReturnType<
     CommandInteractionOptionResolver<"cached">["getString"]
   > & {}
-  user: ReturnType<CommandInteractionOptionResolver<"cached">["getUser"]> & {}
+  readonly user: ReturnType<
+    CommandInteractionOptionResolver<"cached">["getUser"]
+  > & {}
 }

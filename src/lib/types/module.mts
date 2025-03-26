@@ -33,22 +33,22 @@ export type Module<Keys extends keyof Module | "" = ""> = Unwrap<
 >
 
 export type CompletedCommand = {
-  name: string
+  readonly name: string
 } & (
   | {
-      builder: SlashCommandBuilder
-      type: ApplicationCommandType.ChatInput
+      readonly builder: SlashCommandBuilder
+      readonly type: ApplicationCommandType.ChatInput
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
       autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
     }
   | {
-      builder: ContextMenuCommandBuilder
-      type: ApplicationCommandType.User
+      readonly builder: ContextMenuCommandBuilder
+      readonly type: ApplicationCommandType.User
       handle: (interaction: UserContextMenuCommandInteraction) => Promise<void>
     }
   | {
-      builder: ContextMenuCommandBuilder
-      type: ApplicationCommandType.Message
+      readonly builder: ContextMenuCommandBuilder
+      readonly type: ApplicationCommandType.Message
       handle: (
         interaction: MessageContextMenuCommandInteraction,
       ) => Promise<void>

@@ -22,9 +22,9 @@ import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 export type SlashCommand<Keys extends keyof SlashCommand | "" = ""> = Unwrap<
   Omit<
     {
-      name: string
-      builder: SlashCommandBuilder
-      type: ApplicationCommandType.ChatInput
+      readonly name: string
+      readonly builder: SlashCommandBuilder
+      readonly type: ApplicationCommandType.ChatInput
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): SlashCommand<Keys | "nameLocalizations">
@@ -87,10 +87,10 @@ type SlashCommandWithOptions<
 > = Unwrap<
   Omit<
     {
-      name: string
-      builder: SlashCommandBuilder
-      type: ApplicationCommandType.ChatInput
-      options: Options
+      readonly name: string
+      readonly builder: SlashCommandBuilder
+      readonly type: ApplicationCommandType.ChatInput
+      readonly options: Options
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): SlashCommandWithOptions<Options, Keys | "nameLocalizations">

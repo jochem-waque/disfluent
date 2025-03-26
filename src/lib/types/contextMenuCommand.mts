@@ -35,9 +35,9 @@ export type ContextMenuCommand<
 > = Unwrap<
   Omit<
     {
-      name: string
-      builder: ContextMenuCommandBuilder
-      type: TypeMap[Type]
+      readonly name: string
+      readonly builder: ContextMenuCommandBuilder
+      readonly type: TypeMap[Type]
       nameLocalizations(
         localizations: Partial<Record<Locale, string>>,
       ): ContextMenuCommand<Type, Keys | "nameLocalizations">
