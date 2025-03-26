@@ -11,3 +11,5 @@ export type ErrorCode =
   | "subcommand_not_found"
   | "unsupported_option_type"
   | "could_not_register"
+  | "missing_custom_id"
+  | "duplicate_custom_id"

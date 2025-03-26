@@ -9,13 +9,20 @@ import type {
   RESTPutAPIApplicationCommandsResult,
 } from "discord.js"
 import { Client, Routes } from "discord.js"
-import { type Bot, type CompletedCommand, InternalError } from "../external.mts"
+import {
+  type Bot,
+  type CompletedCommand,
+  type CompletedComponent,
+  InternalError,
+} from "../external.mts"
 
 export function bot(options: ClientOptions): Bot {
   const client = new Client(options)
 
   const commands = new Map<string, CompletedCommand>()
   const registeredCommands = new Map<string, CompletedCommand>()
+
+  const components = new Map<string, CompletedComponent>()
 
   let errorHandler = console.error
 
@@ -40,6 +47,24 @@ export function bot(options: ClientOptions): Bot {
       command.autocomplete(interaction).catch(errorHandler)
       return
     }
+
+    if (interaction.isMessageComponent()) {
+      const split = interaction.customId.split(":")
+      if (!split[0]) {
+        return
+      }
+
+      const component = components.get(split[0])
+      if (!component) {
+        return
+      }
+
+      if (component.type !== interaction.componentType) {
+        return
+      }
+
+      component.handle(interaction, ...split.slice(0)).catch(errorHandler)
+    }
   })
 
   return {
@@ -63,6 +88,17 @@ export function bot(options: ClientOptions): Bot {
         }
 
         client.on(handler.event, wrapped)
+      }
+
+      for (const component of module.components) {
+        if (components.has(component.id)) {
+          throw new InternalError(
+            "duplicate_custom_id",
+            `The custom ID "${component.id}" is already in use`,
+          )
+        }
+
+        components.set(component.id, component)
       }
 
       return this

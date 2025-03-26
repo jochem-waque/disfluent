@@ -13,6 +13,7 @@ import {
   SlashCommandBuilder,
   UserContextMenuCommandInteraction,
 } from "discord.js"
+import type { CompletedComponent } from "./component.mts"
 import type { CompletedEventHandler } from "./event.mts"
 import type { Unwrap } from "./util.mts"
 
@@ -22,8 +23,10 @@ export type Module<Keys extends keyof Module | "" = ""> = Unwrap<
       readonly name: string
       readonly commands: ReadonlyMap<string, CompletedCommand>
       readonly events: readonly CompletedEventHandler[]
+      readonly components: readonly CompletedComponent[]
       addCommand(command: CompletedCommand): Module<Keys>
       addEventHandler(handler: CompletedEventHandler): Module<Keys>
+      addComponent(component: CompletedComponent): Module<Keys>
     },
     Keys
   >
