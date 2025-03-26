@@ -4,67 +4,67 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
+  ApplicationCommandOptionType,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js"
-import type { OptionTypeMap } from "../types/internal.mts"
 import type { OptionValue, PartialOption } from "../types/option.mts"
 import { InternalError } from "./error.mts"
 
 export function getOptionValue<
-  Type extends keyof OptionTypeMap,
+  Type extends ApplicationCommandOptionType,
   O extends PartialOption<Type>,
 >(interaction: ChatInputCommandInteraction, option: O): OptionValue<O> {
   let value
 
   switch (option.type) {
-    case "attachment":
+    case ApplicationCommandOptionType.Attachment:
       value = interaction.options.getAttachment(
         option.builder.name,
         !option.required,
       )
       break
-    case "boolean":
+    case ApplicationCommandOptionType.Boolean:
       value = interaction.options.getBoolean(
         option.builder.name,
         !option.required,
       )
       break
-    case "channel":
+    case ApplicationCommandOptionType.Channel:
       value = interaction.options.getChannel(
         option.builder.name,
         !option.required,
       )
       break
-    case "integer":
+    case ApplicationCommandOptionType.Integer:
       value = interaction.options.getInteger(
         option.builder.name,
         !option.required,
       )
       break
-    case "mentionable":
+    case ApplicationCommandOptionType.Mentionable:
       value = interaction.options.getMentionable(
         option.builder.name,
         !option.required,
       )
       break
-    case "number":
+    case ApplicationCommandOptionType.Number:
       value = interaction.options.getNumber(
         option.builder.name,
         !option.required,
       )
       break
-    case "role":
+    case ApplicationCommandOptionType.Role:
       value = interaction.options.getRole(option.builder.name, !option.required)
       break
-    case "string":
+    case ApplicationCommandOptionType.String:
       value = interaction.options.getString(
         option.builder.name,
         !option.required,
       )
       break
-    case "user":
+    case ApplicationCommandOptionType.User:
       value = interaction.options.getUser(option.builder.name, !option.required)
       break
     default:
@@ -83,47 +83,47 @@ export function applyOptions(
     option.builder.setName(name)
 
     switch (option.type) {
-      case "string":
+      case ApplicationCommandOptionType.String:
         builder.addStringOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "number":
+      case ApplicationCommandOptionType.Number:
         builder.addNumberOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "boolean":
+      case ApplicationCommandOptionType.Boolean:
         builder.addBooleanOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "integer":
+      case ApplicationCommandOptionType.Integer:
         builder.addIntegerOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "channel":
+      case ApplicationCommandOptionType.Channel:
         builder.addChannelOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "attachment":
+      case ApplicationCommandOptionType.Attachment:
         builder.addAttachmentOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "mentionable":
+      case ApplicationCommandOptionType.Mentionable:
         builder.addMentionableOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "role":
+      case ApplicationCommandOptionType.Role:
         builder.addRoleOption(
           (option as PartialOption<typeof option.type>).builder,
         )
         break
-      case "user":
+      case ApplicationCommandOptionType.User:
         builder.addUserOption(
           (option as PartialOption<typeof option.type>).builder,
         )

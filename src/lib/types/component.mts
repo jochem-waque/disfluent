@@ -7,36 +7,41 @@
 import type {
   APIActionRowComponent,
   APIActionRowComponentTypes,
-  APIButtonComponent,
+  APIMessageComponent,
   ButtonBuilder,
-  ButtonInteraction,
   ButtonStyle,
   ComponentEmojiResolvable,
   ComponentType,
+  MessageComponentInteraction,
 } from "discord.js"
 import type { Unwrap } from "./util.mts"
 
-type InteractionMap = {
-  [ComponentType.Button]: ButtonInteraction
-}
+type ComponentInteraction<Type extends ComponentType> =
+  MessageComponentInteraction & { componentType: Type }
 
-type DataMap = {
-  [ComponentType.Button]: APIButtonComponent
+type APIComponent<Type extends ComponentType> = APIMessageComponent & {
+  type: Type
 }
 
 type ComponentHandler<
-  Type extends keyof InteractionMap,
+  Type extends ComponentType,
   Arguments extends readonly string[],
-> = (interaction: InteractionMap[Type], ...args: Arguments) => Promise<void>
+> = (
+  interaction: ComponentInteraction<Type>,
+  ...args: Arguments
+) => Promise<void>
 
 export type CompletedComponent<
-  Type extends keyof InteractionMap = keyof InteractionMap,
+  Type extends ComponentType = ComponentType,
   Arguments extends readonly string[] = string[],
 > = {
   readonly id: string
   readonly type: Type
-  build(...args: Arguments): DataMap[Type]
-  handle(interaction: InteractionMap[Type], ...args: Arguments): Promise<void>
+  build(...args: Arguments): APIComponent<Type>
+  handle(
+    interaction: ComponentInteraction<Type>,
+    ...args: Arguments
+  ): Promise<void>
 }
 
 export type ComponentSelector = {
@@ -55,7 +60,7 @@ export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
       disabled(): Button<Keys | "disabled">
       emoji(emoji: ComponentEmojiResolvable): Button<Keys | "emoji">
       label(label: string): Button<Keys | "label">
-      url(url: URL): DataMap[ComponentType.Button]
+      url(url: URL): APIComponent<ComponentType.Button>
       handler<Arguments extends readonly string[]>(
         handler: ComponentHandler<ComponentType.Button, Arguments>,
       ): CompletedComponent<ComponentType.Button, Arguments>

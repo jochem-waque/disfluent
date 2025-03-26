@@ -4,6 +4,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {
+  ApplicationCommandOptionType,
   SharedNameAndDescription,
   SlashCommandAttachmentOption,
   SlashCommandBooleanOption,
@@ -72,7 +73,7 @@ function attachment(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["attachment"]> {
   return {
-    type: "attachment",
+    type: ApplicationCommandOptionType.Attachment,
     builder: extendBuilder(new SlashCommandAttachmentOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -93,7 +94,7 @@ function boolean(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["boolean"]> {
   return {
-    type: "boolean",
+    type: ApplicationCommandOptionType.Boolean,
     builder: extendBuilder(new SlashCommandBooleanOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -114,7 +115,7 @@ function channel(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["channel"]> {
   return {
-    type: "channel",
+    type: ApplicationCommandOptionType.Channel,
     builder: extendBuilder(new SlashCommandChannelOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -154,7 +155,7 @@ function integer(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["integer"]> {
   return {
-    type: "integer",
+    type: ApplicationCommandOptionType.Integer,
     builder: extendBuilder(new SlashCommandIntegerOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -247,7 +248,7 @@ function mentionable(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["mentionable"]> {
   return {
-    type: "mentionable",
+    type: ApplicationCommandOptionType.Mentionable,
     builder: extendBuilder(new SlashCommandMentionableOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -268,7 +269,7 @@ function number(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["number"]> {
   return {
-    type: "number",
+    type: ApplicationCommandOptionType.Number,
     builder: extendBuilder(new SlashCommandNumberOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -361,7 +362,7 @@ function role(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["role"]> {
   return {
-    type: "role",
+    type: ApplicationCommandOptionType.Role,
     builder: extendBuilder(new SlashCommandRoleOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -382,7 +383,7 @@ function string(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["string"]> {
   return {
-    type: "string",
+    type: ApplicationCommandOptionType.String,
     builder: extendBuilder(new SlashCommandStringOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
@@ -475,7 +476,7 @@ function user(
   base: SharedNameAndDescription,
 ): ReturnType<OptionSelector["user"]> {
   return {
-    type: "user",
+    type: ApplicationCommandOptionType.User,
     builder: extendBuilder(new SlashCommandUserOption(), base),
     nameLocalizations(localizations) {
       this.builder.setNameLocalizations(localizations)
