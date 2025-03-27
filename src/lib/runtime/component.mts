@@ -15,31 +15,29 @@ import {
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
   UserSelectMenuBuilder,
+  type APIActionRowComponent,
+  type APIActionRowComponentTypes,
   type APISelectMenuComponent,
   type SelectMenuType,
 } from "discord.js"
 import type {
   Button,
-  ComponentSelector,
   SelectMenuSelector,
   StringSelectBuilder,
 } from "../types/component.mts"
 import { InternalError } from "./error.mts"
 
-export function component(): ComponentSelector {
+export function row<Type extends APIActionRowComponentTypes>(
+  component: Type,
+  ...rest: Type[]
+): APIActionRowComponent<Type> {
   return {
-    row(component, ...rest) {
-      return {
-        type: ComponentType.ActionRow,
-        components: [component, ...rest],
-      }
-    },
-    button,
-    select,
+    type: ComponentType.ActionRow,
+    components: [component, ...rest],
   }
 }
 
-function button(style: ButtonStyle): Button<"handler"> {
+export function button(style: ButtonStyle): Button<"handler"> {
   return {
     builder: new ButtonBuilder().setStyle(style),
     id(id) {
@@ -98,7 +96,7 @@ function button(style: ButtonStyle): Button<"handler"> {
   }
 }
 
-function select(): SelectMenuSelector {
+export function select(): SelectMenuSelector {
   return {
     string,
     user,

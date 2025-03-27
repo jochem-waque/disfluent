@@ -15,11 +15,8 @@ import {
   UserSelectMenuBuilder,
   type ActionRowBuilder,
   type AnySelectMenuInteraction,
-  type APIActionRowComponent,
-  type APIActionRowComponentTypes,
   type APIMessageComponent,
   type ButtonBuilder,
-  type ButtonStyle,
   type ComponentEmojiResolvable,
   type ComponentType,
   type SelectMenuType,
@@ -98,16 +95,6 @@ export type StringSelectBuilder<
     > & { values: Selectable[] },
     ...args: Arguments
   ): Promise<void>
-}
-
-export type ComponentSelector = {
-  row<Type extends APIActionRowComponentTypes>(
-    component: Type,
-    ...rest: Type[]
-  ): APIActionRowComponent<Type>
-  button(style: ButtonStyle): Button<"handler">
-  select(): SelectMenuSelector
-  // TODO textInput
 }
 
 export type SelectMenuSelector = {
