@@ -164,7 +164,9 @@ export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
 export type SelectMenu<
   Type extends SelectMenuType,
   ChannelTypes extends readonly ChannelType[] | undefined = undefined,
-  Options extends Record<string, unknown> | undefined = undefined,
+  Options extends
+    | Record<string, PartialStringSelectOption>
+    | undefined = undefined,
   Keys extends keyof SelectMenu<Type> | "" = "",
 > = Unwrap<
   Omit<
