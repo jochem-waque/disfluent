@@ -52,9 +52,14 @@ type BuilderMap<Type extends ComponentType> = {
 
 type ComponentHandler<
   Type extends ComponentType,
+  Options extends Record<string, PartialStringSelectOption> | undefined,
   Arguments extends readonly string[],
 > = (
-  interaction: ComponentInteraction<Type>,
+  interaction: Options extends Record<string, PartialStringSelectOption>
+    ? Omit<ComponentInteraction<Type>, "values"> & {
+        values: StringValues<Options>
+      }
+    : ComponentInteraction<Type>,
   ...args: Arguments
 ) => Promise<void>
 
@@ -87,7 +92,10 @@ export type StringSelectBuilder<
     ...args: Arguments
   ): APIComponent<ComponentType.StringSelect>
   handle(
-    interaction: ComponentInteraction<ComponentType.StringSelect>,
+    interaction: Omit<
+      ComponentInteraction<ComponentType.StringSelect>,
+      "values"
+    > & { values: Selectable[] },
     ...args: Arguments
   ): Promise<void>
 }
@@ -176,7 +184,7 @@ export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
       label(label: string): Button<Keys | "label">
       url(url: URL): APIComponent<ComponentType.Button>
       handler<Arguments extends readonly string[]>(
-        handler: ComponentHandler<ComponentType.Button, Arguments>,
+        handler: ComponentHandler<ComponentType.Button, undefined, Arguments>,
       ): ComponentBuilder<ComponentType.Button, undefined, Arguments>
     },
     Keys
@@ -208,7 +216,7 @@ export type SelectMenu<
         text: string,
       ): SelectMenu<Type, ChannelTypes, Options, Keys | "placeholder">
       handler<Arguments extends readonly string[]>(
-        handler: ComponentHandler<Type, Arguments>,
+        handler: ComponentHandler<Type, Options, Arguments>,
       ): ComponentBuilder<Type, Options, Arguments>
       // TODO
       options<NewOptions extends Record<string, PartialStringSelectOption>>(
