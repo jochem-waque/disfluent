@@ -21,6 +21,7 @@ import {
 import type {
   Button,
   ComponentSelector,
+  PartialStringSelectOption,
   SelectMenuSelector,
   StringSelectBuilder,
 } from "../types/component.mts"
@@ -162,6 +163,7 @@ function stringSelectBuilder<Arguments extends readonly string[]>(
   constructor: new (
     data: ReturnType<StringSelectMenuBuilder["toJSON"]>,
   ) => StringSelectMenuBuilder,
+  options: Record<string, PartialStringSelectOption>,
   handle: StringSelectBuilder<string, Arguments>["handle"],
 ): StringSelectBuilder<string, Arguments> {
   const data = base.toJSON()
@@ -179,6 +181,11 @@ function stringSelectBuilder<Arguments extends readonly string[]>(
       const builder = new constructor(data).setCustomId(
         data.custom_id + ":" + args.join(":"),
       )
+
+      for (const [label, option] of Object.entries(options)) {
+        option.builder.setLabel(label)
+        builder.addOptions(option.builder)
+      }
 
       const defaultsSet = new Set(defaults)
 
@@ -215,11 +222,6 @@ function string(id: string): ReturnType<SelectMenuSelector["string"]> {
       return this
     },
     options(options) {
-      for (const [label, option] of Object.entries(options)) {
-        option.builder.setLabel(label)
-        this.builder.addOptions(option.builder)
-      }
-
       return {
         ...this,
         "~options": options,
@@ -243,6 +245,7 @@ function string(id: string): ReturnType<SelectMenuSelector["string"]> {
           return stringSelectBuilder(
             this.builder,
             StringSelectMenuBuilder,
+            this["~options"],
             handle,
           )
         },
