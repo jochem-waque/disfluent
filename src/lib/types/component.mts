@@ -58,15 +58,36 @@ type ComponentHandler<
   ...args: Arguments
 ) => Promise<void>
 
-export type CompletedComponent<
+export type ComponentBuilder<
   Type extends ComponentType = ComponentType,
+  Options extends
+    | Record<string, PartialStringSelectOption>
+    | undefined = undefined,
+  Arguments extends readonly string[] = string[],
+> = Type extends ComponentType.StringSelect
+  ? StringSelectBuilder<SecondTesting<Options>, Arguments>
+  : {
+      readonly id: string
+      readonly type: Type
+      build(...args: Arguments): APIComponent<Type>
+      handle(
+        interaction: ComponentInteraction<Type>,
+        ...args: Arguments
+      ): Promise<void>
+    }
+
+export type StringSelectBuilder<
+  Selectable extends string,
   Arguments extends readonly string[] = string[],
 > = {
   readonly id: string
-  readonly type: Type
-  build(...args: Arguments): APIComponent<Type>
+  readonly type: ComponentType.StringSelect
+  build(
+    defaults?: Selectable[],
+    ...args: Arguments
+  ): APIComponent<ComponentType.StringSelect>
   handle(
-    interaction: ComponentInteraction<Type>,
+    interaction: ComponentInteraction<ComponentType.StringSelect>,
     ...args: Arguments
   ): Promise<void>
 }
@@ -94,6 +115,7 @@ export type SelectMenuSelector = {
     | "channelTypes"
     | "~channelTypes"
     | "~options"
+    | "handler"
   >
   user(
     id: string,
@@ -155,7 +177,7 @@ export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
       url(url: URL): APIComponent<ComponentType.Button>
       handler<Arguments extends readonly string[]>(
         handler: ComponentHandler<ComponentType.Button, Arguments>,
-      ): CompletedComponent<ComponentType.Button, Arguments>
+      ): ComponentBuilder<ComponentType.Button, undefined, Arguments>
     },
     Keys
   >
@@ -187,7 +209,7 @@ export type SelectMenu<
       ): SelectMenu<Type, ChannelTypes, Options, Keys | "placeholder">
       handler<Arguments extends readonly string[]>(
         handler: ComponentHandler<Type, Arguments>,
-      ): CompletedComponent<Type, Arguments>
+      ): ComponentBuilder<Type, Options, Arguments>
       // TODO
       options<NewOptions extends Record<string, PartialStringSelectOption>>(
         options: NewOptions,
@@ -195,7 +217,7 @@ export type SelectMenu<
         Type,
         ChannelTypes,
         NewOptions,
-        Exclude<Keys, "~options"> | "options"
+        Exclude<Keys, "~options" | "handler"> | "options"
       >
       defaultUsers(
         ...users: Snowflake[]
@@ -243,6 +265,26 @@ export type PartialStringSelectOption = Pick<
   StringSelectOption<string>,
   "builder" | "~value"
 >
+
+export type PartialSelectMenu<Type extends SelectMenuType = SelectMenuType> =
+  Pick<SelectMenu<Type>, "builder" | "type">
+
+export type Testing<Menu extends PartialSelectMenu> =
+  Menu extends Pick<
+    SelectMenu<
+      ComponentType.StringSelect,
+      undefined,
+      Record<string, infer Values extends StringSelectOption<string>>
+    >,
+    "~options"
+  >
+    ? Values["~value"]
+    : never
+
+export type SecondTesting<Data> =
+  Data extends Record<string, infer Values extends StringSelectOption<string>>
+    ? Values["~value"]
+    : never
 
 export type Row<Keys extends keyof Row | "" = ""> = Unwrap<
   Omit<

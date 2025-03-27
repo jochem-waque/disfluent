@@ -22,6 +22,7 @@ import type {
   Button,
   ComponentSelector,
   SelectMenuSelector,
+  StringSelectBuilder,
 } from "../types/component.mts"
 import { InternalError } from "./error.mts"
 
@@ -125,7 +126,7 @@ function select(): SelectMenuSelector {
   }
 }
 
-function sharedHandler<
+function builder<
   Type extends SelectMenuType,
   Builder extends BaseSelectMenuBuilder<
     APISelectMenuComponent & { type: Type }
@@ -156,6 +157,43 @@ function sharedHandler<
   }
 }
 
+function stringSelectBuilder<Arguments extends readonly string[]>(
+  base: StringSelectMenuBuilder,
+  constructor: new (
+    data: ReturnType<StringSelectMenuBuilder["toJSON"]>,
+  ) => StringSelectMenuBuilder,
+  handle: StringSelectBuilder<string, Arguments>["handle"],
+): StringSelectBuilder<string, Arguments> {
+  const data = base.toJSON()
+  if (!("custom_id" in data) || !data.custom_id) {
+    throw new InternalError(
+      "missing_custom_id",
+      "Can't set handler for button component without a custom ID",
+    )
+  }
+
+  return {
+    id: data.custom_id,
+    type: data.type,
+    build(defaults, ...args) {
+      const builder = new constructor(data).setCustomId(
+        data.custom_id + ":" + args.join(":"),
+      )
+
+      const defaultsSet = new Set(defaults)
+
+      for (const option of builder.options) {
+        if (option.data.value && defaultsSet.has(option.data.value)) {
+          option.setDefault(true)
+        }
+      }
+
+      return builder.toJSON()
+    },
+    handle,
+  }
+}
+
 function string(id: string): ReturnType<SelectMenuSelector["string"]> {
   return {
     type: ComponentType.StringSelect,
@@ -175,9 +213,6 @@ function string(id: string): ReturnType<SelectMenuSelector["string"]> {
     placeholder(text) {
       this.builder.setPlaceholder(text)
       return this
-    },
-    handler(handle) {
-      return sharedHandler(this.builder, StringSelectMenuBuilder, handle)
     },
     options(options) {
       for (const [label, option] of Object.entries(options)) {
@@ -203,6 +238,13 @@ function string(id: string): ReturnType<SelectMenuSelector["string"]> {
         placeholder(text) {
           this.builder.setPlaceholder(text)
           return this
+        },
+        handler(handle) {
+          return stringSelectBuilder(
+            this.builder,
+            StringSelectMenuBuilder,
+            handle,
+          )
         },
       }
     },
@@ -234,7 +276,7 @@ function user(id: string): ReturnType<SelectMenuSelector["user"]> {
       return this
     },
     handler(handle) {
-      return sharedHandler(this.builder, UserSelectMenuBuilder, handle)
+      return builder(this.builder, UserSelectMenuBuilder, handle)
     },
   }
 }
@@ -265,7 +307,7 @@ function role(id: string): ReturnType<SelectMenuSelector["role"]> {
       return this
     },
     handler(handle) {
-      return sharedHandler(this.builder, RoleSelectMenuBuilder, handle)
+      return builder(this.builder, RoleSelectMenuBuilder, handle)
     },
   }
 }
@@ -302,7 +344,7 @@ function mentionable(
       return this
     },
     handler(handle) {
-      return sharedHandler(this.builder, MentionableSelectMenuBuilder, handle)
+      return builder(this.builder, MentionableSelectMenuBuilder, handle)
     },
   }
 }
@@ -359,7 +401,7 @@ function channel(id: string): ReturnType<SelectMenuSelector["channel"]> {
       return this
     },
     handler(handle) {
-      return sharedHandler(this.builder, ChannelSelectMenuBuilder, handle)
+      return builder(this.builder, ChannelSelectMenuBuilder, handle)
     },
   }
 }

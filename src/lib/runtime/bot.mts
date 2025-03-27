@@ -12,7 +12,7 @@ import { Client, Routes } from "discord.js"
 import {
   type Bot,
   type CompletedCommand,
-  type CompletedComponent,
+  type ComponentBuilder,
   InternalError,
 } from "../external.mts"
 
@@ -22,7 +22,7 @@ export function bot(options: ClientOptions): Bot {
   const commands = new Map<string, CompletedCommand>()
   const registeredCommands = new Map<string, CompletedCommand>()
 
-  const components = new Map<string, CompletedComponent>()
+  const components = new Map<string, ComponentBuilder>()
 
   let errorHandler = console.error
 

@@ -6,15 +6,15 @@
 
 import type {
   CompletedCommand,
-  CompletedComponent,
   CompletedEventHandler,
+  ComponentBuilder,
   Module,
 } from "../external.mts"
 
 export function module(name: string): Module {
   const commands = new Map<string, CompletedCommand>()
   const events: CompletedEventHandler[] = []
-  const components: CompletedComponent[] = []
+  const components: ComponentBuilder[] = []
 
   return {
     name,
