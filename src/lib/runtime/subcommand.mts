@@ -8,7 +8,9 @@ import type { OptionValues } from "../types/option.mts"
 import type { Subcommand } from "../types/subcommand.mts"
 import { applyOptions, getOptionValue } from "./internal.mts"
 
-export function subcommand(description: string): Subcommand<"handle"> {
+export function subcommand(
+  description: string,
+): Subcommand<undefined, "handle" | "~options"> {
   return {
     builder: new SlashCommandSubcommandBuilder().setDescription(description),
     nameLocalizations(localizations) {
@@ -24,7 +26,7 @@ export function subcommand(description: string): Subcommand<"handle"> {
 
       return {
         ...this,
-        options,
+        "~options": options,
         handler(handler) {
           return {
             ...this,

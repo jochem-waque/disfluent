@@ -11,54 +11,43 @@ import {
 import type { OptionValues, PartialOption } from "./option.mts"
 import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 
-export type Subcommand<Keys extends keyof Subcommand | "" = ""> = Unwrap<
+export type Subcommand<
+  Options extends
+    | Record<Lowercase<string>, PartialOption>
+    | undefined = undefined,
+  Keys extends keyof Subcommand | "" = "",
+> = Unwrap<
   Omit<
     {
+      readonly "~options": Options
       readonly builder: SlashCommandSubcommandBuilder
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
-      ): Subcommand<Keys | "nameLocalizations">
+      ): Subcommand<Options, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<Locale, string>>,
-      ): Subcommand<Keys | "descriptionLocalizations">
-      options<T extends Record<string, PartialOption>>(
-        options: NotEmpty<LowercaseKeys<T>>,
-      ): SubcommandWithOptions<NotEmpty<LowercaseKeys<T>>, Keys | "options">
+      ): Subcommand<Options, Keys | "descriptionLocalizations">
+      options<NewOptions extends Record<string, PartialOption>>(
+        options: NotEmpty<LowercaseKeys<NewOptions>>,
+      ): Subcommand<
+        NotEmpty<LowercaseKeys<NewOptions>>,
+        Exclude<Keys, "~options"> | "options"
+      >
       handler: (
-        handler: (interaction: ChatInputCommandInteraction) => Promise<void>,
-      ) => Subcommand<Exclude<Keys, "handle"> | "options" | "handler">
+        handler: Options extends Record<Lowercase<string>, PartialOption>
+          ? (
+              interaction: ChatInputCommandInteraction,
+              values: OptionValues<Options>,
+            ) => Promise<void>
+          : (interaction: ChatInputCommandInteraction) => Promise<void>,
+      ) => Subcommand<Options, Exclude<Keys, "handle"> | "options" | "handler">
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
     },
     Keys
   >
 >
 
-export type PartialSubcommand = Pick<Subcommand, "builder" | "handle"> & {
-  options?: () => unknown
-}
-
-export type SubcommandWithOptions<
-  Options extends Record<Lowercase<string>, PartialOption>,
-  Keys extends keyof Subcommand | "" = "",
-> = Unwrap<
-  Omit<
-    {
-      readonly builder: SlashCommandSubcommandBuilder
-      readonly options: Options
-      nameLocalizations(
-        localizations: Partial<Record<Locale, Lowercase<string>>>,
-      ): SubcommandWithOptions<Options, Keys | "nameLocalizations">
-      descriptionLocalizations(
-        localizations: Partial<Record<Locale, string>>,
-      ): SubcommandWithOptions<Options, Keys | "descriptionLocalizations">
-      handler: (
-        handler: (
-          interaction: ChatInputCommandInteraction,
-          values: OptionValues<Options>,
-        ) => Promise<void>,
-      ) => SubcommandWithOptions<Options, Exclude<Keys, "handle"> | "handler">
-      handle: (interaction: ChatInputCommandInteraction) => Promise<void>
-    },
-    Keys
-  >
+export type PartialSubcommand = Pick<
+  Subcommand<Record<Lowercase<string>, PartialOption> | undefined>,
+  "builder" | "handle" | "~options"
 >

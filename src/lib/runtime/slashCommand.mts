@@ -11,11 +11,7 @@ import {
 } from "discord.js"
 import type { OptionValues, PartialOption } from "../types/option.mts"
 import type { SlashCommand } from "../types/slashCommand.mts"
-import type {
-  PartialSubcommand,
-  Subcommand,
-  SubcommandWithOptions,
-} from "../types/subcommand.mts"
+import type { PartialSubcommand } from "../types/subcommand.mts"
 import type { PartialSubcommandGroup } from "../types/subcommandGroup.mts"
 import { InternalError } from "./error.mts"
 import { applyOptions, getOptionValue } from "./internal.mts"
@@ -223,24 +219,18 @@ export function slashCommand(
           const subcommandName = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = subcommands[subcommandName] as
-            | PartialSubcommand
-            | SubcommandWithOptions<
-                Record<Lowercase<string>, PartialOption>,
-                Exclude<keyof Subcommand, "options">
-              >
-            | undefined
+          const command = subcommands[subcommandName]
           if (!command) {
             throw new InternalError("subcommand_not_found")
           }
 
-          if (!command.options || command.options instanceof Function) {
+          if (!command["~options"]) {
             throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[name as Lowercase<string>]
+          const option = command["~options"][name as Lowercase<string>]
           if (!option) {
             throw new InternalError("option_not_found")
           }
@@ -256,24 +246,18 @@ export function slashCommand(
           const subcommandName = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = subcommands[subcommandName] as
-            | PartialSubcommand
-            | SubcommandWithOptions<
-                Record<Lowercase<string>, PartialOption>,
-                Exclude<keyof Subcommand, "options">
-              >
-            | undefined
+          const command = subcommands[subcommandName]
           if (!command) {
             throw new InternalError("subcommand_not_found")
           }
 
-          if (!command.options || command.options instanceof Function) {
+          if (!command["~options"]) {
             throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[name as Lowercase<string>]
+          const option = command["~options"][name as Lowercase<string>]
           if (!option) {
             throw new InternalError("option_not_found")
           }
@@ -387,25 +371,19 @@ export function slashCommand(
           const subcommandName = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = group["~subcommands"][subcommandName] as
-            | PartialSubcommand
-            | SubcommandWithOptions<
-                Record<Lowercase<string>, PartialOption>,
-                Exclude<keyof Subcommand, "options">
-              >
-            | undefined
+          const command = group["~subcommands"][subcommandName]
 
           if (!command) {
             throw new InternalError("subcommand_not_found")
           }
 
-          if (!command.options || command.options instanceof Function) {
+          if (!command["~options"]) {
             throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[name as Lowercase<string>]
+          const option = command["~options"][name as Lowercase<string>]
           if (!option) {
             throw new InternalError("option_not_found")
           }
@@ -428,25 +406,19 @@ export function slashCommand(
           const subcommandName = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = group["~subcommands"][subcommandName] as
-            | PartialSubcommand
-            | SubcommandWithOptions<
-                Record<Lowercase<string>, PartialOption>,
-                Exclude<keyof Subcommand, "options">
-              >
-            | undefined
+          const command = group["~subcommands"][subcommandName]
 
           if (!command) {
             throw new InternalError("subcommand_not_found")
           }
 
-          if (!command.options || command.options instanceof Function) {
+          if (!command["~options"]) {
             throw new InternalError("command_not_autocompletable")
           }
 
           const { name } = interaction.options.getFocused(true)
 
-          const option = command.options[name as Lowercase<string>]
+          const option = command["~options"][name as Lowercase<string>]
           if (!option) {
             throw new InternalError("option_not_found")
           }
