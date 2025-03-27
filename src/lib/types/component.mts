@@ -87,10 +87,7 @@ export type StringSelectBuilder<
     ...args: Arguments
   ): APIComponent<ComponentType.StringSelect>
   handle(
-    interaction: Omit<
-      ComponentInteraction<ComponentType.StringSelect>,
-      "values"
-    > & { values: Selectable[] },
+    interaction: ComponentInteraction<ComponentType.StringSelect>,
     ...args: Arguments
   ): Promise<void>
 }
