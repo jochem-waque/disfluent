@@ -65,7 +65,7 @@ export type ComponentBuilder<
     | undefined = undefined,
   Arguments extends readonly string[] = string[],
 > = Type extends ComponentType.StringSelect
-  ? StringSelectBuilder<SecondTesting<Options>, Arguments>
+  ? StringSelectBuilder<StringValues<Options>, Arguments>
   : {
       readonly id: string
       readonly type: Type
@@ -269,19 +269,7 @@ export type PartialStringSelectOption = Pick<
 export type PartialSelectMenu<Type extends SelectMenuType = SelectMenuType> =
   Pick<SelectMenu<Type>, "builder" | "type">
 
-export type Testing<Menu extends PartialSelectMenu> =
-  Menu extends Pick<
-    SelectMenu<
-      ComponentType.StringSelect,
-      undefined,
-      Record<string, infer Values extends StringSelectOption<string>>
-    >,
-    "~options"
-  >
-    ? Values["~value"]
-    : never
-
-export type SecondTesting<Data> =
+type StringValues<Data> =
   Data extends Record<string, infer Values extends StringSelectOption<string>>
     ? Values["~value"]
     : never
