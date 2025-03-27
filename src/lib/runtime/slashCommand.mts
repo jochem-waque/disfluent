@@ -182,9 +182,7 @@ export function slashCommand(
             return
           }
 
-          const name = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const name = interaction.options.getSubcommand(true)
           const command = subcommands[name]
           if (!command) {
             throw new InternalError("subcommand_not_found")
@@ -194,9 +192,7 @@ export function slashCommand(
         }
       } else {
         handle = async (interaction: ChatInputCommandInteraction) => {
-          const name = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const name = interaction.options.getSubcommand(true)
           const command = subcommands[name]
           if (!command) {
             throw new InternalError("subcommand_not_found")
@@ -216,9 +212,7 @@ export function slashCommand(
             return
           }
 
-          const subcommandName = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const subcommandName = interaction.options.getSubcommand(true)
           const command = subcommands[subcommandName]
           if (!command) {
             throw new InternalError("subcommand_not_found")
@@ -243,9 +237,7 @@ export function slashCommand(
         }
       } else {
         autocomplete = async (interaction: AutocompleteInteraction) => {
-          const subcommandName = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const subcommandName = interaction.options.getSubcommand(true)
           const command = subcommands[subcommandName]
           if (!command) {
             throw new InternalError("subcommand_not_found")
@@ -321,9 +313,7 @@ export function slashCommand(
             throw new InternalError("subcommand_group_not_found")
           }
 
-          const name = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const name = interaction.options.getSubcommand(true)
           const command = group["~subcommands"][name]
           if (!command) {
             throw new InternalError("subcommand_not_found")
@@ -333,17 +323,13 @@ export function slashCommand(
         }
       } else {
         handle = async (interaction: ChatInputCommandInteraction) => {
-          const groupName = interaction.options.getSubcommandGroup(
-            true,
-          ) as Lowercase<string>
+          const groupName = interaction.options.getSubcommandGroup(true)
           const group = subcommandGroups[groupName]
           if (!group) {
             throw new InternalError("subcommand_group_not_found")
           }
 
-          const name = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const name = interaction.options.getSubcommand(true)
           const command = group["~subcommands"][name]
           if (!command) {
             throw new InternalError("subcommand_not_found")
@@ -368,9 +354,7 @@ export function slashCommand(
             throw new InternalError("subcommand_group_not_found")
           }
 
-          const subcommandName = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const subcommandName = interaction.options.getSubcommand(true)
           const command = group["~subcommands"][subcommandName]
 
           if (!command) {
@@ -403,9 +387,7 @@ export function slashCommand(
             throw new InternalError("subcommand_group_not_found")
           }
 
-          const subcommandName = interaction.options.getSubcommand(
-            true,
-          ) as Lowercase<string>
+          const subcommandName = interaction.options.getSubcommand(true)
           const command = group["~subcommands"][subcommandName]
 
           if (!command) {
