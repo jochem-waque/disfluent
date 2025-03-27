@@ -23,7 +23,7 @@ import { applyOptions, getOptionValue } from "./internal.mts"
 export function slashCommand(
   name: Lowercase<string>,
   description: string,
-): SlashCommand<"handle" | "autocomplete"> {
+): SlashCommand<undefined, "handle" | "autocomplete" | "~options"> {
   return {
     name,
     type: ApplicationCommandType.ChatInput,
@@ -59,7 +59,7 @@ export function slashCommand(
 
       return {
         ...this,
-        options,
+        "~options": options,
         nameLocalizations(localizations) {
           this.builder.setNameLocalizations(localizations)
           return this
