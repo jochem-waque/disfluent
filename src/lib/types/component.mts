@@ -11,6 +11,7 @@ import {
   MentionableSelectMenuBuilder,
   RoleSelectMenuBuilder,
   StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
   UserSelectMenuBuilder,
   type ActionRowBuilder,
   type AnySelectMenuInteraction,
@@ -140,6 +141,7 @@ export type SelectMenuSelector = {
     undefined,
     "options" | "defaultUsers" | "defaultRoles" | "~channelTypes" | "~options"
   >
+  stringOption<Value extends string>(value: Value): StringSelectOption<Value>
 }
 
 export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
@@ -185,7 +187,7 @@ export type SelectMenu<
         handler: ComponentHandler<Type, Arguments>,
       ): CompletedComponent<Type, Arguments>
       // TODO
-      options<NewOptions extends Record<string, unknown>>(
+      options<NewOptions extends Record<string, PartialStringSelectOption>>(
         options: NewOptions,
       ): SelectMenu<
         Type,
@@ -213,6 +215,31 @@ export type SelectMenu<
     },
     Keys
   >
+>
+
+export type StringSelectOption<
+  Value extends string,
+  Keys extends keyof StringSelectOption<string> | "" = "",
+> = Unwrap<
+  Omit<
+    {
+      readonly "~value": Value
+      readonly builder: StringSelectMenuOptionBuilder
+      description(
+        description: string,
+      ): StringSelectOption<Value, Keys | "description">
+      emoji(
+        emoji: ComponentEmojiResolvable,
+      ): StringSelectOption<Value, Keys | "emoji">
+      default(): StringSelectOption<Value, Keys | "default">
+    },
+    Keys
+  >
+>
+
+export type PartialStringSelectOption = Pick<
+  StringSelectOption<string>,
+  "builder" | "~value"
 >
 
 export type Row<Keys extends keyof Row | "" = ""> = Unwrap<

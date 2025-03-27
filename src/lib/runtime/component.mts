@@ -13,6 +13,7 @@ import {
   MentionableSelectMenuBuilder,
   RoleSelectMenuBuilder,
   StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
   UserSelectMenuBuilder,
   type APISelectMenuComponent,
   type SelectMenuType,
@@ -103,6 +104,24 @@ function select(): SelectMenuSelector {
     role,
     mentionable,
     channel,
+    stringOption(value) {
+      return {
+        "~value": value,
+        builder: new StringSelectMenuOptionBuilder().setValue(value),
+        default() {
+          this.builder.setDefault(true)
+          return this
+        },
+        description(description) {
+          this.builder.setDescription(description)
+          return this
+        },
+        emoji(emoji) {
+          this.builder.setEmoji(emoji)
+          return this
+        },
+      }
+    },
   }
 }
 
@@ -161,6 +180,11 @@ function string(id: string): ReturnType<SelectMenuSelector["string"]> {
       return sharedHandler(this.builder, StringSelectMenuBuilder, handle)
     },
     options(options) {
+      for (const [label, option] of Object.entries(options)) {
+        option.builder.setLabel(label)
+        this.builder.addOptions(option.builder)
+      }
+
       return {
         ...this,
         "~options": options,
@@ -339,5 +363,3 @@ function channel(id: string): ReturnType<SelectMenuSelector["channel"]> {
     },
   }
 }
-
-// function input() {}
