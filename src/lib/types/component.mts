@@ -57,7 +57,7 @@ type ComponentHandler<
 > = (
   interaction: Options extends Record<string, PartialStringSelectOption>
     ? Omit<ComponentInteraction<Type>, "values"> & {
-        values: StringValues<Options>
+        values: StringValues<Options>[]
       }
     : ComponentInteraction<Type>,
   ...args: Arguments
