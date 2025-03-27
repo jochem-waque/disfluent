@@ -340,7 +340,7 @@ export function slashCommand(
           const name = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = group.subcommands[name]
+          const command = group["~subcommands"][name]
           if (!command) {
             throw new InternalError("subcommand_not_found")
           }
@@ -360,7 +360,7 @@ export function slashCommand(
           const name = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = group.subcommands[name]
+          const command = group["~subcommands"][name]
           if (!command) {
             throw new InternalError("subcommand_not_found")
           }
@@ -387,7 +387,7 @@ export function slashCommand(
           const subcommandName = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = group.subcommands[subcommandName] as
+          const command = group["~subcommands"][subcommandName] as
             | PartialSubcommand
             | SubcommandWithOptions<
                 Record<Lowercase<string>, PartialOption>,
@@ -428,7 +428,7 @@ export function slashCommand(
           const subcommandName = interaction.options.getSubcommand(
             true,
           ) as Lowercase<string>
-          const command = group.subcommands[subcommandName] as
+          const command = group["~subcommands"][subcommandName] as
             | PartialSubcommand
             | SubcommandWithOptions<
                 Record<Lowercase<string>, PartialOption>,

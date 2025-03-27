@@ -7,44 +7,32 @@ import { Locale, SlashCommandSubcommandGroupBuilder } from "discord.js"
 import type { PartialSubcommand } from "./subcommand.mts"
 import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 
-export type SubcommandGroup<Keys extends keyof SubcommandGroup | "" = ""> =
-  Unwrap<
-    Omit<
-      {
-        readonly builder: SlashCommandSubcommandGroupBuilder
-        nameLocalizations(
-          localizations: Partial<Record<Locale, Lowercase<string>>>,
-        ): SubcommandGroup<Keys | "nameLocalizations">
-        descriptionLocalizations(
-          localizations: Partial<Record<Locale, string>>,
-        ): SubcommandGroup<Keys | "descriptionLocalizations">
-        subcommands<T extends Record<string, PartialSubcommand>>(
-          subcommands: NotEmpty<LowercaseKeys<T>>,
-        ): SubcommandGroupWithSubcommands<Keys>
-      },
-      Keys
-    >
-  >
-
-export type SubcommandGroupWithSubcommands<
+export type SubcommandGroup<
+  Subcommands extends Record<string, PartialSubcommand> | undefined = undefined,
   Keys extends keyof SubcommandGroup | "" = "",
 > = Unwrap<
   Omit<
     {
+      readonly "~subcommands": Subcommands
       readonly builder: SlashCommandSubcommandGroupBuilder
-      readonly subcommands: Record<Lowercase<string>, PartialSubcommand>
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
-      ): SubcommandGroupWithSubcommands<Keys | "nameLocalizations">
+      ): SubcommandGroup<Subcommands, Keys | "nameLocalizations">
       descriptionLocalizations(
         localizations: Partial<Record<Locale, string>>,
-      ): SubcommandGroupWithSubcommands<Keys | "descriptionLocalizations">
+      ): SubcommandGroup<Subcommands, Keys | "descriptionLocalizations">
+      subcommands<NewSubcommands extends Record<string, PartialSubcommand>>(
+        subcommands: NotEmpty<LowercaseKeys<NewSubcommands>>,
+      ): SubcommandGroup<
+        NotEmpty<LowercaseKeys<NewSubcommands>>,
+        Exclude<Keys, "~subcommands"> | "subcommands"
+      >
     },
     Keys
   >
 >
 
 export type PartialSubcommandGroup = Pick<
-  SubcommandGroupWithSubcommands,
-  "builder" | "subcommands"
+  SubcommandGroup<Record<string, PartialSubcommand>>,
+  "builder" | "~subcommands"
 >

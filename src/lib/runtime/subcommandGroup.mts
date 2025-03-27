@@ -7,7 +7,9 @@ import { SlashCommandSubcommandGroupBuilder } from "discord.js"
 import type { PartialSubcommand } from "../types/subcommand.mts"
 import type { SubcommandGroup } from "../types/subcommandGroup.mts"
 
-export function subcommandGroup(description: string): SubcommandGroup {
+export function subcommandGroup(
+  description: string,
+): SubcommandGroup<undefined, "~subcommands"> {
   return {
     builder: new SlashCommandSubcommandGroupBuilder().setDescription(
       description,
@@ -20,15 +22,17 @@ export function subcommandGroup(description: string): SubcommandGroup {
       this.builder.setDescriptionLocalizations(localizations)
       return this
     },
-    subcommands(subcommands: Record<Lowercase<string>, PartialSubcommand>) {
-      for (const [name, { builder }] of Object.entries(subcommands)) {
+    subcommands(subcommands) {
+      for (const [name, { builder }] of Object.entries(
+        subcommands as Record<Lowercase<string>, PartialSubcommand>,
+      )) {
         builder.setName(name)
         this.builder.addSubcommand(builder)
       }
 
       return {
         ...this,
-        subcommands,
+        "~subcommands": subcommands,
         nameLocalizations(localizations) {
           this.builder.setNameLocalizations(localizations)
           return this
