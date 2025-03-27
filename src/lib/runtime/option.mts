@@ -133,7 +133,7 @@ function channel(
       this.builder.addChannelTypes(...channelTypes)
       return {
         ...this,
-        channelTypes,
+        "~channelTypes": channelTypes,
         nameLocalizations(localizations) {
           this.builder.setNameLocalizations(localizations)
           return this
@@ -206,7 +206,7 @@ function integer(
       )
       return {
         ...this,
-        choices,
+        "~choices": choices,
         nameLocalizations(localizations) {
           this.builder.setNameLocalizations(localizations)
           return this
@@ -320,7 +320,7 @@ function number(
       )
       return {
         ...this,
-        choices,
+        "~choices": choices,
         nameLocalizations(localizations) {
           this.builder.setNameLocalizations(localizations)
           return this
@@ -434,7 +434,7 @@ function string(
       )
       return {
         ...this,
-        choices,
+        "~choices": choices,
         nameLocalizations(localizations) {
           this.builder.setNameLocalizations(localizations)
           return this
