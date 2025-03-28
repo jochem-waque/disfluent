@@ -265,7 +265,7 @@ export type PartialSelectMenu<Type extends SelectMenuType = SelectMenuType> =
   Pick<SelectMenu<Type>, "builder" | "type">
 
 type StringValues<Data> =
-  Data extends Record<string, infer Values extends StringSelectOption<string>>
+  Data extends Record<string, infer Values extends PartialStringSelectOption>
     ? Values["~value"]
     : never
 
