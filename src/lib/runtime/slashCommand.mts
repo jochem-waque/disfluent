@@ -34,16 +34,16 @@ export function slashCommand(
       this.builder.setDescriptionLocalizations(localizations)
       return this
     },
-    contexts(context, ...rest) {
-      this.builder.setContexts(context, ...rest)
+    contexts(...contexts) {
+      this.builder.setContexts(...contexts)
       return this
     },
     defaultMemberPermissions(permissions) {
       this.builder.setDefaultMemberPermissions(permissions)
       return this
     },
-    integrationTypes(type, ...rest) {
-      this.builder.setIntegrationTypes(type, ...rest)
+    integrationTypes(...types) {
+      this.builder.setIntegrationTypes(...types)
       return this
     },
     nsfw() {
@@ -97,16 +97,16 @@ export function slashCommand(
               this.builder.setDescriptionLocalizations(localizations)
               return this
             },
-            contexts(context, ...rest) {
-              this.builder.setContexts(context, ...rest)
+            contexts(...contexts) {
+              this.builder.setContexts(...contexts)
               return this
             },
             defaultMemberPermissions(permissions) {
               this.builder.setDefaultMemberPermissions(permissions)
               return this
             },
-            integrationTypes(type, ...rest) {
-              this.builder.setIntegrationTypes(type, ...rest)
+            integrationTypes(...types) {
+              this.builder.setIntegrationTypes(...types)
               return this
             },
             nsfw() {
@@ -115,16 +115,16 @@ export function slashCommand(
             },
           }
         },
-        contexts(context, ...rest) {
-          this.builder.setContexts(context, ...rest)
+        contexts(...contexts) {
+          this.builder.setContexts(...contexts)
           return this
         },
         defaultMemberPermissions(permissions) {
           this.builder.setDefaultMemberPermissions(permissions)
           return this
         },
-        integrationTypes(type, ...rest) {
-          this.builder.setIntegrationTypes(type, ...rest)
+        integrationTypes(...types) {
+          this.builder.setIntegrationTypes(...types)
           return this
         },
         nsfw() {
@@ -148,16 +148,16 @@ export function slashCommand(
         autocomplete() {
           throw new InternalError("command_not_autocompletable")
         },
-        contexts(context, ...rest) {
-          this.builder.setContexts(context, ...rest)
+        contexts(...contexts) {
+          this.builder.setContexts(...contexts)
           return this
         },
         defaultMemberPermissions(permissions) {
           this.builder.setDefaultMemberPermissions(permissions)
           return this
         },
-        integrationTypes(type, ...rest) {
-          this.builder.setIntegrationTypes(type, ...rest)
+        integrationTypes(...types) {
+          this.builder.setIntegrationTypes(...types)
           return this
         },
         nsfw() {
@@ -274,16 +274,16 @@ export function slashCommand(
           this.builder.setDescriptionLocalizations(localizations)
           return this
         },
-        contexts(context, ...rest) {
-          this.builder.setContexts(context, ...rest)
+        contexts(...contexts) {
+          this.builder.setContexts(...contexts)
           return this
         },
         defaultMemberPermissions(permissions) {
           this.builder.setDefaultMemberPermissions(permissions)
           return this
         },
-        integrationTypes(type, ...rest) {
-          this.builder.setIntegrationTypes(type, ...rest)
+        integrationTypes(...types) {
+          this.builder.setIntegrationTypes(...types)
           return this
         },
         nsfw() {
@@ -425,16 +425,16 @@ export function slashCommand(
           this.builder.setDescriptionLocalizations(localizations)
           return this
         },
-        contexts(context, ...rest) {
-          this.builder.setContexts(context, ...rest)
+        contexts(...contexts) {
+          this.builder.setContexts(...contexts)
           return this
         },
         defaultMemberPermissions(permissions) {
           this.builder.setDefaultMemberPermissions(permissions)
           return this
         },
-        integrationTypes(type, ...rest) {
-          this.builder.setIntegrationTypes(type, ...rest)
+        integrationTypes(...types) {
+          this.builder.setIntegrationTypes(...types)
           return this
         },
         nsfw() {

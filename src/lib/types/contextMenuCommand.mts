@@ -50,15 +50,13 @@ export type ContextMenuCommand<
         Exclude<Keys, "type" | "handler"> | "user" | "message"
       >
       contexts(
-        context: InteractionContextType,
-        ...rest: InteractionContextType[]
+        ...contexts: InteractionContextType[]
       ): ContextMenuCommand<Type, Keys | "contexts">
       defaultMemberPermissions(
         permissions: Permissions | bigint,
       ): ContextMenuCommand<Type, Keys | "defaultMemberPermissions">
       integrationTypes(
-        type: ApplicationIntegrationType,
-        ...rest: ApplicationIntegrationType[]
+        ...types: ApplicationIntegrationType[]
       ): ContextMenuCommand<Type, Keys | "integrationTypes">
       handler(
         handler: (interaction: InteractionMap[Type]) => Promise<void>,

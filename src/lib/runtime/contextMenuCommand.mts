@@ -26,16 +26,16 @@ export function contextMenuCommand(
           this.builder.setNameLocalizations(localizations)
           return this
         },
-        contexts(context, ...rest) {
-          this.builder.setContexts(context, ...rest)
+        contexts(...contexts) {
+          this.builder.setContexts(...contexts)
           return this
         },
         defaultMemberPermissions(permissions) {
           this.builder.setDefaultMemberPermissions(permissions)
           return this
         },
-        integrationTypes(type, ...rest) {
-          this.builder.setIntegrationTypes(type, ...rest)
+        integrationTypes(...types) {
+          this.builder.setIntegrationTypes(...types)
           return this
         },
         handler(handler) {
@@ -46,16 +46,16 @@ export function contextMenuCommand(
               this.builder.setNameLocalizations(localizations)
               return this
             },
-            contexts(context, ...rest) {
-              this.builder.setContexts(context, ...rest)
+            contexts(...contexts) {
+              this.builder.setContexts(...contexts)
               return this
             },
             defaultMemberPermissions(permissions) {
               this.builder.setDefaultMemberPermissions(permissions)
               return this
             },
-            integrationTypes(type, ...rest) {
-              this.builder.setIntegrationTypes(type, ...rest)
+            integrationTypes(...types) {
+              this.builder.setIntegrationTypes(...types)
               return this
             },
           }
@@ -72,16 +72,16 @@ export function contextMenuCommand(
           this.builder.setNameLocalizations(localizations)
           return this
         },
-        contexts(context, ...rest) {
-          this.builder.setContexts(context, ...rest)
+        contexts(...contexts) {
+          this.builder.setContexts(...contexts)
           return this
         },
         defaultMemberPermissions(permissions) {
           this.builder.setDefaultMemberPermissions(permissions)
           return this
         },
-        integrationTypes(type, ...rest) {
-          this.builder.setIntegrationTypes(type, ...rest)
+        integrationTypes(...types) {
+          this.builder.setIntegrationTypes(...types)
           return this
         },
         handler(handler) {
@@ -92,32 +92,32 @@ export function contextMenuCommand(
               this.builder.setNameLocalizations(localizations)
               return this
             },
-            contexts(context, ...rest) {
-              this.builder.setContexts(context, ...rest)
+            contexts(...contexts) {
+              this.builder.setContexts(...contexts)
               return this
             },
             defaultMemberPermissions(permissions) {
               this.builder.setDefaultMemberPermissions(permissions)
               return this
             },
-            integrationTypes(type, ...rest) {
-              this.builder.setIntegrationTypes(type, ...rest)
+            integrationTypes(...types) {
+              this.builder.setIntegrationTypes(...types)
               return this
             },
           }
         },
       }
     },
-    contexts(context, ...rest) {
-      this.builder.setContexts(context, ...rest)
+    contexts(...contexts) {
+      this.builder.setContexts(...contexts)
       return this
     },
     defaultMemberPermissions(permissions) {
       this.builder.setDefaultMemberPermissions(permissions)
       return this
     },
-    integrationTypes(type, ...rest) {
-      this.builder.setIntegrationTypes(type, ...rest)
+    integrationTypes(...types) {
+      this.builder.setIntegrationTypes(...types)
       return this
     },
   }

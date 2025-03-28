@@ -37,15 +37,13 @@ export type SlashCommand<
         localizations: Partial<Record<Locale, string>>,
       ): SlashCommand<Options, Keys | "descriptionLocalizations">
       contexts(
-        context: InteractionContextType,
-        ...rest: InteractionContextType[]
+        ...contexts: InteractionContextType[]
       ): SlashCommand<Options, Keys | "contexts">
       defaultMemberPermissions(
         permissions: Permissions | bigint,
       ): SlashCommand<Options, Keys | "defaultMemberPermissions">
       integrationTypes(
-        type: ApplicationIntegrationType,
-        ...rest: ApplicationIntegrationType[]
+        ...types: ApplicationIntegrationType[]
       ): SlashCommand<Options, Keys | "integrationTypes">
       nsfw(): SlashCommand<Options, Keys | "nsfw">
       options<NewOptions extends Record<string, PartialOption>>(

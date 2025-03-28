@@ -28,12 +28,11 @@ import type {
 import { InternalError } from "./error.mts"
 
 export function row<Type extends APIActionRowComponentTypes>(
-  component: Type,
-  ...rest: Type[]
+  ...components: Type[]
 ): APIActionRowComponent<Type> {
   return {
     type: ComponentType.ActionRow,
-    components: [component, ...rest],
+    components,
   }
 }
 
