@@ -47,7 +47,10 @@ export type Subcommand<
   >
 >
 
-export type PartialSubcommand = Pick<
-  Subcommand<Record<Lowercase<string>, PartialOption> | undefined>,
-  "builder" | "handle"
->
+export type PartialSubcommand = Pick<Subcommand, "builder" | "handle"> &
+  Partial<
+    Pick<
+      Subcommand<Record<Lowercase<string>, PartialOption> | undefined>,
+      "~options"
+    >
+  >
