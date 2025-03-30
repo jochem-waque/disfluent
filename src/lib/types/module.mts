@@ -36,17 +36,20 @@ export type CompletedCommand = {
   readonly name: string
 } & (
   | {
+      id?: string
       readonly builder: SlashCommandBuilder
       readonly type: ApplicationCommandType.ChatInput
       handle: (interaction: ChatInputCommandInteraction) => Promise<void>
       autocomplete: (interaction: AutocompleteInteraction) => Promise<void>
     }
   | {
+      id?: string
       readonly builder: ContextMenuCommandBuilder
       readonly type: ApplicationCommandType.User
       handle: (interaction: UserContextMenuCommandInteraction) => Promise<void>
     }
   | {
+      id?: string
       readonly builder: ContextMenuCommandBuilder
       readonly type: ApplicationCommandType.Message
       handle: (

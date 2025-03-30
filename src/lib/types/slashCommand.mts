@@ -30,6 +30,7 @@ export type SlashCommand<
       readonly name: string
       readonly builder: SlashCommandBuilder
       readonly type: ApplicationCommandType.ChatInput
+      readonly id?: string
       nameLocalizations(
         localizations: Partial<Record<Locale, Lowercase<string>>>,
       ): SlashCommand<Options, Keys | "nameLocalizations">
@@ -61,7 +62,7 @@ export type SlashCommand<
           : (interaction: ChatInputCommandInteraction) => Promise<void>,
       ): SlashCommand<
         Options,
-        | Exclude<Keys, "handle" | "autocomplete">
+        | Exclude<Keys, "handle" | "autocomplete" | "id">
         | "handler"
         | "options"
         | "subcommandGroups"

@@ -128,6 +128,7 @@ export function bot(options: ClientOptions): Bot {
               }
 
               registeredCommands.set(registration.id, command)
+              command.id = registration.id
             }
           })
           .catch(errorHandler)
