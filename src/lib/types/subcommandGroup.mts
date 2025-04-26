@@ -3,6 +3,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 import { Locale, SlashCommandSubcommandGroupBuilder } from "discord.js"
 import type { PartialSubcommand } from "./subcommand.mts"
 import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"

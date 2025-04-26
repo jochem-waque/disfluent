@@ -3,6 +3,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 import { SlashCommandSubcommandBuilder } from "discord.js"
 import type { OptionValues } from "../types/option.mts"
 import type { Subcommand } from "../types/subcommand.mts"
