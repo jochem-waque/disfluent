@@ -8,10 +8,17 @@ import {
   ButtonInteraction,
   ChannelSelectMenuBuilder,
   ChannelType,
+  ContainerBuilder,
+  FileBuilder,
+  MediaGalleryBuilder,
   MentionableSelectMenuBuilder,
   RoleSelectMenuBuilder,
+  SectionBuilder,
+  SeparatorBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  TextDisplayBuilder,
+  ThumbnailBuilder,
   UserSelectMenuBuilder,
   type ActionRowBuilder,
   type AnySelectMenuInteraction,
@@ -45,6 +52,14 @@ type BuilderMap<Type extends ComponentType> = {
   [ComponentType.RoleSelect]: RoleSelectMenuBuilder
   [ComponentType.MentionableSelect]: MentionableSelectMenuBuilder
   [ComponentType.ChannelSelect]: ChannelSelectMenuBuilder
+  [ComponentType.Section]: SectionBuilder
+  [ComponentType.TextDisplay]: TextDisplayBuilder
+  [ComponentType.Thumbnail]: ThumbnailBuilder
+  [ComponentType.MediaGallery]: MediaGalleryBuilder
+  [ComponentType.File]: FileBuilder
+  [ComponentType.Separator]: SeparatorBuilder
+  [ComponentType.ContentInventoryEntry]: never
+  [ComponentType.Container]: ContainerBuilder
 }[Type]
 
 type ComponentHandler<

@@ -16,7 +16,7 @@ import {
   StringSelectMenuOptionBuilder,
   UserSelectMenuBuilder,
   type APIActionRowComponent,
-  type APIActionRowComponentTypes,
+  type APIComponentInActionRow,
   type APISelectMenuComponent,
   type SelectMenuType,
 } from "discord.js"
@@ -27,7 +27,7 @@ import type {
 } from "../types/component.mts"
 import { InternalError } from "./error.mts"
 
-export function row<Type extends APIActionRowComponentTypes>(
+export function row<Type extends APIComponentInActionRow>(
   ...components: Type[]
 ): APIActionRowComponent<Type> {
   return {
