@@ -13,7 +13,7 @@ import {
   SlashCommandBuilder,
   UserContextMenuCommandInteraction,
 } from "discord.js"
-import type { ComponentBuilder } from "./component.mts"
+import type { ComponentBuilder } from "./component/shared.mts"
 import type { CompletedEventHandler } from "./event.mts"
 import type { Unwrap } from "./util.mts"
 

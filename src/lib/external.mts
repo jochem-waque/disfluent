@@ -3,8 +3,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 export * from "./runtime/bot.mts"
-export * from "./runtime/component.mts"
+export * from "./runtime/component/button.mts"
+export * from "./runtime/component/row.mts"
+export * from "./runtime/component/select.mts"
 export * from "./runtime/contextMenuCommand.mts"
 export * from "./runtime/error.mts"
 export * from "./runtime/event.mts"
@@ -15,7 +18,10 @@ export * from "./runtime/subcommand.mts"
 export * from "./runtime/subcommandGroup.mts"
 
 export type * from "./types/bot.mts"
-export type * from "./types/component.mts"
+export type * from "./types/component/button.mts"
+export type * from "./types/component/row.mts"
+export type * from "./types/component/select.mts"
+export type * from "./types/component/shared.mts"
 export type * from "./types/contextMenuCommand.mts"
 export type * from "./types/error.mts"
 export type * from "./types/event.mts"
