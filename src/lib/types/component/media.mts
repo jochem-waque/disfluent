@@ -4,17 +4,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ActionRowBuilder, AnyComponentBuilder } from "discord.js"
+import type { MediaGalleryItemBuilder } from "discord.js"
 import type { Unwrap } from "../util.mts"
 
-export type Row<
-  Type extends AnyComponentBuilder,
-  Keys extends keyof Row<Type> | "" = "",
-> = Unwrap<
+export type Media<Keys extends keyof Media | "" = ""> = Unwrap<
   Omit<
     {
-      builder: ActionRowBuilder<Type>
-      build(): ReturnType<ActionRowBuilder<Type>["toJSON"]>
+      builder: MediaGalleryItemBuilder
+      description(description: string): Media<Keys | "description">
+      spoiler(): Media<Keys | "spoiler">
     },
     Keys
   >

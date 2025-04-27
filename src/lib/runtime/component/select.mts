@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024  Jochem Waqué
+ * Copyright (C) 2024-2025  Jochem Waqué
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -72,10 +72,10 @@ function builder<
   return {
     id: data.custom_id,
     type: data.type,
-    build(...args: readonly string[]) {
-      return new constructor(data)
-        .setCustomId(data.custom_id + ":" + args.join(":"))
-        .toJSON()
+    with(...args: readonly string[]) {
+      return new constructor(data).setCustomId(
+        data.custom_id + ":" + args.join(":"),
+      )
     },
     handle,
   }

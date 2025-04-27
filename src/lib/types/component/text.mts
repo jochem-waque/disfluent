@@ -4,17 +4,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ActionRowBuilder, AnyComponentBuilder } from "discord.js"
+import type { APITextDisplayComponent, TextDisplayBuilder } from "discord.js"
 import type { Unwrap } from "../util.mts"
 
-export type Row<
-  Type extends AnyComponentBuilder,
-  Keys extends keyof Row<Type> | "" = "",
-> = Unwrap<
+export type Text<Keys extends keyof Text | "" = ""> = Unwrap<
   Omit<
     {
-      builder: ActionRowBuilder<Type>
-      build(): ReturnType<ActionRowBuilder<Type>["toJSON"]>
+      builder: TextDisplayBuilder
+      build(): APITextDisplayComponent
     },
     Keys
   >

@@ -1,20 +1,19 @@
 /**
- * Copyright (C) 2024  Jochem Waqué
+ * Copyright (C) 2024-2025  Jochem Waqué
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  ComponentType,
-  type APIActionRowComponent,
-  type APIComponentInActionRow,
-} from "discord.js"
+import { ActionRowBuilder, type AnyComponentBuilder } from "discord.js"
+import type { Row } from "../../external.mts"
 
-export function row<Type extends APIComponentInActionRow>(
+export function row<Type extends AnyComponentBuilder>(
   ...components: Type[]
-): APIActionRowComponent<Type> {
+): Row<Type> {
   return {
-    type: ComponentType.ActionRow,
-    components,
+    builder: new ActionRowBuilder<Type>().setComponents(components),
+    build() {
+      return this.builder.toJSON()
+    },
   }
 }
