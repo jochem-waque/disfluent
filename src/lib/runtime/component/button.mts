@@ -11,8 +11,8 @@ import { InternalError } from "../error.mts"
 export function button(style: ButtonStyle): Button<"handler"> {
   return {
     builder: new ButtonBuilder().setStyle(style),
-    id(id) {
-      this.builder.setCustomId(id)
+    customId(customId) {
+      this.builder.setCustomId(customId)
       return {
         ...this,
         disabled() {

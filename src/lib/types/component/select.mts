@@ -22,7 +22,7 @@ import type {
 
 export type SelectMenuSelector = {
   string(
-    id: string,
+    customId: string,
   ): SelectMenu<
     ComponentType.StringSelect,
     undefined,
@@ -36,7 +36,7 @@ export type SelectMenuSelector = {
     | "handler"
   >
   user(
-    id: string,
+    customId: string,
   ): SelectMenu<
     ComponentType.UserSelect,
     undefined,
@@ -49,7 +49,7 @@ export type SelectMenuSelector = {
     | "~options"
   >
   role(
-    id: string,
+    customId: string,
   ): SelectMenu<
     ComponentType.RoleSelect,
     undefined,
@@ -62,7 +62,7 @@ export type SelectMenuSelector = {
     | "~options"
   >
   mentionable(
-    id: string,
+    customId: string,
   ): SelectMenu<
     ComponentType.MentionableSelect,
     undefined,
@@ -74,7 +74,7 @@ export type SelectMenuSelector = {
     | "~options"
   >
   channel(
-    id: string,
+    customId: string,
   ): SelectMenu<
     ComponentType.ChannelSelect,
     undefined,
