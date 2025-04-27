@@ -4,12 +4,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type {
-  APIFileComponent,
-  ChatInputCommandInteraction,
-  FileBuilder,
-} from "discord.js"
-import { container } from "../../runtime/component/container.mts"
+import type { APIFileComponent, FileBuilder } from "discord.js"
 import type { Unwrap } from "../util.mts"
 
 export type File<Keys extends keyof File | "" = ""> = Unwrap<
@@ -22,9 +17,3 @@ export type File<Keys extends keyof File | "" = ""> = Unwrap<
     Keys
   >
 >
-
-const test: ChatInputCommandInteraction =
-  {} as unknown as ChatInputCommandInteraction
-await test.reply({
-  components: [container([]).builder.toJSON()],
-})
