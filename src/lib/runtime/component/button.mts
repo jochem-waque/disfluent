@@ -41,7 +41,7 @@ export function button(style: ButtonStyle): Button<"handler"> {
             type: base.type,
             with(...args: readonly string[]) {
               return new ButtonBuilder(base).setCustomId(
-                base.custom_id + ":" + args.join(":"),
+                [base.custom_id, ...args].join(":"),
               )
             },
             handle,

@@ -74,7 +74,7 @@ function builder<
     type: data.type,
     with(...args: readonly string[]) {
       return new constructor(data).setCustomId(
-        data.custom_id + ":" + args.join(":"),
+        [data.custom_id, ...args].join(":"),
       )
     },
     handle,
@@ -101,7 +101,7 @@ function stringSelectBuilder<Arguments extends readonly string[]>(
     type: data.type,
     with(defaults, ...args) {
       const builder = new constructor(data).setCustomId(
-        data.custom_id + ":" + args.join(":"),
+        [data.custom_id, ...args].join(":"),
       )
 
       const defaultsSet = new Set(defaults)
