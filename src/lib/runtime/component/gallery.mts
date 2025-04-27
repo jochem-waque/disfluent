@@ -8,7 +8,7 @@ import { MediaGalleryBuilder } from "discord.js"
 import type { Gallery } from "../../types/component/gallery.mts"
 import type { Media } from "../../types/component/media.mts"
 
-export function gallery(...items: Media[]): Gallery {
+export function gallery(...items: Pick<Media, "builder">[]): Gallery {
   return {
     builder: new MediaGalleryBuilder().addItems(
       items.map((item) => item.builder),

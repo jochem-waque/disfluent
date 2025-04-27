@@ -8,7 +8,7 @@ import { SectionBuilder } from "discord.js"
 import type { Section } from "../../types/component/section.mts"
 import type { Text } from "../../types/component/text.mts"
 
-export function section(...components: Text[]): Section {
+export function section(...components: Pick<Text, "builder">[]): Section {
   return {
     builder: new SectionBuilder().addTextDisplayComponents(
       ...components.map((text) => text.builder),
