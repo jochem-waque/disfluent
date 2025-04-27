@@ -10,6 +10,10 @@ import type { Thumbnail } from "../../types/component/thumbnail.mts"
 export function thumbnail(): Thumbnail {
   return {
     builder: new ThumbnailBuilder(),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     description(description) {
       this.builder.setDescription(description)
       return this

@@ -13,6 +13,10 @@ export function section(...components: Text[]): Section {
     builder: new SectionBuilder().addTextDisplayComponents(
       ...components.map((text) => text.builder),
     ),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     accessory(accessory) {
       this.builder.setButtonAccessory(accessory.builder)
       return this

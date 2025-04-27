@@ -98,6 +98,7 @@ type SelectMenu<
       readonly "~options": Options
       readonly builder: BuilderMap<Type>
       readonly type: Type
+      id(id: number): SelectMenu<Type, ChannelTypes, Options, Keys | "id">
       disabled(): SelectMenu<Type, ChannelTypes, Options, Keys | "disabled">
       maxValues(
         value: number,

@@ -17,6 +17,7 @@ export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
   Omit<
     {
       readonly builder: BuilderMap<ComponentType.Button>
+      id(id: number): Button<Keys | "id">
       customId(
         customId: string,
       ): Button<Exclude<Keys, "handler"> | "customId" | "url">

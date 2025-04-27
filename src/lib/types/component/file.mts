@@ -11,6 +11,7 @@ export type File<Keys extends keyof File | "" = ""> = Unwrap<
   Omit<
     {
       builder: FileBuilder
+      id(id: number): File<Keys | "id">
       spoiler(): File<Keys | "spoiler">
       build(): APIFileComponent
     },

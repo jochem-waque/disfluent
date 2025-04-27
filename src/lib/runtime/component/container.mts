@@ -17,6 +17,10 @@ export function container(...components: ContainerComponent[]): Container {
       0,
       ...components.map((component) => component.builder),
     ),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     accent(color) {
       this.builder.setAccentColor(color)
       return this

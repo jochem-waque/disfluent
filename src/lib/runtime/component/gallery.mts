@@ -13,6 +13,10 @@ export function gallery(...items: Media[]): Gallery {
     builder: new MediaGalleryBuilder().addItems(
       items.map((item) => item.builder),
     ),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     build() {
       return this.builder.toJSON()
     },

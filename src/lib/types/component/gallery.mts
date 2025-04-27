@@ -11,6 +11,7 @@ export type Gallery<Keys extends keyof Gallery | "" = ""> = Unwrap<
   Omit<
     {
       builder: MediaGalleryBuilder
+      id(id: number): Gallery<Keys | "id">
       build(): APIMediaGalleryComponent
     },
     Keys

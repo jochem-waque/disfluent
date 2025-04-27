@@ -11,6 +11,7 @@ export type Thumbnail<Keys extends keyof Thumbnail | "" = ""> = Unwrap<
   Omit<
     {
       builder: ThumbnailBuilder
+      id(id: number): Thumbnail<Keys | "id">
       description(description: string): Thumbnail<Keys | "description">
       spoiler(): Thumbnail<Keys | "spoiler">
     },

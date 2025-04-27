@@ -15,6 +15,7 @@ export type Separator<Keys extends keyof Separator | "" = ""> = Unwrap<
   Omit<
     {
       builder: SeparatorBuilder
+      id(id: number): Separator<Keys | "id">
       divider(): Separator<Keys | "divider">
       spacing(spacing: SeparatorSpacingSize): Separator<Keys | "spacing">
       build(): APISeparatorComponent

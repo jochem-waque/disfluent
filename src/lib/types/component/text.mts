@@ -11,6 +11,7 @@ export type Text<Keys extends keyof Text | "" = ""> = Unwrap<
   Omit<
     {
       builder: TextDisplayBuilder
+      id(id: number): Text<Keys | "id">
       build(): APITextDisplayComponent
     },
     Keys

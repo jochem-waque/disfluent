@@ -12,6 +12,10 @@ export function row<Type extends AnyComponentBuilder>(
 ): Row<Type> {
   return {
     builder: new ActionRowBuilder<Type>().setComponents(components),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     build() {
       return this.builder.toJSON()
     },

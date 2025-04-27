@@ -14,6 +14,7 @@ export type Section<Keys extends keyof Section | "" = ""> = Unwrap<
   Omit<
     {
       builder: SectionBuilder
+      id(id: number): Section<Keys | "id">
       accessory(accessory: Accessory): Section<Keys | "accessory">
       build(): APISectionComponent
     },

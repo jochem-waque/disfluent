@@ -14,6 +14,7 @@ export type Row<
   Omit<
     {
       builder: ActionRowBuilder<Type>
+      id(id: number): Row<Type, Keys | "id">
       build(): ReturnType<ActionRowBuilder<Type>["toJSON"]>
     },
     Keys

@@ -10,6 +10,10 @@ import type { Separator } from "../../types/component/separator.mts"
 export function separator(): Separator {
   return {
     builder: new SeparatorBuilder(),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     divider() {
       this.builder.setDivider(true)
       return this

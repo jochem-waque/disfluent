@@ -10,6 +10,10 @@ import type { Text } from "../../types/component/text.mts"
 export function text(content: string): Text {
   return {
     builder: new TextDisplayBuilder().setContent(content),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     build() {
       return this.builder.toJSON()
     },

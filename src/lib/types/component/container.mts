@@ -20,6 +20,7 @@ export type Container<Keys extends keyof Container | "" = ""> = Unwrap<
   Omit<
     {
       builder: ContainerBuilder
+      id(id: number): Container<Keys | "id">
       accent(color: RGBTuple | number): Container<Keys | "accent">
       spoiler(): Container<Keys | "spoiler">
       build(): APIContainerComponent

@@ -122,6 +122,10 @@ function string(id: string): ReturnType<SelectMenuSelector["string"]> {
   return {
     type: ComponentType.StringSelect,
     builder: new StringSelectMenuBuilder().setCustomId(id),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     disabled() {
       this.builder.setDisabled(true)
       return this
@@ -147,6 +151,10 @@ function string(id: string): ReturnType<SelectMenuSelector["string"]> {
       return {
         ...this,
         "~options": options,
+        id(id) {
+          this.builder.setId(id)
+          return this
+        },
         disabled() {
           this.builder.setDisabled(true)
           return this
@@ -179,6 +187,10 @@ function user(id: string): ReturnType<SelectMenuSelector["user"]> {
   return {
     type: ComponentType.UserSelect,
     builder: new UserSelectMenuBuilder().setCustomId(id),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     disabled() {
       this.builder.setDisabled(true)
       return this
@@ -209,6 +221,10 @@ function role(id: string): ReturnType<SelectMenuSelector["role"]> {
   return {
     type: ComponentType.RoleSelect,
     builder: new RoleSelectMenuBuilder().setCustomId(id),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     disabled() {
       this.builder.setDisabled(true)
       return this
@@ -242,6 +258,10 @@ function mentionable(
   return {
     type: ComponentType.MentionableSelect,
     builder: new MentionableSelectMenuBuilder().setCustomId(id),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     disabled() {
       this.builder.setDisabled(true)
       return this
@@ -277,6 +297,10 @@ function channel(id: string): ReturnType<SelectMenuSelector["channel"]> {
   return {
     type: ComponentType.ChannelSelect,
     builder: new ChannelSelectMenuBuilder().setCustomId(id),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     disabled() {
       this.builder.setDisabled(true)
       return this
@@ -298,6 +322,10 @@ function channel(id: string): ReturnType<SelectMenuSelector["channel"]> {
       return {
         ...this,
         "~channelTypes": types,
+        id(id) {
+          this.builder.setId(id)
+          return this
+        },
         disabled() {
           this.builder.setDisabled(true)
           return this

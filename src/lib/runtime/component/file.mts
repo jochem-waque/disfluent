@@ -10,6 +10,10 @@ import type { File } from "../../types/component/file.mts"
 export function file(url: `attachment://${string}`): File {
   return {
     builder: new FileBuilder().setURL(url),
+    id(id) {
+      this.builder.setId(id)
+      return this
+    },
     spoiler() {
       this.builder.setSpoiler(true)
       return this
