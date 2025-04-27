@@ -4,18 +4,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { APISectionComponent, SectionBuilder } from "discord.js"
+import type {
+  APISectionComponent,
+  ButtonBuilder,
+  SectionBuilder,
+} from "discord.js"
 import type { Unwrap } from "../util.mts"
-import type { Button } from "./button.mts"
+import type { Thumbnail } from "./thumbnail.mts"
 
-type Accessory = Button
+export type Accessory = ButtonBuilder | Pick<Thumbnail, "builder">
 
 export type Section<Keys extends keyof Section | "" = ""> = Unwrap<
   Omit<
     {
       builder: SectionBuilder
       id(id: number): Section<Keys | "id">
-      accessory(accessory: Accessory): Section<Keys | "accessory">
       build(): APISectionComponent
     },
     Keys
