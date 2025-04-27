@@ -99,7 +99,7 @@ function stringSelectBuilder<Arguments extends readonly string[]>(
   return {
     id: data.custom_id,
     type: data.type,
-    build(defaults, ...args) {
+    with(defaults, ...args) {
       const builder = new constructor(data).setCustomId(
         data.custom_id + ":" + args.join(":"),
       )
@@ -112,7 +112,7 @@ function stringSelectBuilder<Arguments extends readonly string[]>(
         }
       }
 
-      return builder.toJSON()
+      return builder
     },
     handle,
   }

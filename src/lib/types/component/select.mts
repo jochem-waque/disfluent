@@ -14,7 +14,6 @@ import type {
 } from "discord.js"
 import type { Unwrap } from "../util.mts"
 import type {
-  APIComponent,
   BuilderMap,
   ComponentBuilder,
   ComponentHandler,
@@ -174,10 +173,10 @@ export type StringSelectBuilder<
 > = {
   readonly id: string
   readonly type: ComponentType.StringSelect
-  build(
+  with(
     defaults?: Selectable[],
     ...args: Arguments
-  ): APIComponent<ComponentType.StringSelect>
+  ): BuilderMap<ComponentType.StringSelect>
   handle(
     interaction: Omit<
       ComponentInteraction<ComponentType.StringSelect>,
