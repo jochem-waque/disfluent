@@ -7,9 +7,9 @@
 import { ThumbnailBuilder } from "discord.js"
 import type { Thumbnail } from "../../types/component/thumbnail.mts"
 
-export function thumbnail(): Thumbnail {
+export function thumbnail(url: string): Thumbnail {
   return {
-    builder: new ThumbnailBuilder(),
+    builder: new ThumbnailBuilder().setURL(url),
     id(id) {
       this.builder.setId(id)
       return this
