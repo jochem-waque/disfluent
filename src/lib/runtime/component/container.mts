@@ -10,7 +10,7 @@ import type {
   ContainerComponent,
 } from "../../types/component/container.mts"
 
-export function container(components: ContainerComponent[]): Container {
+export function container(...components: ContainerComponent[]): Container {
   return {
     builder: new ContainerBuilder().spliceComponents(
       0,
