@@ -13,6 +13,8 @@ import {
   type Bot,
   type CompletedCommand,
   type ComponentBuilder,
+  type ErrorContext,
+  type ErrorHandler,
   InternalError,
 } from "../external.mts"
 
@@ -24,7 +26,12 @@ export function bot(options: ClientOptions): Bot {
 
   const components = new Map<string, ComponentBuilder>()
 
-  let errorHandler = console.error
+  let errorHandler: ErrorHandler = console.log
+  const errorHandlerFactory = (context?: Omit<ErrorContext, "error">) => {
+    return (error: unknown) => {
+      errorHandler({ ...context, error })
+    }
+  }
 
   client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
@@ -33,7 +40,9 @@ export function bot(options: ClientOptions): Bot {
         return
       }
 
-      command.handle(interaction as never).catch(errorHandler)
+      command
+        .handle(interaction as never)
+        .catch(errorHandlerFactory({ interaction, command }))
 
       return
     }
@@ -44,7 +53,9 @@ export function bot(options: ClientOptions): Bot {
         return
       }
 
-      command.autocomplete(interaction).catch(errorHandler)
+      command
+        .autocomplete(interaction)
+        .catch(errorHandlerFactory({ interaction, command }))
       return
     }
 
@@ -65,7 +76,7 @@ export function bot(options: ClientOptions): Bot {
 
       component
         .handle(interaction as never, ...split.slice(0))
-        .catch(errorHandler)
+        .catch(errorHandlerFactory({ interaction, component }))
     }
   })
 
@@ -80,7 +91,9 @@ export function bot(options: ClientOptions): Bot {
         const wrapped = (...params: Parameters<typeof handler.handle>) => {
           const promise = handler.handle(...params)
           if (promise) {
-            promise.catch(errorHandler)
+            promise.catch(
+              errorHandlerFactory({ handler, handlerParameters: params }),
+            )
           }
         }
 
@@ -131,7 +144,7 @@ export function bot(options: ClientOptions): Bot {
               command.id = registration.id
             }
           })
-          .catch(errorHandler)
+          .catch(errorHandlerFactory())
       })
       return this
     },
