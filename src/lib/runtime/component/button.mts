@@ -70,7 +70,7 @@ export function button(style: ButtonStyle): Button<"handler"> {
       return this
     },
     url(url) {
-      return this.builder.setURL(url.toString()).toJSON()
+      return this.builder.setURL(url.toString())
     },
   }
 }
