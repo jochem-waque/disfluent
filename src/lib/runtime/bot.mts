@@ -75,7 +75,7 @@ export function bot(options: ClientOptions): Bot {
       }
 
       component
-        .handle(interaction as never, ...split.slice(0))
+        .handle(interaction as never, ...split.slice(1))
         .catch(errorHandlerFactory({ interaction, component }))
     }
   })
