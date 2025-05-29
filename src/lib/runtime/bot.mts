@@ -101,11 +101,14 @@ export function bot(options: ClientOptions): Bot {
 
       for (const handler of module.events) {
         const wrapped = (...params: Parameters<typeof handler.handle>) => {
-          const promise = handler.handle(...params)
-          if (promise) {
-            promise.catch(
-              errorHandlerFactory({ handler, handlerParameters: params }),
-            )
+          try {
+            handler
+              .handle(...params)
+              ?.catch(
+                errorHandlerFactory({ handler, handlerParameters: params }),
+              )
+          } catch (error) {
+            errorHandlerFactory({ handler, handlerParameters: params })(error)
           }
         }
 
