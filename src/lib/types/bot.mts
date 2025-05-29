@@ -14,10 +14,11 @@ export type ErrorHandler = (context: ErrorContext) => void
 export type Bot<Keys extends keyof Bot | "" = ""> = Unwrap<
   Omit<
     {
-      readonly client: Client
+      readonly "~client": Client
       addModule(module: Module): Bot<Keys>
       errorHandler(handler: ErrorHandler): Bot<Keys | "errorHandler">
       register(): Bot<Keys | "register">
+      login(token: string): Promise<void>
     },
     Keys
   >

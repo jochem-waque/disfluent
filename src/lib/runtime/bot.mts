@@ -81,7 +81,7 @@ export function bot(options: ClientOptions): Bot {
   })
 
   return {
-    client,
+    "~client": client,
     addModule(module) {
       for (const command of module.commands.values()) {
         commands.set(command.name, command)
@@ -147,6 +147,9 @@ export function bot(options: ClientOptions): Bot {
           .catch(errorHandlerFactory())
       })
       return this
+    },
+    async login(token) {
+      await client.login(token)
     },
   }
 }
