@@ -7,8 +7,10 @@
 import type {
   ClientOptions,
   RESTPutAPIApplicationCommandsResult,
+  Webhook,
+  WebhookType,
 } from "discord.js"
-import { Client, Routes } from "discord.js"
+import { Client, codeBlock, Routes } from "discord.js"
 import {
   type Bot,
   type CompletedCommand,
@@ -30,8 +32,18 @@ export function bot(options: ClientOptions): Bot {
   const errorHandlerFactory = (context?: Omit<ErrorContext, "error">) => {
     return (error: unknown) => {
       errorHandler({ ...context, error })
+
+      for (const webhook of errorWebhooks.values()) {
+        webhook
+          .send(codeBlock("json", JSON.stringify(context, undefined, 4)))
+          .catch((error: unknown) => {
+            errorHandler({ error })
+          })
+      }
     }
   }
+
+  const errorWebhooks = new Map<string, Webhook<WebhookType.Incoming>>()
 
   client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
@@ -122,6 +134,10 @@ export function bot(options: ClientOptions): Bot {
       errorHandler = handler
       return this
     },
+    addErrorWebhook(webhook) {
+      errorWebhooks.set(webhook.id, webhook)
+      return this
+    },
     register() {
       client.once("ready", (client) => {
         client.rest
@@ -150,6 +166,7 @@ export function bot(options: ClientOptions): Bot {
     },
     async login(token) {
       await client.login(token)
+      return this
     },
   }
 }
