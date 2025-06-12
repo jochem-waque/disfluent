@@ -38,6 +38,7 @@ export function bot(options: ClientOptions): Bot {
     const options: WebhookMessageCreateOptions = {
       flags: MessageFlags.IsComponentsV2,
       components: errorMessageComponents(context),
+      withComponents: true,
     }
 
     if (client.user) {
