@@ -4,19 +4,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { Interaction } from "discord.js"
-import type { ComponentBuilder } from "./component/shared.mts"
+import type {
+  AutocompleteInteraction,
+  CommandInteraction,
+  ComponentType,
+} from "discord.js"
+import type {
+  ComponentBuilder,
+  ComponentInteraction,
+} from "./component/shared.mts"
 import type { CompletedEventHandler } from "./event.mts"
 import type { CompletedCommand } from "./module.mts"
 
-export type ErrorContext = {
-  error: unknown
-  interaction?: Interaction
-  command?: CompletedCommand
-  component?: ComponentBuilder
-  handler?: CompletedEventHandler
-  handlerParameters?: unknown[]
-}
+export type ErrorContext =
+  | {
+      error: unknown
+      interaction: CommandInteraction | AutocompleteInteraction
+      command: CompletedCommand
+    }
+  | {
+      error: unknown
+      interaction: ComponentInteraction<ComponentType>
+      component: ComponentBuilder
+    }
+  | {
+      error: unknown
+      handler: CompletedEventHandler
+      handlerParameters: unknown[]
+    }
+  | { error: unknown }
 
 export type ErrorCode =
   | "command_not_autocompletable"

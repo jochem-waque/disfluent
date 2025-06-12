@@ -8,9 +8,10 @@ import type {
   ClientOptions,
   RESTPutAPIApplicationCommandsResult,
   Webhook,
+  WebhookMessageCreateOptions,
   WebhookType,
 } from "discord.js"
-import { Client, codeBlock, Routes } from "discord.js"
+import { Client, MessageFlags, Routes } from "discord.js"
 import {
   type Bot,
   type CompletedCommand,
@@ -19,6 +20,7 @@ import {
   type ErrorHandler,
   InternalError,
 } from "../external.mts"
+import { errorMessageComponents } from "./errorMessage.mts"
 
 export function bot(options: ClientOptions): Bot {
   const client = new Client(options)
@@ -29,17 +31,24 @@ export function bot(options: ClientOptions): Bot {
   const components = new Map<string, ComponentBuilder>()
 
   let errorHandler: ErrorHandler = console.log
-  const errorHandlerFactory = (context?: Omit<ErrorContext, "error">) => {
-    return (error: unknown) => {
-      errorHandler({ ...context, error })
 
-      for (const webhook of errorWebhooks.values()) {
-        webhook
-          .send(codeBlock("json", JSON.stringify(context, undefined, 4)))
-          .catch((error: unknown) => {
-            errorHandler({ error })
-          })
-      }
+  const errorHandlerWrapper = (context: ErrorContext) => {
+    errorHandler(context)
+
+    const options: WebhookMessageCreateOptions = {
+      flags: MessageFlags.IsComponentsV2,
+      components: errorMessageComponents(context),
+    }
+
+    if (client.user) {
+      options.username = client.user.displayName
+      options.avatarURL = client.user.displayAvatarURL()
+    }
+
+    for (const webhook of errorWebhooks.values()) {
+      webhook.send(options).catch((error: unknown) => {
+        errorHandler({ error })
+      })
     }
   }
 
@@ -52,9 +61,9 @@ export function bot(options: ClientOptions): Bot {
         return
       }
 
-      command
-        .handle(interaction as never)
-        .catch(errorHandlerFactory({ interaction, command }))
+      command.handle(interaction as never).catch((error: unknown) => {
+        errorHandlerWrapper({ error, interaction, command })
+      })
 
       return
     }
@@ -65,9 +74,9 @@ export function bot(options: ClientOptions): Bot {
         return
       }
 
-      command
-        .autocomplete(interaction)
-        .catch(errorHandlerFactory({ interaction, command }))
+      command.autocomplete(interaction).catch((error: unknown) => {
+        errorHandlerWrapper({ error, interaction, command })
+      })
       return
     }
 
@@ -88,7 +97,9 @@ export function bot(options: ClientOptions): Bot {
 
       component
         .handle(interaction as never, ...split.slice(1))
-        .catch(errorHandlerFactory({ interaction, component }))
+        .catch((error: unknown) => {
+          errorHandlerWrapper({ error, interaction, component })
+        })
     }
   })
 
@@ -102,13 +113,11 @@ export function bot(options: ClientOptions): Bot {
       for (const handler of module.events) {
         const wrapped = (...params: Parameters<typeof handler.handle>) => {
           try {
-            handler
-              .handle(...params)
-              ?.catch(
-                errorHandlerFactory({ handler, handlerParameters: params }),
-              )
+            handler.handle(...params)?.catch((error: unknown) => {
+              errorHandlerWrapper({ error, handler, handlerParameters: params })
+            })
           } catch (error) {
-            errorHandlerFactory({ handler, handlerParameters: params })(error)
+            errorHandlerWrapper({ error, handler, handlerParameters: params })
           }
         }
 
@@ -163,7 +172,9 @@ export function bot(options: ClientOptions): Bot {
               command.id = registration.id
             }
           })
-          .catch(errorHandlerFactory())
+          .catch((error: unknown) => {
+            errorHandlerWrapper({ error })
+          })
       })
       return this
     },
