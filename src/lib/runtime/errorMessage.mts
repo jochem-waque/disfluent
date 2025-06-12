@@ -12,7 +12,6 @@ import {
   HeadingLevel,
   InteractionType,
   orderedList,
-  subtext,
   unorderedList,
   type CommandInteractionOption,
 } from "discord.js"
@@ -40,12 +39,8 @@ function errorInformation(error: unknown) {
 
   const components: d.ContainerComponent[] = [
     d.text(heading(error.name)),
-    d.text(subtext(error.message)),
+    d.text(error.stack ? codeBlock(error.stack.slice(0, 1000)) : error.message),
   ]
-
-  if (error.stack) {
-    components.push(d.text(codeBlock(error.stack.slice(0, 1000))))
-  }
 
   return components
 }
