@@ -151,6 +151,28 @@ export function bot(options: ClientOptions): Bot {
       errorWebhooks.set(webhook.id, webhook)
       return this
     },
+    // TODO: this should only be possible after .login, but I couldn't get the
+    // types for that to work
+    async addErrorWebhookFromURL(url) {
+      if (!client.isReady()) {
+        errorHandlerWrapper({ error: new InternalError("client_not_ready") })
+        return this
+      }
+
+      const [id, token] = url.toString().slice(33).split("/")
+      if (!id || !token) {
+        console.warn("Invalid webhook URL", url)
+        return this
+      }
+
+      const webhook = await client.fetchWebhook(id, token)
+      if (!webhook.isIncoming()) {
+        console.warn("Invalid webhook", webhook)
+        return this
+      }
+
+      return this.addErrorWebhook(webhook)
+    },
     register() {
       client.once("ready", (client) => {
         client.rest

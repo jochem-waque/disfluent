@@ -44,3 +44,4 @@ export type ErrorCode =
   | "could_not_register"
   | "missing_custom_id"
   | "duplicate_custom_id"
+  | "client_not_ready"
