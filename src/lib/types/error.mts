@@ -45,3 +45,5 @@ export type ErrorCode =
   | "missing_custom_id"
   | "duplicate_custom_id"
   | "client_not_ready"
+  | "invalid_webhook_url"
+  | "invalid_webhook_type"

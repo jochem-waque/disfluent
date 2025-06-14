@@ -33,23 +33,27 @@ export function bot(options: ClientOptions): Bot {
   let errorHandler: ErrorHandler = console.log
 
   const errorHandlerWrapper = (context: ErrorContext) => {
-    errorHandler(context)
+    try {
+      errorHandler(context)
 
-    const options: WebhookMessageCreateOptions = {
-      flags: MessageFlags.IsComponentsV2,
-      components: errorMessageComponents(context),
-      withComponents: true,
-    }
+      const options: WebhookMessageCreateOptions = {
+        flags: MessageFlags.IsComponentsV2,
+        components: errorMessageComponents(context),
+        withComponents: true,
+      }
 
-    if (client.user) {
-      options.username = client.user.displayName
-      options.avatarURL = client.user.displayAvatarURL()
-    }
+      if (client.user) {
+        options.username = client.user.displayName
+        options.avatarURL = client.user.displayAvatarURL()
+      }
 
-    for (const webhook of errorWebhooks.values()) {
-      webhook.send(options).catch((error: unknown) => {
-        errorHandler({ error })
-      })
+      for (const webhook of errorWebhooks.values()) {
+        webhook.send(options).catch((error: unknown) => {
+          errorHandler({ error })
+        })
+      }
+    } catch (e) {
+      errorHandler({ error: e })
     }
   }
 
@@ -161,13 +165,22 @@ export function bot(options: ClientOptions): Bot {
 
       const [id, token] = url.toString().slice(33).split("/")
       if (!id || !token) {
-        console.warn("Invalid webhook URL", url)
+        errorHandlerWrapper({ error: new InternalError("invalid_webhook_url") })
         return this
       }
 
-      const webhook = await client.fetchWebhook(id, token)
+      let webhook
+      try {
+        webhook = await client.fetchWebhook(id, token)
+      } catch (e) {
+        errorHandlerWrapper({ error: e })
+        return this
+      }
+
       if (!webhook.isIncoming()) {
-        console.warn("Invalid webhook", webhook)
+        errorHandlerWrapper({
+          error: new InternalError("invalid_webhook_type"),
+        })
         return this
       }
 
