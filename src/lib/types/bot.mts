@@ -4,7 +4,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Client, Webhook, WebhookType } from "discord.js"
+import { Client } from "discord.js"
 import type { ErrorContext } from "./error.mts"
 import type { Module } from "./module.mts"
 import type { Unwrap } from "./util.mts"
@@ -16,16 +16,9 @@ export type Bot<Keys extends keyof Bot | "" = ""> = Unwrap<
     {
       readonly "~client": Client
       addModule(module: Module): Bot<Keys>
-      addErrorWebhook(webhook: Webhook<WebhookType.Incoming>): Bot<Keys>
-      addErrorWebhookFromURL(url: URL): Promise<Bot<Keys>>
-      errorHandler(
-        handler: ErrorHandler,
-        webhookFailureOnly?: true,
-      ): Bot<Keys | "errorHandler">
+      addErrorWebhook(url: URL): Bot<Keys>
       register(): Bot<Keys | "register">
-      login(
-        token: string,
-      ): Promise<Bot<Keys | "addModule" | "register" | "login">>
+      login(token: string): Promise<void>
     },
     Keys
   >

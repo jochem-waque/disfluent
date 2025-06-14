@@ -17,7 +17,6 @@ import {
   type CompletedCommand,
   type ComponentBuilder,
   type ErrorContext,
-  type ErrorHandler,
   InternalError,
 } from "../external.mts"
 import { errorMessageComponents } from "./errorMessage.mts"
@@ -30,18 +29,11 @@ export function bot(options: ClientOptions): Bot {
 
   const components = new Map<string, ComponentBuilder>()
 
-  let errorHandler: ErrorHandler = console.log
-  let onWebhookFailureOnly = false
-
   const errorHandlerWrapper = (context: ErrorContext) => {
     try {
-      if (errorWebhooks.size === 0) {
-        errorHandler(context)
+      if (webhooks.length === 0) {
+        console.error(context)
         return
-      }
-
-      if (!onWebhookFailureOnly) {
-        errorHandler(context)
       }
 
       const options: WebhookMessageCreateOptions = {
@@ -55,17 +47,16 @@ export function bot(options: ClientOptions): Bot {
         options.avatarURL = client.user.displayAvatarURL()
       }
 
-      for (const webhook of errorWebhooks.values()) {
-        webhook.send(options).catch((error: unknown) => {
-          errorHandler({ error })
-        })
+      for (const webhook of webhooks.values()) {
+        webhook.send(options).catch(console.error)
       }
     } catch (e) {
-      errorHandler({ error: e })
+      console.error(e)
     }
   }
 
-  const errorWebhooks = new Map<string, Webhook<WebhookType.Incoming>>()
+  const webhookURLs = new Set<string>()
+  const webhooks: Webhook<WebhookType.Incoming>[] = []
 
   client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
@@ -116,6 +107,37 @@ export function bot(options: ClientOptions): Bot {
     }
   })
 
+  client.on("ready", (client) => {
+    async function fetchWebhook(url: string) {
+      const [id, token] = url.slice(33).split("/")
+      if (!id || !token) {
+        throw new InternalError("invalid_webhook_url")
+      }
+
+      const webhook = await client.fetchWebhook(id, token)
+      if (!webhook.isIncoming()) {
+        throw new InternalError("invalid_webhook_type")
+      }
+
+      return webhook
+    }
+
+    Promise.allSettled([...webhookURLs.values()].map(fetchWebhook))
+      .then((results) => {
+        for (const result of results) {
+          switch (result.status) {
+            case "rejected":
+              console.error(result.reason)
+              break
+            case "fulfilled":
+              webhooks.push(result.value)
+              break
+          }
+        }
+      })
+      .catch(console.error)
+  })
+
   return {
     "~client": client,
     addModule(module) {
@@ -155,48 +177,9 @@ export function bot(options: ClientOptions): Bot {
 
       return this
     },
-    errorHandler(handler, ignore) {
-      if (ignore) {
-        onWebhookFailureOnly = true
-      }
-
-      errorHandler = handler
+    addErrorWebhook(url) {
+      webhookURLs.add(url.toString())
       return this
-    },
-    addErrorWebhook(webhook) {
-      errorWebhooks.set(webhook.id, webhook)
-      return this
-    },
-    // TODO: this should only be possible after .login, but I couldn't get the
-    // types for that to work
-    async addErrorWebhookFromURL(url) {
-      if (!client.isReady()) {
-        errorHandlerWrapper({ error: new InternalError("client_not_ready") })
-        return this
-      }
-
-      const [id, token] = url.toString().slice(33).split("/")
-      if (!id || !token) {
-        errorHandlerWrapper({ error: new InternalError("invalid_webhook_url") })
-        return this
-      }
-
-      let webhook
-      try {
-        webhook = await client.fetchWebhook(id, token)
-      } catch (e) {
-        errorHandlerWrapper({ error: e })
-        return this
-      }
-
-      if (!webhook.isIncoming()) {
-        errorHandlerWrapper({
-          error: new InternalError("invalid_webhook_type"),
-        })
-        return this
-      }
-
-      return this.addErrorWebhook(webhook)
     },
     register() {
       client.once("ready", (client) => {
@@ -228,7 +211,6 @@ export function bot(options: ClientOptions): Bot {
     },
     async login(token) {
       await client.login(token)
-      return this
     },
   }
 }
