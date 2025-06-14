@@ -35,6 +35,11 @@ export function bot(options: ClientOptions): Bot {
 
   const errorHandlerWrapper = (context: ErrorContext) => {
     try {
+      if (errorWebhooks.size === 0) {
+        errorHandler(context)
+        return
+      }
+
       if (!onWebhookFailureOnly) {
         errorHandler(context)
       }
