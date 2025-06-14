@@ -31,10 +31,13 @@ export function bot(options: ClientOptions): Bot {
   const components = new Map<string, ComponentBuilder>()
 
   let errorHandler: ErrorHandler = console.log
+  let onWebhookFailureOnly = false
 
   const errorHandlerWrapper = (context: ErrorContext) => {
     try {
-      errorHandler(context)
+      if (!onWebhookFailureOnly) {
+        errorHandler(context)
+      }
 
       const options: WebhookMessageCreateOptions = {
         flags: MessageFlags.IsComponentsV2,
@@ -147,7 +150,11 @@ export function bot(options: ClientOptions): Bot {
 
       return this
     },
-    errorHandler(handler) {
+    errorHandler(handler, ignore) {
+      if (ignore) {
+        onWebhookFailureOnly = true
+      }
+
       errorHandler = handler
       return this
     },

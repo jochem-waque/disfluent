@@ -18,7 +18,10 @@ export type Bot<Keys extends keyof Bot | "" = ""> = Unwrap<
       addModule(module: Module): Bot<Keys>
       addErrorWebhook(webhook: Webhook<WebhookType.Incoming>): Bot<Keys>
       addErrorWebhookFromURL(url: URL): Promise<Bot<Keys>>
-      errorHandler(handler: ErrorHandler): Bot<Keys | "errorHandler">
+      errorHandler(
+        handler: ErrorHandler,
+        webhookFailureOnly?: true,
+      ): Bot<Keys | "errorHandler">
       register(): Bot<Keys | "register">
       login(
         token: string,
