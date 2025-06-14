@@ -17,6 +17,7 @@ import {
   type CompletedCommand,
   type ComponentBuilder,
   type ErrorContext,
+  type ErrorHandler,
   InternalError,
 } from "../external.mts"
 import { errorMessageComponents } from "./errorMessage.mts"
@@ -29,8 +30,14 @@ export function bot(options: ClientOptions): Bot {
 
   const components = new Map<string, ComponentBuilder>()
 
+  let errorHandler: ErrorHandler | undefined = undefined
+
   const errorHandlerWrapper = (context: ErrorContext) => {
     try {
+      if (errorHandler) {
+        errorHandler(context)
+      }
+
       if (webhooks.length === 0) {
         console.error(context)
         return
@@ -175,6 +182,10 @@ export function bot(options: ClientOptions): Bot {
         components.set(component.id, component)
       }
 
+      return this
+    },
+    errorHandler(handler) {
+      errorHandler = handler
       return this
     },
     addErrorWebhook(url) {
