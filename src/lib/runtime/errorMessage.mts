@@ -5,9 +5,9 @@
  */
 
 import {
+  ChatInputCommandInteraction,
   codeBlock,
   Colors,
-  CommandInteraction,
   heading,
   HeadingLevel,
   InteractionType,
@@ -84,6 +84,8 @@ function interactionInformation(context: ErrorContext) {
 
   switch (interaction.type) {
     case InteractionType.ApplicationCommand:
+      interaction.isChatInputCommand()
+
       components.push(
         d.text(
           unorderedList([
@@ -92,8 +94,10 @@ function interactionInformation(context: ErrorContext) {
               "Channel ID": interaction.channelId,
               "Guild ID": interaction.guildId ?? "None",
             }),
-            "Options:",
-            formatOptions(interaction.options),
+
+            ...(interaction.isChatInputCommand()
+              ? ["Options:", formatOptions(interaction.options)]
+              : []),
           ]),
         ),
       )
@@ -179,7 +183,7 @@ function formatAutocompleteOption(option?: CommandInteractionOption) {
   }
 }
 
-function formatOptions(options: CommandInteraction["options"]) {
+function formatOptions(options: ChatInputCommandInteraction["options"]) {
   return options.data.map(
     (option) => `${option.name}: ${option.value?.toString() ?? ""}`,
   )
