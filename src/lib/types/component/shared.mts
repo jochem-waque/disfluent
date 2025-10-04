@@ -47,6 +47,7 @@ export type BuilderMap<Type extends ComponentType> = {
   [ComponentType.Separator]: SeparatorBuilder
   [ComponentType.ContentInventoryEntry]: never
   [ComponentType.Container]: ContainerBuilder
+  [ComponentType.Label]: never
 }[Type]
 
 export type APIComponent<Type extends ComponentType> = APIMessageComponent & {
