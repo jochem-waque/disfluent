@@ -34,9 +34,6 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Update package.json
-        uses: adobe/update-prerelease-npm-version@v1.2.0
-
       - name: Publish
         run: pnpm publish --provenance --access public
         env:
