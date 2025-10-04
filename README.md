@@ -1,4 +1,4 @@
-# Fluent Commands
+# disfluent
 
 A fluent, Zod-like API for discord.js commands.
 
@@ -57,13 +57,6 @@ In the second example, the type of the deconstructed parameter is inferred as:
   auto?: number
 }
 ```
-
-## Why?
-
-Because Discord.js's command builders just aren't good enough. Defining your
-commands in one place and repeating all of the option names and types in another
-is prone to errors and completely unnecessary. I already solved this problem
-over a year ago. Now, I've solved it again, but more terse and elegant.
 
 ## License
 
