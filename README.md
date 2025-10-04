@@ -4,8 +4,8 @@ A fluent, Zod-like API for discord.js commands.
 
 ## Usage
 
-After installing `fluent-commands` and adding `import d from "fluent-commands"`
-to a file, defining a command can be as simple as:
+After installing `disfluent` and adding `import d from "disfluent"` to a file,
+defining a command can be as simple as:
 
 ```ts
 d.slashCommand("ping", "Respond with pong").handler(async (interaction) => {

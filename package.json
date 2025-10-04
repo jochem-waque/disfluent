@@ -1,5 +1,5 @@
 {
-  "name": "fluent-commands",
+  "name": "disfluent",
   "version": "2.0.0",
   "author": "Jochem Waqué (https://jochem.cc/)",
   "license": "AGPL-3.0-or-later",
@@ -14,11 +14,11 @@
     "lint": "eslint src"
   },
   "bugs": {
-    "url": "https://github.com/jochem-waque/fluent-commands/issues"
+    "url": "https://github.com/jochem-waque/disfluent/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jochem-waque/fluent-commands.git"
+    "url": "git+https://github.com/jochem-waque/disfluent.git"
   },
   "engineStrict": true,
   "engines": {
