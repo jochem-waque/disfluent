@@ -48,6 +48,7 @@ export type BuilderMap<Type extends ComponentType> = {
   [ComponentType.ContentInventoryEntry]: never
   [ComponentType.Container]: ContainerBuilder
   [ComponentType.Label]: never
+  [ComponentType.FileUpload]: never
 }[Type]
 
 export type APIComponent<Type extends ComponentType> = APIMessageComponent & {
