@@ -7,6 +7,7 @@
 import type {
   ClientOptions,
   RESTPutAPIApplicationCommandsResult,
+  User,
   Webhook,
   WebhookMessageCreateOptions,
   WebhookType,
@@ -22,45 +23,54 @@ import {
 } from "../external.mts"
 import { errorMessageComponents } from "./errorMessage.mts"
 
+let instantiated = false
+let errorHandler: ErrorHandler | undefined
+let clientUser: User | undefined
+const webhooks: Webhook<WebhookType.Incoming>[] = []
+
+export function log(context: ErrorContext) {
+  try {
+    if (errorHandler) {
+      errorHandler(context)
+    }
+
+    if (webhooks.length === 0) {
+      console.error(context)
+      return
+    }
+
+    const options: WebhookMessageCreateOptions = {
+      flags: MessageFlags.IsComponentsV2,
+      components: errorMessageComponents(context),
+      withComponents: true,
+    }
+
+    if (clientUser) {
+      options.username = clientUser.displayName
+      options.avatarURL = clientUser.displayAvatarURL()
+    }
+
+    for (const webhook of webhooks.values()) {
+      webhook.send(options).catch(console.error)
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 export function bot(options: ClientOptions): Bot {
+  if (instantiated) {
+    throw new Error("Bot is a singleton and can only be instantiated once")
+  }
+
+  instantiated = true
+
   const client = new Client(options)
 
   const commands = new Map<string, CompletedCommand>()
   const registeredCommands = new Map<string, CompletedCommand>()
 
   const components = new Map<string, ComponentBuilder>()
-
-  let errorHandler: ErrorHandler | undefined = undefined
-
-  const errorHandlerWrapper = (context: ErrorContext) => {
-    try {
-      if (errorHandler) {
-        errorHandler(context)
-      }
-
-      if (webhooks.length === 0) {
-        console.error(context)
-        return
-      }
-
-      const options: WebhookMessageCreateOptions = {
-        flags: MessageFlags.IsComponentsV2,
-        components: errorMessageComponents(context),
-        withComponents: true,
-      }
-
-      if (client.user) {
-        options.username = client.user.displayName
-        options.avatarURL = client.user.displayAvatarURL()
-      }
-
-      for (const webhook of webhooks.values()) {
-        webhook.send(options).catch(console.error)
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
 
   const webhookURLs = new Set<string>()
   const webhooks: Webhook<WebhookType.Incoming>[] = []
@@ -73,7 +83,7 @@ export function bot(options: ClientOptions): Bot {
       }
 
       command.handle(interaction as never).catch((error: unknown) => {
-        errorHandlerWrapper({ error, interaction, command })
+        log({ error, interaction, command })
       })
 
       return
@@ -86,7 +96,7 @@ export function bot(options: ClientOptions): Bot {
       }
 
       command.autocomplete(interaction).catch((error: unknown) => {
-        errorHandlerWrapper({ error, interaction, command })
+        log({ error, interaction, command })
       })
       return
     }
@@ -109,7 +119,7 @@ export function bot(options: ClientOptions): Bot {
       component
         .handle(interaction as never, ...split.slice(1))
         .catch((error: unknown) => {
-          errorHandlerWrapper({ error, interaction, component })
+          log({ error, interaction, component })
         })
     }
   })
@@ -156,10 +166,10 @@ export function bot(options: ClientOptions): Bot {
         const wrapped = (...params: Parameters<typeof handler.handle>) => {
           try {
             handler.handle(...params)?.catch((error: unknown) => {
-              errorHandlerWrapper({ error, handler, handlerParameters: params })
+              log({ error, handler, handlerParameters: params })
             })
           } catch (error) {
-            errorHandlerWrapper({ error, handler, handlerParameters: params })
+            log({ error, handler, handlerParameters: params })
           }
         }
 
@@ -215,7 +225,7 @@ export function bot(options: ClientOptions): Bot {
             }
           })
           .catch((error: unknown) => {
-            errorHandlerWrapper({ error })
+            log({ error })
           })
       })
       return this
