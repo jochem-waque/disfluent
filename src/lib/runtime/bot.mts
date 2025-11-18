@@ -73,7 +73,6 @@ export function bot(options: ClientOptions): Bot {
   const components = new Map<string, ComponentBuilder>()
 
   const webhookURLs = new Set<string>()
-  const webhooks: Webhook<WebhookType.Incoming>[] = []
 
   client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
