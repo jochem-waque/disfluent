@@ -4,19 +4,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ButtonBuilder, type ButtonStyle } from "discord.js"
+import { ButtonBuilder, ButtonStyle } from "discord.js"
 import type { Button } from "../../types/component/button.mts"
 import { InternalError } from "../error.mts"
 
-export function button(style: ButtonStyle): Button<"handler"> {
+export function button(customId: string): Button<"handler"> {
   return {
-    builder: new ButtonBuilder().setStyle(style),
+    builder: new ButtonBuilder().setCustomId(customId),
     id(id) {
       this.builder.setId(id)
       return this
     },
-    customId(customId) {
-      this.builder.setCustomId(customId)
+    style(style) {
+      this.builder.setStyle(style)
+
       return {
         ...this,
         id(id) {
@@ -70,7 +71,7 @@ export function button(style: ButtonStyle): Button<"handler"> {
       return this
     },
     url(url) {
-      return this.builder.setURL(url.toString())
+      return this.builder.setStyle(ButtonStyle.Link).setURL(url.toString())
     },
   }
 }
