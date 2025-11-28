@@ -123,7 +123,7 @@ export function bot(options: ClientOptions): Bot {
     }
   })
 
-  client.on("ready", (client) => {
+  client.on("clientReady", (client) => {
     async function fetchWebhook(url: string) {
       const [id, token] = url.slice(33).split("/")
       if (!id || !token) {
@@ -202,7 +202,7 @@ export function bot(options: ClientOptions): Bot {
       return this
     },
     register() {
-      client.once("ready", (client) => {
+      client.once("clientReady", (client) => {
         client.rest
           .put(Routes.applicationCommands(client.application.id), {
             body: [...commands.values()].map((command) =>
