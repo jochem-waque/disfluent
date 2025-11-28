@@ -4,14 +4,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ActionRowBuilder, type AnyComponentBuilder } from "discord.js"
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  type MessageActionRowComponentBuilder,
+} from "discord.js"
 import type { Row } from "../../external.mts"
 
-export function row<Type extends AnyComponentBuilder>(
-  ...components: Type[]
-): Row<Type> {
+export function row(
+  ...components:
+    | [MessageActionRowComponentBuilder]
+    | [ButtonBuilder, ButtonBuilder]
+    | [ButtonBuilder, ButtonBuilder, ButtonBuilder]
+    | [ButtonBuilder, ButtonBuilder, ButtonBuilder, ButtonBuilder]
+    | [
+        ButtonBuilder,
+        ButtonBuilder,
+        ButtonBuilder,
+        ButtonBuilder,
+        ButtonBuilder,
+      ]
+): Row {
   return {
-    builder: new ActionRowBuilder<Type>().setComponents(components),
+    builder:
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
+        components,
+      ),
     id(id) {
       this.builder.setId(id)
       return this
