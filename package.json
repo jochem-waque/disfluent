@@ -1,6 +1,6 @@
 {
   "name": "disfluent",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "author": "Jochem Waqué (https://jochem.cc/)",
   "license": "AGPL-3.0-or-later",
   "main": "./dist/index.mjs",
