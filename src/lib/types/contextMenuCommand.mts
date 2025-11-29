@@ -31,7 +31,7 @@ type TypeMap = {
 }
 
 export type ContextMenuCommand<
-  Type extends keyof InteractionMap | "undefined" = "undefined",
+  Type extends keyof InteractionMap = "undefined",
   Keys extends keyof ContextMenuCommand | "" = "",
 > = Unwrap<
   Omit<
