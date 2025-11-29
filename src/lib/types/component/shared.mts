@@ -64,9 +64,8 @@ export type ComponentInteraction<Type extends ComponentType> = (
 
 export type ComponentBuilder<
   Type extends ComponentType = ComponentType,
-  Options extends
-    | Record<string, PartialStringSelectOption>
-    | undefined = undefined,
+  Options extends Record<string, PartialStringSelectOption> | undefined =
+    undefined,
   Arguments extends readonly string[] = readonly string[],
 > = Type extends ComponentType.StringSelect
   ? StringSelectBuilder<StringValues<Options>, Arguments>

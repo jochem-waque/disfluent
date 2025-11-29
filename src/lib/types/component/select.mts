@@ -87,9 +87,8 @@ export type SelectMenuSelector = {
 type SelectMenu<
   Type extends SelectMenuType,
   ChannelTypes extends readonly ChannelType[] | undefined = undefined,
-  Options extends
-    | Record<string, PartialStringSelectOption>
-    | undefined = undefined,
+  Options extends Record<string, PartialStringSelectOption> | undefined =
+    undefined,
   Keys extends keyof SelectMenu<Type> | "" = "",
 > = Unwrap<
   Omit<

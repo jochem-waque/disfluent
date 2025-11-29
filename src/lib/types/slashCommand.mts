@@ -20,9 +20,8 @@ import type { PartialSubcommandGroup } from "./subcommandGroup.mts"
 import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 
 export type SlashCommand<
-  Options extends
-    | Record<Lowercase<string>, PartialOption>
-    | undefined = undefined,
+  Options extends Record<Lowercase<string>, PartialOption> | undefined =
+    undefined,
   Keys extends keyof SlashCommand | "" = "",
 > = Unwrap<
   Omit<

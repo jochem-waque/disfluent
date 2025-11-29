@@ -13,9 +13,8 @@ import type { OptionValues, PartialOption } from "./option.mts"
 import type { LowercaseKeys, NotEmpty, Unwrap } from "./util.mts"
 
 export type Subcommand<
-  Options extends
-    | Record<Lowercase<string>, PartialOption>
-    | undefined = undefined,
+  Options extends Record<Lowercase<string>, PartialOption> | undefined =
+    undefined,
   Keys extends keyof Subcommand | "" = "",
 > = Unwrap<
   Omit<
