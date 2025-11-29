@@ -5,7 +5,6 @@
  */
 
 import {
-  BaseSelectMenuBuilder,
   ChannelSelectMenuBuilder,
   ComponentType,
   MentionableSelectMenuBuilder,
@@ -13,14 +12,19 @@ import {
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
   UserSelectMenuBuilder,
-  type APISelectMenuComponent,
   type SelectMenuType,
 } from "discord.js"
+import type {
+  BuilderMap,
+  ComponentBuilder,
+  ComponentHandler,
+} from "../../external.mts"
 import type {
   SelectMenuSelector,
   StringSelectBuilder,
 } from "../../types/component/select.mts"
 import { InternalError } from "../error.mts"
+import { Components } from "../internal.mts"
 
 export function select(): SelectMenuSelector {
   return {
@@ -51,16 +55,14 @@ export function select(): SelectMenuSelector {
 }
 
 function builder<
-  Type extends SelectMenuType,
-  Builder extends BaseSelectMenuBuilder<
-    APISelectMenuComponent & { type: Type }
-  >,
-  Handler,
+  Builder extends BuilderMap<Type>,
+  Type extends Exclude<SelectMenuType, ComponentType.StringSelect>,
+  Arguments extends readonly string[],
 >(
   base: Builder,
   constructor: new (data: ReturnType<Builder["toJSON"]>) => Builder,
-  handle: Handler,
-) {
+  handle: ComponentHandler<Type, undefined, Arguments>,
+): ComponentBuilder<Type, undefined, Arguments> {
   const data = base.toJSON() as ReturnType<Builder["toJSON"]>
   if (!("custom_id" in data) || !data.custom_id) {
     throw new InternalError(
@@ -69,16 +71,20 @@ function builder<
     )
   }
 
-  return {
+  const component = {
     id: data.custom_id,
     type: data.type,
-    with(...args: readonly string[]) {
+    with(...args: Arguments) {
       return new constructor(data).setCustomId(
         [data.custom_id, ...args].join(":"),
       )
     },
     handle,
-  }
+  } as ComponentBuilder<Type, undefined, Arguments>
+
+  Components.set(data.custom_id, component)
+
+  return component
 }
 
 function stringSelectBuilder<Arguments extends readonly string[]>(
@@ -96,7 +102,7 @@ function stringSelectBuilder<Arguments extends readonly string[]>(
     )
   }
 
-  return {
+  const component: StringSelectBuilder<string, Arguments> = {
     id: data.custom_id,
     type: data.type,
     with(defaults, ...args) {
@@ -116,6 +122,10 @@ function stringSelectBuilder<Arguments extends readonly string[]>(
     },
     handle,
   }
+
+  Components.set(data.custom_id, component)
+
+  return component
 }
 
 function string(id: string): ReturnType<SelectMenuSelector["string"]> {

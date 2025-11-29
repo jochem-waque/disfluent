@@ -16,12 +16,12 @@ import { Client, MessageFlags, Routes } from "discord.js"
 import {
   type Bot,
   type CompletedCommand,
-  type ComponentBuilder,
   type ErrorContext,
   type ErrorHandler,
   InternalError,
 } from "../external.mts"
 import { errorMessageComponents } from "./errorMessage.mts"
+import { Components } from "./internal.mts"
 
 let instantiated = false
 let errorHandler: ErrorHandler | undefined
@@ -70,8 +70,6 @@ export function bot(options: ClientOptions): Bot {
   const commands = new Map<string, CompletedCommand>()
   const registeredCommands = new Map<string, CompletedCommand>()
 
-  const components = new Map<string, ComponentBuilder>()
-
   const webhookURLs = new Set<string>()
 
   client.on("interactionCreate", (interaction) => {
@@ -106,7 +104,7 @@ export function bot(options: ClientOptions): Bot {
         return
       }
 
-      const component = components.get(split[0])
+      const component = Components.get(split[0])
       if (!component) {
         return
       }
@@ -178,17 +176,6 @@ export function bot(options: ClientOptions): Bot {
         }
 
         client.on(handler.event, wrapped)
-      }
-
-      for (const component of module.components) {
-        if (components.has(component.id)) {
-          throw new InternalError(
-            "duplicate_custom_id",
-            `The custom ID "${component.id}" is already in use`,
-          )
-        }
-
-        components.set(component.id, component)
       }
 
       return this

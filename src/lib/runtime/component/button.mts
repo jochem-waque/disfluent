@@ -7,6 +7,7 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js"
 import type { Button } from "../../types/component/button.mts"
 import { InternalError } from "../error.mts"
+import { Components } from "../internal.mts"
 
 export function button(customId: string): Button<"handler"> {
   return {
@@ -45,7 +46,7 @@ export function button(customId: string): Button<"handler"> {
             )
           }
 
-          return {
+          const component = {
             id: base.custom_id,
             type: base.type,
             with(...args: readonly string[]) {
@@ -55,6 +56,10 @@ export function button(customId: string): Button<"handler"> {
             },
             handle,
           }
+
+          Components.set(customId, component)
+
+          return component
         },
       }
     },

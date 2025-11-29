@@ -10,8 +10,11 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js"
+import type { ComponentBuilder } from "../types/component/shared.mts"
 import type { OptionValue, PartialOption } from "../types/option.mts"
 import { InternalError } from "./error.mts"
+
+export const Components = new Map<string, ComponentBuilder>()
 
 export function getOptionValue<
   Type extends ApplicationCommandOptionType,

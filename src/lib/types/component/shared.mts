@@ -67,7 +67,7 @@ export type ComponentBuilder<
   Options extends
     | Record<string, PartialStringSelectOption>
     | undefined = undefined,
-  Arguments extends readonly string[] = string[],
+  Arguments extends readonly string[] = readonly string[],
 > = Type extends ComponentType.StringSelect
   ? StringSelectBuilder<StringValues<Options>, Arguments>
   : {
