@@ -24,7 +24,7 @@
   "engines": {
     "node": ">=24"
   },
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
+  "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
   "devEngines": {
     "runtime": {
       "name": "node",
@@ -39,19 +39,19 @@
     "discord.js": "^14.18.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^9.39.2",
     "@favware/npm-deprecate": "^2.0.0",
-    "@tsconfig/node24": "^24.0.3",
+    "@tsconfig/node24": "^24.0.4",
     "@tsconfig/strictest": "^2.0.8",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.9",
     "discord.js": "^14.25.1",
-    "eslint": "^9.39.1",
-    "prettier": "^3.7.3",
+    "eslint": "^9.39.2",
+    "prettier": "^3.8.1",
     "prettier-plugin-organize-imports": "^4.3.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.54.0"
   },
   "prettier": {
     "semi": false,
