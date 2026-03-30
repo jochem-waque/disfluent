@@ -75,7 +75,7 @@ export function bot(options: ClientOptions): Bot {
   client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
       const command = registeredCommands.get(interaction.commandId)
-      if (!command || command.type !== interaction.commandType) {
+      if (command?.type !== interaction.commandType) {
         return
       }
 
@@ -122,6 +122,8 @@ export function bot(options: ClientOptions): Bot {
   })
 
   client.on("clientReady", (client) => {
+    clientUser = client.user
+
     async function fetchWebhook(url: string) {
       const [id, token] = url.slice(33).split("/")
       if (!id || !token) {
