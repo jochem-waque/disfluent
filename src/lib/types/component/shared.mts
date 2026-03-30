@@ -49,6 +49,9 @@ export type BuilderMap<Type extends ComponentType> = {
   [ComponentType.Container]: ContainerBuilder
   [ComponentType.Label]: never
   [ComponentType.FileUpload]: never
+  [ComponentType.RadioGroup]: never
+  [ComponentType.CheckboxGroup]: never
+  [ComponentType.Checkbox]: never
 }[Type]
 
 export type APIComponent<Type extends ComponentType> = APIMessageComponent & {

@@ -39,19 +39,19 @@
     "discord.js": "^14.18.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^10.0.1",
     "@favware/npm-deprecate": "^2.0.0",
     "@tsconfig/node24": "^24.0.4",
     "@tsconfig/strictest": "^2.0.8",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^24.10.9",
+    "@types/node": "^25.5.0",
     "discord.js": "^14.25.1",
-    "eslint": "^9.39.2",
+    "eslint": "^10.1.0",
     "prettier": "^3.8.1",
     "prettier-plugin-organize-imports": "^4.3.0",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0"
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0"
   },
   "prettier": {
     "semi": false,
