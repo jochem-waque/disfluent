@@ -9,15 +9,14 @@ import type { Button } from "../../types/component/button.mts"
 import { InternalError } from "../error.mts"
 import { Components } from "../internal.mts"
 
-export function button(url: URL): Button<"style" | "url" | "handler">
-export function button(customId: string): Button<"url" | "handler">
-
-export function button(urlOrCustomId: string | URL) {
-  if (urlOrCustomId instanceof URL) {
+export function button(style: ButtonStyle.Link): Button<"customId" | "handler">
+export function button(
+  style: Exclude<ButtonStyle, ButtonStyle.Link>,
+): Button<"url" | "handler">
+export function button(style: ButtonStyle) {
+  if (style === ButtonStyle.Link) {
     return {
-      builder: new ButtonBuilder()
-        .setStyle(ButtonStyle.Link)
-        .setURL(urlOrCustomId.toString()),
+      builder: new ButtonBuilder().setStyle(style),
       id(id) {
         this.builder.setId(id)
         return this
@@ -34,19 +33,17 @@ export function button(urlOrCustomId: string | URL) {
         this.builder.setLabel(label)
         return this
       },
-    } satisfies Button<"style" | "url" | "handler"> as Button<
-      "style" | "url" | "handler"
-    >
+      url(url) {
+        this.builder.setURL(url.toString())
+        return this.builder
+      },
+    } satisfies Button<"customId" | "handler"> as Button<"customId" | "handler">
   }
 
   return {
-    builder: new ButtonBuilder().setCustomId(urlOrCustomId),
-    id(id) {
-      this.builder.setId(id)
-      return this
-    },
-    style(style) {
-      this.builder.setStyle(style)
+    builder: new ButtonBuilder().setStyle(style),
+    customId(id) {
+      this.builder.setCustomId(id)
 
       return {
         ...this,
@@ -86,11 +83,15 @@ export function button(urlOrCustomId: string | URL) {
             handle,
           }
 
-          Components.set(urlOrCustomId, component)
+          Components.set(id, component)
 
           return component
         },
       }
+    },
+    id(id) {
+      this.builder.setId(id)
+      return this
     },
     disabled() {
       this.builder.setDisabled(true)
@@ -104,5 +105,5 @@ export function button(urlOrCustomId: string | URL) {
       this.builder.setLabel(label)
       return this
     },
-  } satisfies Button<"url" | "handler">
+  } satisfies Button<"url" | "handler"> as Button<"url" | "handler">
 }

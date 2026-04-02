@@ -6,7 +6,6 @@
 
 import type {
   ButtonBuilder,
-  ButtonStyle,
   ComponentEmojiResolvable,
   ComponentType,
 } from "discord.js"
@@ -21,10 +20,8 @@ export type Button<Keys extends keyof Button | "" = ""> = Unwrap<
   Omit<
     {
       readonly builder: BuilderMap<ComponentType.Button>
+      customId(id: string): Button<Exclude<Keys, "handler"> | "customId">
       id(id: number): Button<Keys | "id">
-      style(
-        style: Exclude<ButtonStyle, ButtonStyle.Link | ButtonStyle.Premium>,
-      ): Button<Exclude<Keys, "handler"> | "style" | "url">
       disabled(): Button<Keys | "disabled">
       emoji(emoji: ComponentEmojiResolvable): Button<Keys | "emoji">
       label(label: string): Button<Keys | "label">
