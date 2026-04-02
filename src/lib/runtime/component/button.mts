@@ -9,9 +9,38 @@ import type { Button } from "../../types/component/button.mts"
 import { InternalError } from "../error.mts"
 import { Components } from "../internal.mts"
 
-export function button(customId: string): Button<"handler"> {
+export function button(url: URL): Button<"style" | "url" | "handler">
+export function button(customId: string): Button<"url" | "handler">
+
+export function button(urlOrCustomId: string | URL) {
+  if (urlOrCustomId instanceof URL) {
+    return {
+      builder: new ButtonBuilder()
+        .setStyle(ButtonStyle.Link)
+        .setURL(urlOrCustomId.toString()),
+      id(id) {
+        this.builder.setId(id)
+        return this
+      },
+      disabled() {
+        this.builder.setDisabled(true)
+        return this
+      },
+      emoji(emoji) {
+        this.builder.setEmoji(emoji)
+        return this
+      },
+      label(label) {
+        this.builder.setLabel(label)
+        return this
+      },
+    } satisfies Button<"style" | "url" | "handler"> as Button<
+      "style" | "url" | "handler"
+    >
+  }
+
   return {
-    builder: new ButtonBuilder().setCustomId(customId),
+    builder: new ButtonBuilder().setCustomId(urlOrCustomId),
     id(id) {
       this.builder.setId(id)
       return this
@@ -57,7 +86,7 @@ export function button(customId: string): Button<"handler"> {
             handle,
           }
 
-          Components.set(customId, component)
+          Components.set(urlOrCustomId, component)
 
           return component
         },
@@ -75,8 +104,5 @@ export function button(customId: string): Button<"handler"> {
       this.builder.setLabel(label)
       return this
     },
-    url(url) {
-      return this.builder.setStyle(ButtonStyle.Link).setURL(url.toString())
-    },
-  }
+  } satisfies Button<"url" | "handler">
 }
