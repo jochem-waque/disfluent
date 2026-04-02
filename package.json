@@ -25,16 +25,6 @@
     "node": ">=24"
   },
   "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
-  "devEngines": {
-    "runtime": {
-      "name": "node",
-      "onFail": "warn"
-    },
-    "packageManager": {
-      "name": "pnpm",
-      "onFail": "warn"
-    }
-  },
   "peerDependencies": {
     "discord.js": "^14.18.0"
   },
@@ -45,7 +35,7 @@
     "@tsconfig/strictest": "^2.0.8",
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/node": "^25.5.0",
-    "discord.js": "^14.25.1",
+    "discord.js": "^14.26.0",
     "eslint": "^10.1.0",
     "prettier": "^3.8.1",
     "prettier-plugin-organize-imports": "^4.3.0",
@@ -67,5 +57,8 @@
     "dts": true,
     "format": "esm",
     "clean": true
+  },
+  "dependencies": {
+    "disfluent": "3.0.0-pre.2026-03-30.sha-cfea4dfc"
   }
 }
