@@ -5,25 +5,34 @@ on:
     tags:
       - "v*"
 
+concurrency:
+  group:
+    ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
 jobs:
   publish:
     name: Test and publish
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
+      id-token: write # Needed to publish packages with provenance
     steps:
       - name: Checkout source
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
 
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: package.json
           registry-url: https://registry.npmjs.org
-          cache: pnpm
+          package-manager-cache: false
 
       - name: Install dependencies
         run: pnpm install
